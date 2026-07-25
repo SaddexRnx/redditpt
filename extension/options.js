@@ -331,5 +331,43 @@ async function initShortcuts() {
     await set({ [KEYS.shortcuts]: { ...SHORTCUT_DEF } });
     render();
   });
+  /* Export / import so users can back up or move keybindings across browsers. */
+  const status = document.getElementById("shortcuts-status");
+  const flash = (msg, isErr) => {
+    status.textContent = msg;
+    status.style.color = isErr ? "var(--red)" : "var(--green)";
+    setTimeout(() => { status.textContent = ""; status.style.color = ""; }, 3000);
+  };
+  document.getElementById("shortcuts-export").addEventListener("click", async () => {
+    const cur = await load();
+    download(
+      "rpt-shortcuts.json",
+      "application/json",
+      JSON.stringify({ schema: "rpt-shortcuts/1", exportedAt: new Date().toISOString(), shortcuts: cur }, null, 2),
+    );
+    flash("Exported.");
+  });
+  const file = document.getElementById("shortcuts-import-file");
+  document.getElementById("shortcuts-import-btn").addEventListener("click", () => file.click());
+  file.addEventListener("change", async () => {
+    const f = file.files?.[0]; if (!f) return;
+    try {
+      const parsed = JSON.parse(await f.text());
+      const src = parsed?.shortcuts || parsed;
+      if (!src || typeof src !== "object") throw new Error("bad shape");
+      const next = { ...SHORTCUT_DEF };
+      let n = 0;
+      for (const k of Object.keys(SHORTCUT_DEF)) {
+        if (typeof src[k] === "string" && src[k].length && src[k].length < 40) { next[k] = src[k]; n++; }
+      }
+      if (!n) throw new Error("no valid entries");
+      await set({ [KEYS.shortcuts]: next });
+      render();
+      flash(`Imported ${n} shortcut${n === 1 ? "" : "s"}.`);
+    } catch {
+      flash("Could not import — invalid file.", true);
+    }
+    file.value = "";
+  });
   render();
 }
