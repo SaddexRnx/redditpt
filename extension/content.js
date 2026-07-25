@@ -317,6 +317,8 @@
         nodes.forEach((n) => {
           const li = document.createElement("li");
           const color = RPT.utils.authorColor(n.author);
+          li.dataset.author = (n.author || "").toLowerCase();
+          li.dataset.text = (n.body || "").toLowerCase();
           li.innerHTML = `
             <div class="rpt-tree-item" data-id="${RPT.utils.escapeHtml(n.id)}">
               <span class="rpt-author-dot" style="background:${color}"></span>
@@ -325,10 +327,36 @@
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
             </div>`;
           li.querySelector(".rpt-author").style.color = color;
-          li.querySelector(".rpt-tree-item").addEventListener("click", () => {
+          const row = li.querySelector(".rpt-tree-item");
+          /* Hover: quick preview bubble showing the full first ~400 chars,
+             so a user can survey comments without leaving the tree. */
+          let pv;
+          row.addEventListener("mouseenter", (ev) => {
+            pv = document.createElement("div");
+            pv.className = "rpt-tree-hoverpv";
+            pv.innerHTML = `<b>u/${RPT.utils.escapeHtml(n.author)} · ${n.score}</b>${RPT.utils.escapeHtml((n.body || "(no text)").slice(0, 400))}`;
+            document.body.appendChild(pv);
+            const r = row.getBoundingClientRect();
+            const top = Math.max(8, Math.min(window.innerHeight - 180, r.top));
+            pv.style.top = top + "px";
+            pv.style.left = Math.max(8, r.left - 330) + "px";
+          });
+          row.addEventListener("mouseleave", () => { pv && pv.remove(); pv = null; });
+          /* Click: expand ancestors, scroll into view, trigger big highlight. */
+          row.addEventListener("click", () => {
+            pv && pv.remove(); pv = null;
+            try {
+              let p = n.el.parentElement;
+              while (p && p !== document.body) {
+                if (p.tagName === "SHREDDIT-COMMENT" && p.hasAttribute("collapsed")) p.removeAttribute("collapsed");
+                if (p.classList && p.classList.contains("collapsed")) p.classList.remove("collapsed");
+                p = p.parentElement;
+              }
+              if (n.el.tagName === "SHREDDIT-COMMENT" && n.el.hasAttribute("collapsed")) n.el.removeAttribute("collapsed");
+            } catch {}
             n.el.scrollIntoView({ behavior: "smooth", block: "center" });
-            n.el.classList.add("rpt-flash");
-            setTimeout(() => n.el.classList.remove("rpt-flash"), 1500);
+            n.el.classList.add("rpt-jump-flash");
+            setTimeout(() => n.el.classList.remove("rpt-jump-flash"), 1700);
           });
           if (n.children.length) { const c = document.createElement("ul"); walk(n.children, c); li.appendChild(c); }
           parent.appendChild(li);
@@ -336,6 +364,12 @@
       };
       walk(roots, ul);
       container.appendChild(ul);
+    },
+    /* Unique sorted list of authors present in the currently parsed tree. */
+    authorList() {
+      const set = new Set();
+      (RPT.state.comments || []).forEach((c) => c.author && set.add(c.author));
+      return Array.from(set).sort((a, b) => a.localeCompare(b));
     },
   };
 
