@@ -52,7 +52,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "No tracking", p2d: "No analytics pings, no third-party scripts, no telemetry.",
     p3t: "No AI calls", p3d: "All analysis (stats, health, cleaner) runs with plain JavaScript.",
     p4t: "Local storage", p4d: "Filters, tags, keywords, history and analytics use browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT licensed",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT licensed",
     footerB: "Not affiliated with Reddit, Inc.",
     nav_features: "Features", nav_install: "Install", nav_privacy: "Privacy",
     step_download: "Download the ZIP above and unzip it anywhere on your computer.",
@@ -81,7 +81,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sin rastreo", p2d: "Sin analíticas, scripts de terceros ni telemetría.",
     p3t: "Sin IA", p3d: "Todo el análisis se hace con JavaScript.",
     p4t: "Datos locales", p4d: "Filtros, etiquetas, historial en browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licencia MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licencia MIT",
     footerB: "No afiliado con Reddit, Inc.",
     nav_features: "Funciones", nav_install: "Instalar", nav_privacy: "Privacidad",
     step_download: "Descarga el ZIP y descomprímelo.",
@@ -110,7 +110,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Aucun traçage", p2d: "Aucune télémétrie ni script tiers.",
     p3t: "Aucune IA", p3d: "Tout est du JavaScript pur.",
     p4t: "Stockage local", p4d: "Tout dans browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licence MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licence MIT",
     footerB: "Sans affiliation avec Reddit, Inc.",
     nav_features: "Fonctions", nav_install: "Installer", nav_privacy: "Vie privée",
     step_download: "Téléchargez le ZIP et décompressez-le.",
@@ -139,7 +139,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Kein Tracking", p2d: "Keine Telemetrie.",
     p3t: "Keine KI", p3d: "Reines JavaScript.",
     p4t: "Lokaler Speicher", p4d: "Alles in browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT-Lizenz",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT-Lizenz",
     footerB: "Nicht mit Reddit, Inc. verbunden.",
     nav_features: "Funktionen", nav_install: "Installieren", nav_privacy: "Datenschutz",
     step_download: "ZIP herunterladen und entpacken.",
@@ -168,7 +168,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sem rastreio", p2d: "Sem telemetria.",
     p3t: "Sem IA", p3d: "Só JavaScript.",
     p4t: "Só local", p4d: "Tudo em browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licença MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licença MIT",
     footerB: "Não afiliado à Reddit, Inc.",
     nav_features: "Recursos", nav_install: "Instalar", nav_privacy: "Privacidade",
     step_download: "Baixe o ZIP e descompacte.",
@@ -197,7 +197,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "追跡無し", p2d: "テレメトリー無し。",
     p3t: "AI 呼び出し無し", p3d: "純粋な JavaScript。",
     p4t: "ローカル保存", p4d: "browser.storage.local に保存。",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT",
     footerB: "Reddit, Inc. とは無関係。",
     nav_features: "機能", nav_install: "インストール", nav_privacy: "プライバシー",
     step_download: "ZIP をダウンロードして解凍。",
@@ -226,7 +226,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "无追踪", p2d: "无遥测。",
     p3t: "无 AI", p3d: "纯 JavaScript。",
     p4t: "仅本地", p4d: "全部保存在 browser.storage.local。",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT 许可",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT 许可",
     footerB: "与 Reddit, Inc. 无关联。",
     nav_features: "功能", nav_install: "安装", nav_privacy: "隐私",
     step_download: "下载 ZIP 并解压。",
@@ -422,7 +422,7 @@ function Index() {
         </nav>
         <div className="flex items-center gap-2">
           <a
-            href="https://github.com/Saddex"
+            href="https://github.com/Saddexrnxrnx"
             target="_blank" rel="noreferrer"
             aria-label="GitHub"
             className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
@@ -611,8 +611,8 @@ function Index() {
         <div className={`mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-sm sm:flex-row sm:items-center ${muted}`}>
           <span>Uses the Reddit color palette · 100% local, zero tracking.</span>
           <div className="flex flex-wrap items-center gap-4">
-            <a href="https://github.com/Saddex" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
-              <Github className="h-4 w-4" /> github.com/Saddex
+            <a href="https://github.com/Saddexrnxrnx" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
+              <Github className="h-4 w-4" /> github.com/Saddexrnx
             </a>
             <a href="https://t.me/Saddex_x" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
               <TelegramIcon className="h-4 w-4" /> @Saddex_x
