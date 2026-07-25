@@ -15,8 +15,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 EXT  = ROOT / "extension"
 OUT  = ROOT / "docs" / "ui-snapshots"
 
+# Popup is pinned at 380px in Chrome; skip narrower widths (not a real target).
 PAGES = [
-    ("popup",     "popup.html",     [320, 380, 460]),
+    ("popup",     "popup.html",     [380, 460, 560]),
     ("options",   "options.html",   [360, 720, 1024]),
     ("analytics", "analytics.html", [360, 720, 1024]),
 ]
