@@ -117,18 +117,28 @@ html:not([data-rpt-theme])[data-color-scheme="light"] {
   background: var(--rpt-bg-1);
 }
 .rpt-brand {
-  display: flex; align-items: center; gap: 8px;
-  font-weight: 700; font-size: 13px; letter-spacing: .02em;
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 600; font-size: 13px; letter-spacing: -0.01em;
+  color: var(--rpt-text);
 }
 .rpt-brand-dot {
-  width: 8px; height: 8px; border-radius: 999px; background: var(--rpt-green);
-  box-shadow: 0 0 12px var(--rpt-green);
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  display: inline-grid; place-items: center; box-shadow: none;
+  position: relative;
+}
+.rpt-brand-dot::after {
+  content: ""; width: 10px; height: 10px; border-radius: 999px;
+  background: var(--rpt-green); box-shadow: 0 0 10px var(--rpt-green);
 }
 .rpt-panel-close {
-  background: transparent; border: none; color: var(--rpt-muted); font-size: 22px;
-  cursor: pointer; padding: 0 4px; line-height: 1;
+  background: transparent; border: 1px solid var(--rpt-border);
+  color: var(--rpt-muted); font-size: 18px; cursor: pointer;
+  width: 30px; height: 30px; border-radius: 8px; line-height: 1;
+  display: inline-grid; place-items: center;
+  transition: color .15s, border-color .15s, background .15s;
 }
-.rpt-panel-close:hover { color: var(--rpt-text); }
+.rpt-panel-close:hover { color: var(--rpt-green); border-color: var(--rpt-green); background: var(--rpt-bg-2); }
 
 /* Panel-head actions cluster (status pill + refresh + close) */
 .rpt-panel-head-actions { display: flex; align-items: center; gap: 6px; }
@@ -190,17 +200,19 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 .rpt-chip.rpt-chip-blue.rpt-active { background: var(--rpt-blue); color: #001028; border-color: var(--rpt-blue); }
 
 .rpt-tabs {
-  display: flex; gap: 2px; padding: 8px 10px; border-bottom: 1px solid var(--rpt-border);
-  overflow-x: auto; background: var(--rpt-bg-1);
+  display: flex; gap: 4px; padding: 10px 12px 0; border-bottom: 1px solid var(--rpt-border);
+  overflow-x: auto; background: var(--rpt-bg-0);
 }
 .rpt-tabs button {
-  display: inline-flex; align-items: center; gap: 5px;
-  border: none; background: transparent; padding: 6px 10px; border-radius: 6px;
-  cursor: pointer; font-size: 12px; color: var(--rpt-muted); white-space: nowrap;
-  transition: color .15s, background .15s;
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; background: transparent; padding: 8px 12px;
+  border-radius: 6px 6px 0 0; margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; font: 500 12px var(--rpt-font); color: var(--rpt-muted);
+  white-space: nowrap; transition: color .15s, border-color .15s;
 }
-.rpt-tabs button:hover { color: var(--rpt-text); background: var(--rpt-bg-2); }
-.rpt-tabs button.active { background: var(--rpt-bg-2); color: var(--rpt-green); }
+.rpt-tabs button:hover { color: var(--rpt-text); }
+.rpt-tabs button.active { color: var(--rpt-text); border-bottom-color: var(--rpt-green); background: transparent; }
 .rpt-tabs svg { width: 13px; height: 13px; }
 
 .rpt-tab-body { flex: 1; overflow: auto; padding: 14px 16px; background: var(--rpt-bg-0); }
