@@ -59,10 +59,10 @@ function downloadZip() {
 
 function Index() {
   return (
-    <div className="min-h-screen bg-[#0b0b0f] text-white">
+    <div className="min-h-screen bg-black text-white">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
         <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-[#ff4500] to-[#ff8717] font-bold">
+          <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#10b981] font-bold text-black">
             RPT
           </div>
           <span className="font-semibold">Reddit Power Toolkit</span>
@@ -83,7 +83,7 @@ function Index() {
             <h1 className="mt-6 text-4xl font-bold leading-tight md:text-6xl">
               Supercharge Reddit.
               <br />
-              <span className="bg-gradient-to-r from-[#ff4500] to-[#ff8717] bg-clip-text text-transparent">
+              <span className="text-[#10b981]">
                 100% local, zero tracking.
               </span>
             </h1>
@@ -95,7 +95,7 @@ function Index() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button
                 onClick={downloadZip}
-                className="rounded-lg bg-gradient-to-br from-[#ff4500] to-[#ff8717] px-6 py-3 font-semibold shadow-lg shadow-[#ff4500]/25 transition hover:brightness-110"
+                className="rounded-lg bg-[#3b82f6] px-6 py-3 font-semibold text-white shadow-lg shadow-[#3b82f6]/25 transition hover:bg-[#2563eb]"
               >
                 Download extension (.zip)
               </button>
@@ -120,7 +120,7 @@ function Index() {
               {FEATURES.map((f) => (
                 <div
                   key={f.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#ff4500]/40 hover:bg-white/[0.06]"
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-[#10b981]/50 hover:bg-white/[0.06]"
                 >
                   <h3 className="font-semibold text-white">{f.title}</h3>
                   <p className="mt-2 text-sm text-white/60">{f.desc}</p>
@@ -141,7 +141,7 @@ function Index() {
               "Open any Reddit thread — the RPT floating button appears bottom-right.",
             ].map((step, i) => (
               <li key={i} className="flex gap-4">
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#ff4500] to-[#ff8717] text-sm font-bold">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#3b82f6] text-sm font-bold text-white">
                   {i + 1}
                 </span>
                 <span className="pt-1">{step}</span>
