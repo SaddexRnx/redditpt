@@ -1446,7 +1446,18 @@
   };
 
   /* ---------------- Bootstrap ---------------- */
-  const runAll = RPT.utils.debounce(async () => {
+  RPT.status = {
+    set(state, msg) {
+      // state: "parsing" | "ready" | "idle"
+      document.querySelectorAll(".rpt-status-pill").forEach((el) => {
+        el.dataset.state = state;
+        const t = el.querySelector(".rpt-status-txt");
+        if (t) t.textContent = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
+      });
+    },
+  };
+  const _runAllImpl = async () => {
+    RPT.status.set("parsing", "Parsing thread…");
     const auto = await RPT.autorun.load();
     RPT.features.commentTree.parse();
     RPT.features.layers.remove();
@@ -1455,7 +1466,7 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
-    RPT.features.authorColors.apply();
+    await RPT.features.authorColors.apply();
     await RPT.features.rules.apply();
     RPT.features.chips.apply();
     await RPT.features.collections.attach();
@@ -1463,7 +1474,22 @@
     if (auto.ageWarning) RPT.features.ageWarning.check();
     RPT.features.history.record();
     RPT.features.history.trackAnalytics();
-  }, 400);
+    RPT.status.set("ready", `Ready · ${RPT.state.comments.length} comments`);
+  };
+  const runAll = RPT.utils.debounce(_runAllImpl, 400);
+  // Force immediate re-parse — used by the panel Refresh button.
+  RPT.resync = async () => {
+    RPT.state = { tree: null, comments: [], post: null };
+    await _runAllImpl();
+    // Refresh open panel tabs so stats/tree reflect the new parse.
+    const p = document.querySelector(".rpt-panel");
+    if (p) {
+      const active = p.querySelector(".rpt-tabs button.active")?.dataset.tab;
+      RPT.features.commentTree.renderInto(p.querySelector(".rpt-tree-container"));
+      if (active === "stats") RPT.ui.renderStats(p);
+      if (active === "collect") RPT.ui.renderCollections(p);
+    }
+  };
 
   const boot = () => {
     // Ensure theme + i18n are ready for injected UI
