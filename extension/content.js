@@ -1317,6 +1317,16 @@
         <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
       </button>
         ${btn("kbd", I.kbd, "Shortcuts", "?")}
+        ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, "About Reddit Power Toolkit")}
+        <div class="rpt-qb-sep"></div>
+        <button class="rpt-qb-btn" data-act="size" aria-label="Toggle toolbar size" title="Toggle toolbar size">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <span class="rpt-qb-tip">Compact / Comfortable</span>
+        </button>
+        <button class="rpt-qb-btn rpt-qb-power" data-act="power" aria-label="Turn extension off" title="Turn extension on/off">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+          <span class="rpt-qb-tip">Turn extension off</span>
+        </button>
         ${btn("close", I.close, "Hide toolbar")}`;
       bar.addEventListener("click", (e) => {
         const b = e.target.closest?.("[data-act]");
@@ -1330,14 +1340,39 @@
         else if (a === "new")     RPT.features.shortcuts._jumpToNewest();
       else if (a === "cmdk")    RPT.features.cmdk.open();
         else if (a === "kbd")     RPT.features.shortcuts.cheatsheet();
+        else if (a === "about")   RPT.features.about.open();
+        else if (a === "size")    RPT.ui.toggleSize();
+        else if (a === "power")   RPT.ui.togglePower();
         else if (a === "close")   { bar.remove(); RPT.autorun.load().then((v) => RPT.autorun.save({ ...v, quickBar: false })); }
       });
       document.body.appendChild(bar);
+      // Restore persisted compact size preference.
+      chrome.storage.local.get("rpt_qb_size", (v) => {
+        if (v?.rpt_qb_size === "compact") bar.classList.add("rpt-qb-min");
+      });
     // Refresh live-pill label after the DOM node exists
     RPT.features.liveNew._renderStatus();
     // Reflect current status on the freshly mounted pill.
     RPT.status.set(RPT.state.comments.length ? "ready" : "idle",
       RPT.state.comments.length ? `Ready · ${RPT.state.comments.length} comments` : "Idle");
+    },
+    toggleSize() {
+      const bar = document.querySelector(".rpt-qb");
+      if (!bar) return;
+      bar.classList.toggle("rpt-qb-min");
+      const size = bar.classList.contains("rpt-qb-min") ? "compact" : "comfortable";
+      chrome.storage.local.set({ rpt_qb_size: size });
+    },
+    togglePower() {
+      const next = !RPT.enabled;
+      chrome.storage.local.set({ rpt_enabled: next });
+      RPT.setEnabled?.(next);
+      const btn = document.querySelector('.rpt-qb-btn[data-act="power"]');
+      if (btn) {
+        btn.title = next ? "Turn extension off" : "Turn extension on";
+        btn.setAttribute("aria-label", btn.title);
+        btn.classList.toggle("rpt-qb-power-off", !next);
+      }
     },
     updateNewBadge(n) {
       const badge = document.querySelector(".rpt-qb-badge");
