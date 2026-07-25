@@ -387,6 +387,7 @@ function Index() {
         <nav className="hidden gap-6 text-sm md:flex">
           <a href="#features" className={`${subtle} hover:text-inherit`}>{t("nav_features")}</a>
           <a href="#install" className={`${subtle} hover:text-inherit`}>{t("nav_install")}</a>
+          <a href="#changelog" className={`${subtle} hover:text-inherit`}>What's new</a>
           <a href="#privacy" className={`${subtle} hover:text-inherit`}>{t("nav_privacy")}</a>
         </nav>
         <div className="flex items-center gap-2">
