@@ -271,6 +271,13 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "New", i: Zap, items: [
+      "New Performance & status panel — see which modules run and how long each scan takes",
+      "Per-subreddit rules — enable/disable any feature just inside a specific community",
+      "One-click JSON backup & restore for bookmarks, history, keyword tracking, notes and settings",
+      "Lazy-loading wrapper — advanced modules only touch the DOM the first time you use them",
+      "Feature cards on this page collapse by default — click a title to expand",
+    ]},
     { v: "1.7", t: "Live-updating help & safer backups", d: "Today", i: KeyRound, items: [
       "Modal keyboard-help text updates instantly when you rebind a shortcut",
       "Options export/import now covers shortcuts, general prefs, accessibility and gallery positions",
