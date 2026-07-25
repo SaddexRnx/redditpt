@@ -1,6 +1,7 @@
 const KEYS = {
   filters: "rpt_filters", keywords: "rpt_keywords", tags: "rpt_user_tags",
   autorun: "rpt_autorun", general: "rpt_general",
+  a11y: "rpt_a11y", rules: "rpt_rules", collections: "rpt_collections",
 };
 const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
 const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
@@ -84,9 +85,168 @@ document.getElementById("reset").onclick = async () => {
   location.reload();
 };
 
+/* -------- Accessibility -------- */
+async function initA11y() {
+  const { [KEYS.a11y]: cur = {} } = await get(KEYS.a11y);
+  const merged = { palette: "default", contrast: "normal", text: "normal", motion: "auto", ...cur };
+  const bind = (id, key) => {
+    const el = document.getElementById(id);
+    el.value = merged[key];
+    el.addEventListener("change", async () => {
+      const { [KEYS.a11y]: c = {} } = await get(KEYS.a11y);
+      const next = { ...merged, ...c, [key]: el.value };
+      await set({ [KEYS.a11y]: next });
+      window.RPT_A11Y?.set(next);
+    });
+  };
+  bind("a11y-palette", "palette");
+  bind("a11y-contrast", "contrast");
+  bind("a11y-text", "text");
+  bind("a11y-motion", "motion");
+}
+
+/* -------- Rules builder -------- */
+const RULE_DEF = { enabled: true, type: "keyword", pattern: "", action: "highlight", color: "#f59e0b", label: "" };
+function compileRule(rule) {
+  try {
+    if (rule.type === "regex")   return new RegExp(rule.pattern, "i");
+    if (rule.type === "keyword") return new RegExp(rule.pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  } catch { return null; }
+  return null;
+}
+async function renderRules() {
+  const { [KEYS.rules]: rules = [] } = await get(KEYS.rules);
+  const ul = document.getElementById("rule-list");
+  ul.innerHTML = rules.map((r, i) => `
+    <li style="display:flex;gap:8px;align-items:center;padding:8px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px">
+      <input type="checkbox" data-i="${i}" data-k="enabled" ${r.enabled ? "checked" : ""} aria-label="Enable rule">
+      <span style="min-width:64px;color:var(--muted);text-transform:uppercase;font-size:11px">${r.type}</span>
+      <code style="flex:1;color:var(--text)">${r.pattern.replace(/</g, "&lt;")}</code>
+      <span style="padding:2px 8px;border-radius:999px;background:${r.action === "hide" ? "var(--red)" : (r.color || "#f59e0b")};color:#fff;font-size:11px">${r.action}</span>
+      <button class="remove" data-i="${i}" data-remove="1">Remove</button>
+    </li>`).join("") || `<li class="muted" style="list-style:none">No rules yet.</li>`;
+  ul.querySelectorAll("[data-k]").forEach((cb) => cb.addEventListener("change", async () => {
+    const { [KEYS.rules]: cur = [] } = await get(KEYS.rules);
+    cur[Number(cb.dataset.i)][cb.dataset.k] = cb.checked;
+    await set({ [KEYS.rules]: cur }); renderRules();
+  }));
+  ul.querySelectorAll("[data-remove]").forEach((btn) => btn.addEventListener("click", async () => {
+    const { [KEYS.rules]: cur = [] } = await get(KEYS.rules);
+    cur.splice(Number(btn.dataset.i), 1);
+    await set({ [KEYS.rules]: cur }); renderRules();
+  }));
+}
+function updatePreview() {
+  const rule = {
+    type: document.getElementById("rule-type").value,
+    pattern: document.getElementById("rule-pattern").value.trim(),
+    action: document.getElementById("rule-action").value,
+  };
+  const p = document.getElementById("rule-preview");
+  if (!rule.pattern) { p.textContent = "Type a pattern to preview matches."; return; }
+  if (rule.type === "regex" || rule.type === "keyword") {
+    const rx = compileRule(rule);
+    if (!rx) { p.style.color = "var(--red)"; p.textContent = "Invalid regex."; return; }
+  }
+  p.style.color = ""; p.textContent = `Rule ready: ${rule.type} → ${rule.action}. Save to apply on the next Reddit page.`;
+}
+async function initRules() {
+  ["rule-type", "rule-pattern", "rule-action"].forEach((id) =>
+    document.getElementById(id).addEventListener("input", updatePreview));
+  document.getElementById("rule-add").onclick = async () => {
+    const pattern = document.getElementById("rule-pattern").value.trim();
+    if (!pattern) return;
+    const rule = {
+      ...RULE_DEF,
+      type: document.getElementById("rule-type").value,
+      pattern,
+      action: document.getElementById("rule-action").value,
+      color: document.getElementById("rule-color").value,
+    };
+    if ((rule.type === "keyword" || rule.type === "regex") && !compileRule(rule)) { alert("Invalid pattern."); return; }
+    const { [KEYS.rules]: cur = [] } = await get(KEYS.rules);
+    cur.push(rule); await set({ [KEYS.rules]: cur });
+    document.getElementById("rule-pattern").value = "";
+    renderRules(); updatePreview();
+  };
+  renderRules(); updatePreview();
+}
+
+/* -------- Collections export / import -------- */
+function download(name, mime, content) {
+  const blob = new Blob([content], { type: mime });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = name; a.click(); URL.revokeObjectURL(a.href);
+}
+function csvEscape(v) { return `"${String(v ?? "").replace(/"/g, '""').replace(/\r?\n/g, " ")}"`; }
+async function initCollections() {
+  const refreshCount = async () => {
+    const { [KEYS.collections]: c = [] } = await get(KEYS.collections);
+    document.getElementById("coll-count").textContent = `${c.length} saved`;
+  };
+  refreshCount();
+  document.getElementById("coll-export-json").onclick = async () => {
+    const { [KEYS.collections]: c = [] } = await get(KEYS.collections);
+    download("rpt-collections.json", "application/json",
+      JSON.stringify({ schema: "rpt-collections/1", exportedAt: new Date().toISOString(), items: c }, null, 2));
+  };
+  document.getElementById("coll-export-csv").onclick = async () => {
+    const { [KEYS.collections]: c = [] } = await get(KEYS.collections);
+    const header = ["savedAt", "author", "score", "title", "url", "body"];
+    const rows = [header.join(","), ...c.map((x) => header.map((k) => csvEscape(x[k])).join(","))];
+    download("rpt-collections.csv", "text/csv", rows.join("\n"));
+  };
+  const file = document.getElementById("coll-import-file");
+  document.getElementById("coll-import-btn").onclick = () => file.click();
+  file.addEventListener("change", async () => {
+    const f = file.files?.[0]; if (!f) return;
+    const text = await f.text();
+    let items = [];
+    try {
+      if (f.name.endsWith(".csv") || /^savedAt,/.test(text)) {
+        const [head, ...body] = text.split(/\r?\n/).filter(Boolean);
+        const cols = head.split(",");
+        items = body.map((line) => {
+          const cells = []; let cur = "", q = false;
+          for (let i = 0; i < line.length; i++) {
+            const ch = line[i];
+            if (q) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; }
+            else if (ch === '"') q = true; else if (ch === ",") { cells.push(cur); cur = ""; } else cur += ch;
+          }
+          cells.push(cur);
+          const obj = {}; cols.forEach((k, i) => (obj[k] = cells[i]));
+          return obj;
+        });
+      } else {
+        const parsed = JSON.parse(text);
+        items = Array.isArray(parsed) ? parsed : (parsed.items || []);
+      }
+    } catch { alert("Could not parse the file."); file.value = ""; return; }
+    const { [KEYS.collections]: cur = [] } = await get(KEYS.collections);
+    const seen = new Set(cur.map((x) => x.url + "|" + x.id));
+    let added = 0;
+    for (const it of items) {
+      if (!it?.author || !it?.body) continue;
+      const key = (it.url || "") + "|" + (it.id || it.author + "-" + it.savedAt);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      cur.unshift({
+        id: it.id || (it.author + "-" + (it.savedAt || Date.now())),
+        author: it.author, body: it.body, score: Number(it.score) || 0,
+        url: it.url || "", title: it.title || "", savedAt: it.savedAt || new Date().toISOString(),
+      });
+      added++;
+    }
+    await set({ [KEYS.collections]: cur.slice(0, 500) });
+    alert(`Imported ${added} new comment${added === 1 ? "" : "s"}.`);
+    file.value = ""; refreshCount();
+  });
+}
+
 (async () => {
   await window.RPT_I18N.load();
   await window.RPT_THEME.load();
+  await window.RPT_A11Y?.load();
   window.RPT_I18N.apply(document);
   await initLangTheme();
   await bindGroup("g", KEYS.general, G_DEF);
@@ -94,4 +254,7 @@ document.getElementById("reset").onclick = async () => {
   await bindGroup("f", KEYS.filters, F_DEF);
   await loadKeywords();
   await loadTags();
+  await initA11y();
+  await initRules();
+  await initCollections();
 })();
