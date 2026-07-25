@@ -79,21 +79,35 @@ public/reddit-power-toolkit.zip  # Prebuilt release bundle
 
 ---
 
-## Install (Chrome / Edge / Brave / Kiwi)
+## Install — step by step
 
-1. Download or clone this repo
-2. Open `chrome://extensions`
-3. Enable **Developer mode** (top right)
-4. Click **Load unpacked** and select the `extension/` folder
-5. Pin the icon, open a Reddit thread, click the icon or press `Ctrl+K`
+### Chrome, Edge, Brave, Opera, Arc
 
-> On Kiwi Browser (Android): open `kiwi://extensions`, enable Developer mode, then use **+ (from .zip/.crx/.user.js)** with `public/reddit-power-toolkit.zip`.
+1. Download this repo (`Code → Download ZIP`) and unzip it, or clone with `git clone`.
+2. Open a new tab and go to `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`).
+3. Toggle **Developer mode** on (top-right corner).
+4. Click **Load unpacked** and pick the `extension/` folder from this repo.
+5. Pin **Reddit Power Toolkit** to the toolbar from the puzzle-piece menu.
+6. Open any Reddit comment thread (`reddit.com/r/*/comments/*`) and click the icon — the side panel opens and the floating **RPT** button appears bottom-right.
+7. If Reddit was already open before you installed, hit **Reload this tab** in the popup once.
 
-## Install (Firefox)
+### Firefox (128+)
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click **Load Temporary Add-on…**
-3. Select `extension/manifest.json`
+1. Download or clone this repo.
+2. Open `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on…**.
+4. Navigate into the `extension/` folder and pick **`manifest.json`**.
+5. Open a Reddit thread — the toolkit runs immediately.
+6. Temporary add-ons are removed when Firefox restarts. To keep it permanently, install a signed build from AMO (planned) or use Firefox Developer Edition / Nightly with `xpinstall.signatures.required = false`.
+
+### Kiwi Browser (Android)
+
+1. Download `public/reddit-power-toolkit.zip` from this repo to your phone.
+2. Open Kiwi and go to `kiwi://extensions`.
+3. Enable **Developer mode** (top-right).
+4. Tap **+ (from .zip/.crx/.user.js)** and pick the downloaded zip.
+5. Force-stop Kiwi from Android app settings, then reopen it (Kiwi needs a full restart to activate new content scripts).
+6. Open a Reddit comment thread — the floating **RPT** button appears bottom-right.
 
 ---
 
