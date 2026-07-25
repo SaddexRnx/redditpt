@@ -1414,7 +1414,7 @@
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button. Current bindings — collapse all: ${c.collapseAll}, refresh: ${c.refresh}.`);
+      RPT.a11y.addKeyHelp(o, () => tr("kbd_help_cheatsheet"));
     },
   };
 
