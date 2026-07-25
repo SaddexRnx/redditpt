@@ -1,5 +1,9 @@
 # Reddit Power Toolkit
 
+<p align="center">
+  <img src="public/logo.png" alt="Reddit Power Toolkit logo" width="120" height="120">
+</p>
+
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
 Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
