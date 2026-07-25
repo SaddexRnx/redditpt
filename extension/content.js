@@ -894,19 +894,51 @@
       let idx = 0;
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-gallery";
+      o.setAttribute("role", "dialog");
+      o.setAttribute("aria-modal", "true");
+      o.setAttribute("aria-label", "Image gallery");
+      o.tabIndex = -1;
       o.innerHTML = `
-        <button class="rpt-g-prev">‹</button>
-        <img class="rpt-g-img" src="${unique[0]}">
-        <button class="rpt-g-next">›</button>
-        <button class="rpt-close rpt-g-close">×</button>
-        <div class="rpt-g-count">1 / ${unique.length}</div>`;
+        <button class="rpt-g-prev" type="button" aria-label="Previous image (Left arrow)" title="Previous (←)">‹</button>
+        <img class="rpt-g-img" alt="Gallery image 1 of ${unique.length}" src="${unique[0]}">
+        <button class="rpt-g-next" type="button" aria-label="Next image (Right arrow)" title="Next (→)">›</button>
+        <button class="rpt-close rpt-g-close" type="button" aria-label="Close gallery (Esc)" title="Close (Esc)">×</button>
+        <div class="rpt-g-count" aria-live="polite">1 / ${unique.length}</div>`;
       const img = o.querySelector(".rpt-g-img");
       const count = o.querySelector(".rpt-g-count");
-      const go = (n) => { idx = (n + unique.length) % unique.length; img.src = unique[idx]; count.textContent = `${idx + 1} / ${unique.length}`; };
-      o.querySelector(".rpt-g-prev").onclick = () => go(idx - 1);
-      o.querySelector(".rpt-g-next").onclick = () => go(idx + 1);
-      o.querySelector(".rpt-g-close").onclick = () => o.remove();
+      const go = (n) => {
+        idx = (n + unique.length) % unique.length;
+        img.src = unique[idx];
+        img.alt = `Gallery image ${idx + 1} of ${unique.length}`;
+        count.textContent = `${idx + 1} / ${unique.length}`;
+      };
+      const prev = () => go(idx - 1);
+      const next = () => go(idx + 1);
+      const close = () => {
+        document.removeEventListener("keydown", onKey, true);
+        o.remove();
+      };
+      const stop = (e) => e.stopPropagation();
+      const bindBtn = (sel, fn) => {
+        const b = o.querySelector(sel);
+        b.addEventListener("click", (e) => { stop(e); e.preventDefault(); fn(); });
+      };
+      bindBtn(".rpt-g-prev", prev);
+      bindBtn(".rpt-g-next", next);
+      bindBtn(".rpt-g-close", close);
+      // Click on the dark backdrop closes; click on the image/buttons does not.
+      o.addEventListener("click", (e) => { if (e.target === o) close(); });
+      const onKey = (e) => {
+        if (e.key === "ArrowLeft")  { e.preventDefault(); e.stopPropagation(); prev(); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); next(); }
+        else if (e.key === "Home")  { e.preventDefault(); go(0); }
+        else if (e.key === "End")   { e.preventDefault(); go(unique.length - 1); }
+        else if (e.key === "Escape") { e.preventDefault(); close(); }
+      };
+      document.addEventListener("keydown", onKey, true);
       document.body.appendChild(o);
+      // Move focus into the dialog so arrow keys / Escape are captured immediately.
+      setTimeout(() => o.focus(), 0);
     },
   };
 
