@@ -567,6 +567,7 @@
         };
       });
       document.body.appendChild(o);
+      RPT.a11y.trapModal(o);
     },
   };
 
