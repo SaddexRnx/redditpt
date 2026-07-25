@@ -7,7 +7,7 @@
 
   const DICTS = {
     en: {
-      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.5",
       status_active: "Active on this Reddit tab", status_notReddit: "Open a Reddit page to use the tools",
       status_notInjected: "Extension not injected on this tab", status_injectFail: "Couldn't inject on this page",
       reload_prompt: "This tab was open before the extension was installed. Reload it to activate the toolkit here.",
@@ -44,9 +44,11 @@
       reading_time: "Reading time", saved_comments: "Saved comments", recent_threads: "Recent threads",
       enable_toolkit: "Enable toolkit",
       enable_toolkit_sub: "Turn off to disable RPT and restore any comments it hid",
+      power_features: "⚡ Power features (36)", power_features_sub: "Compare · analyze · export · bookmark · more", command_palette: "Command palette", accessibility: "Accessibility", about_changelog: "About & changelog", custom_rules: "Custom rules", saved_collections: "Saved collections", about: "About",
+
     },
     es: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
       status_active: "Activo en esta pestaña de Reddit", status_notReddit: "Abre una página de Reddit para usarlo",
       status_notInjected: "La extensión no está inyectada en esta pestaña", status_injectFail: "No se pudo inyectar aquí",
       reload_prompt: "Esta pestaña estaba abierta antes de instalar la extensión. Recárgala para activarla aquí.",
@@ -82,9 +84,11 @@
       analytics_title: "Reddit Power Toolkit — Analíticas",
       threads_visited: "Hilos visitados", comments_read: "Comentarios leídos", subs_seen: "Subreddits vistos",
       reading_time: "Tiempo de lectura", saved_comments: "Guardados", recent_threads: "Recientes",
+      power_features: "⚡ Funciones avanzadas (36)", power_features_sub: "Comparar · analizar · exportar · guardar · más", command_palette: "Paleta de comandos", accessibility: "Accesibilidad", about_changelog: "Acerca de y cambios", custom_rules: "Reglas personalizadas", saved_collections: "Colecciones guardadas", about: "Acerca de",
+
     },
     fr: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
       status_active: "Actif sur cet onglet Reddit", status_notReddit: "Ouvrez une page Reddit pour utiliser les outils",
       status_notInjected: "Extension non injectée sur cet onglet", status_injectFail: "Injection impossible ici",
       reload_prompt: "Cet onglet était ouvert avant l'installation. Rechargez-le pour l'activer.",
@@ -120,9 +124,11 @@
       analytics_title: "Reddit Power Toolkit — Analytique",
       threads_visited: "Fils visités", comments_read: "Commentaires lus", subs_seen: "Subreddits vus",
       reading_time: "Temps de lecture", saved_comments: "Enregistrés", recent_threads: "Récents",
+      power_features: "⚡ Fonctions avancées (36)", power_features_sub: "Comparer · analyser · exporter · favoris · plus", command_palette: "Palette de commandes", accessibility: "Accessibilité", about_changelog: "À propos et changelog", custom_rules: "Règles personnalisées", saved_collections: "Collections enregistrées", about: "À propos",
+
     },
     de: {
-      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.5",
       status_active: "Aktiv auf diesem Reddit-Tab", status_notReddit: "Öffne eine Reddit-Seite",
       status_notInjected: "Erweiterung nicht in diesen Tab injiziert", status_injectFail: "Injektion fehlgeschlagen",
       reload_prompt: "Dieser Tab war bereits offen. Neu laden zum Aktivieren.",
@@ -158,9 +164,11 @@
       analytics_title: "Reddit Power Toolkit — Analyse",
       threads_visited: "Threads besucht", comments_read: "Kommentare gelesen", subs_seen: "Subreddits gesehen",
       reading_time: "Lesezeit", saved_comments: "Gespeichert", recent_threads: "Letzte",
+      power_features: "⚡ Power-Funktionen (36)", power_features_sub: "Vergleichen · analysieren · exportieren · Lesezeichen · mehr", command_palette: "Befehlspalette", accessibility: "Barrierefreiheit", about_changelog: "Über & Änderungen", custom_rules: "Eigene Regeln", saved_collections: "Gespeicherte Sammlungen", about: "Über",
+
     },
     pt: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
       status_active: "Ativo nesta aba do Reddit", status_notReddit: "Abra uma página do Reddit",
       status_notInjected: "Extensão não injetada nesta aba", status_injectFail: "Falha ao injetar",
       reload_prompt: "Esta aba estava aberta antes da instalação. Recarregue para ativar.",
@@ -196,9 +204,11 @@
       analytics_title: "Reddit Power Toolkit — Análises",
       threads_visited: "Tópicos visitados", comments_read: "Comentários lidos", subs_seen: "Subreddits vistos",
       reading_time: "Tempo de leitura", saved_comments: "Salvos", recent_threads: "Recentes",
+      power_features: "⚡ Recursos avançados (36)", power_features_sub: "Comparar · analisar · exportar · salvar · mais", command_palette: "Paleta de comandos", accessibility: "Acessibilidade", about_changelog: "Sobre e novidades", custom_rules: "Regras personalizadas", saved_collections: "Coleções salvas", about: "Sobre",
+
     },
     ja: {
-      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.5",
       status_active: "このRedditタブで有効", status_notReddit: "Redditページを開いてください",
       status_notInjected: "このタブに拡張機能が注入されていません", status_injectFail: "注入に失敗",
       reload_prompt: "このタブはインストール前から開いていました。再読み込みで有効化されます。",
@@ -234,9 +244,11 @@
       analytics_title: "Reddit Power Toolkit — アナリティクス",
       threads_visited: "訪問スレ", comments_read: "既読コメント", subs_seen: "既見サブ",
       reading_time: "読了時間", saved_comments: "保存済み", recent_threads: "最近",
+      power_features: "⚡ パワー機能 (36)", power_features_sub: "比較・分析・エクスポート・ブックマークほか", command_palette: "コマンドパレット", accessibility: "アクセシビリティ", about_changelog: "情報と更新履歴", custom_rules: "カスタムルール", saved_collections: "保存済みコレクション", about: "情報",
+
     },
     zh_CN: {
-      appName: "Reddit Power Toolkit", tagline: "本地 · v1.2",
+      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.5",
       status_active: "在此Reddit标签页已激活", status_notReddit: "请打开一个Reddit页面",
       status_notInjected: "扩展未在此标签页注入", status_injectFail: "注入失败",
       reload_prompt: "此标签在扩展安装前已打开，请重新加载以激活。",
@@ -272,6 +284,8 @@
       analytics_title: "Reddit Power Toolkit — 分析",
       threads_visited: "访问过的串", comments_read: "已读评论", subs_seen: "看过的板块",
       reading_time: "阅读时长", saved_comments: "已收藏", recent_threads: "最近",
+      power_features: "⚡ 强大功能 (36)", power_features_sub: "对比·分析·导出·收藏·更多", command_palette: "命令面板", accessibility: "无障碍", about_changelog: "关于与更新日志", custom_rules: "自定义规则", saved_collections: "已保存的收藏", about: "关于",
+
     },
   };
 
