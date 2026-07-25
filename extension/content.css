@@ -153,6 +153,9 @@
 }
 .rpt-btnrow button svg, .rpt-primary svg { width: 14px; height: 14px; color: var(--rpt-green); flex-shrink: 0; }
 .rpt-btn-sub { display: block; font-size: 11px; color: var(--rpt-muted); margin-top: 2px; }
+.rpt-btnrow button > div { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.rpt-btnrow button strong { color: var(--rpt-text); font-weight: 600; font-size: 12px; line-height: 1.3; }
+.rpt-btnrow button span, .rpt-btnrow button strong { display: block; }
 
 .rpt-kw {
   width: 100%; box-sizing: border-box; background: var(--rpt-bg-1);
@@ -194,9 +197,14 @@
 
 /* Folding */
 .rpt-collapsed [slot="comment"],
+.rpt-collapsed [slot="commentAvatar"] + div,
+.rpt-collapsed shreddit-comment,
 .rpt-collapsed .child,
 .rpt-collapsed .usertext,
 .rpt-collapsed .md { display: none !important; }
+shreddit-comment[collapsed] { --rpt-collapsed-marker: 1; }
+shreddit-comment[collapsed] [slot="comment"],
+shreddit-comment[collapsed] shreddit-comment { display: none !important; }
 
 /* Cleaner hidden */
 .rpt-hidden { display: none !important; }
@@ -286,14 +294,18 @@ mark.rpt-hl { background: var(--rpt-amber); color: #1a1000; padding: 0 2px; bord
 .rpt-summary-text { font-size: 13px; color: var(--rpt-text); line-height: 1.4; }
 
 /* Gallery */
-.rpt-gallery { flex-direction: row; background: rgba(3,6,10,.9); }
-.rpt-g-img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
+.rpt-gallery { background: rgba(3,6,10,.92); }
+.rpt-g-img { max-width: min(80vw, 1100px); max-height: 82vh; object-fit: contain; border-radius: 8px; }
 .rpt-g-prev, .rpt-g-next {
-  background: rgba(255,255,255,.08); color: #fff; border: 1px solid var(--rpt-border);
-  font-size: 32px; padding: 6px 14px; cursor: pointer; border-radius: 8px; margin: 0 12px;
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,.1); color: #fff; border: 1px solid var(--rpt-border);
+  font-size: 32px; padding: 8px 16px; cursor: pointer; border-radius: 999px;
+  z-index: 2; user-select: none; line-height: 1;
 }
+.rpt-g-prev { left: 24px; }
+.rpt-g-next { right: 24px; }
 .rpt-g-prev:hover, .rpt-g-next:hover { background: var(--rpt-green); color: #001912; }
-.rpt-g-close { position: absolute; top: 16px; right: 20px; font-size: 32px; color:#fff; background: transparent; border: none; cursor: pointer; }
+.rpt-g-close { position: absolute; top: 16px; right: 20px; font-size: 32px; color:#fff; background: transparent; border: none; cursor: pointer; z-index: 3; }
 .rpt-g-count { position: absolute; bottom: 20px; color: #fff; font-size: 13px; opacity: .8; }
 
 /* Stats cards */
@@ -371,6 +383,29 @@ mark.rpt-hl { background: var(--rpt-amber); color: #1a1000; padding: 0 2px; bord
   cursor: pointer; font-size: 14px;
 }
 .rpt-collect-item .rpt-collect-remove:hover { color: var(--rpt-red); }
+
+/* ---------------- Author auto-color + tree dot ---------------- */
+.rpt-author-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 999px;
+  flex-shrink: 0; margin-right: 2px;
+}
+shreddit-comment.rpt-authored, .thing.comment.rpt-authored {
+  border-left: 3px solid var(--rpt-author-color, transparent);
+  padding-left: 6px;
+}
+
+/* Clickable stat cards + inline stat chips */
+.rpt-card.rpt-clickable { cursor: pointer; transition: border-color .15s, background .15s; }
+.rpt-card.rpt-clickable:hover { border-color: var(--rpt-green); background: var(--rpt-bg-2); }
+.rpt-chips-v { display: flex; flex-wrap: wrap; gap: 6px; font-weight: 500; font-size: 12px; }
+.rpt-stat-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 999px;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  color: var(--rpt-text); cursor: pointer; transition: all .15s;
+}
+.rpt-stat-chip:hover { border-color: var(--rpt-green); color: var(--rpt-green); }
+.rpt-stat-chip em { font-style: normal; color: var(--rpt-muted); font-size: 11px; }
 /* ---------------- Light theme overrides ---------------- */
 html[data-rpt-theme="light"], body[data-rpt-theme="light"] {
   --rpt-bg-0: #ffffff; --rpt-bg-1: #f7f9fc; --rpt-bg-2: #eef2f7; --rpt-bg-3: #e2e8f0;
