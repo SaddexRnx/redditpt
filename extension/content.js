@@ -1702,6 +1702,7 @@
           if (b.dataset.tab === "stats") this.renderStats(p);
           if (b.dataset.tab === "collect") this.renderCollections(p);
           if (b.dataset.tab === "tools") this.renderAutorun(p);
+          if (b.dataset.tab === "power") this.renderPower(p);
         };
       });
       p.querySelectorAll("[data-act]").forEach((b) => {
