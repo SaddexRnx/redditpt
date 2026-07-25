@@ -182,17 +182,37 @@
    * aria-describedby so screen readers announce the shortcuts as soon as
    * the dialog opens. Visible for sighted keyboard users too.           */
   RPT.a11y._helpSeq = 0;
+  RPT.a11y._helpEntries = [];
+  /* text can be a string OR a function(cfg) that returns a string using the
+   * current custom-shortcut config. When shortcuts change we re-render every
+   * live helper so aria-describedby stays in sync with the actual bindings. */
   RPT.a11y.addKeyHelp = function (root, text) {
     if (!root || !text) return;
     const id = `rpt-kbd-help-${++this._helpSeq}`;
     const el = document.createElement("div");
     el.className = "rpt-kbd-help";
     el.id = id;
-    el.textContent = text;
+    const render = () => {
+      el.textContent = typeof text === "function" ? text(RPT.customKeys.cfg) : text;
+    };
+    render();
     const panel = root.querySelector(".rpt-overlay-panel, .rpt-cmdk") || root;
     panel.appendChild(el);
     const prev = root.getAttribute("aria-describedby");
     root.setAttribute("aria-describedby", prev ? `${prev} ${id}` : id);
+    const entry = { el, render };
+    this._helpEntries.push(entry);
+    // Auto-cleanup when the modal element leaves the DOM.
+    const obs = new MutationObserver(() => {
+      if (!document.body.contains(el)) {
+        this._helpEntries = this._helpEntries.filter((e) => e !== entry);
+        obs.disconnect();
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+  };
+  RPT.a11y.refreshKeyHelp = function () {
+    (this._helpEntries || []).forEach((e) => { try { e.render(); } catch {} });
   };
 
   /* ---------------- Custom keyboard shortcuts config ---------------- *
