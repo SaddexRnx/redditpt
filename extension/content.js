@@ -12,7 +12,7 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.9.3",
+    VERSION: "1.9.4",
     BUILD_DATE: "2026-07-25",
   });
 
@@ -1248,10 +1248,10 @@
               A 100% local browser extension that upgrades Reddit reading and writing. No accounts, no servers, no tracking.
             </p>
             <div style="display:grid;gap:8px">
-              <a class="rpt-about-link" href="https://github.com/Saddex-x/reddit-power-toolkit/releases" target="_blank" rel="noopener">
+              <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener">
                 <span>Changelog & releases</span><span aria-hidden="true">↗</span>
               </a>
-              <a class="rpt-about-link" href="https://github.com/Saddex-x/reddit-power-toolkit" target="_blank" rel="noopener">
+              <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener">
                 <span>GitHub repository</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
