@@ -1165,6 +1165,12 @@
         // Command palette: Ctrl/Cmd+K (works even in inputs)
         if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); RPT.features.cmdk.open(); return; }
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        // Configurable shortcuts (collapse-all, refresh) — matched first so
+        // user overrides beat the legacy single-key defaults below.
+        const s = RPT.utils.keyEventToStr(e);
+        const cfg = RPT.customKeys.cfg;
+        if (s && s === cfg.collapseAll) { e.preventDefault(); RPT.features.folding.collapseAll(); return; }
+        if (s && s === cfg.refresh)     { e.preventDefault(); RPT.resync?.(); return; }
         const k = e.key;
         if (k === "?") { e.preventDefault(); this.cheatsheet(); return; }
         if (k === "Escape") { document.querySelectorAll(".rpt-overlay").forEach((o) => o.remove()); return; }
@@ -1178,7 +1184,6 @@
           else RPT.features.layers.remove();
           return;
         }
-        if (k === "C") { RPT.features.folding.collapseAll(); return; }
         if (k === "E") { RPT.features.folding.expandAll(); return; }
         if (k === "j") { e.preventDefault(); this._move(1); return; }
         if (k === "k") { e.preventDefault(); this._move(-1); return; }
@@ -1208,6 +1213,9 @@
       if (document.querySelector(".rpt-cheat-overlay")) return;
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-cheat-overlay";
+      o.setAttribute("role", "dialog");
+      o.setAttribute("aria-modal", "true");
+      o.setAttribute("aria-label", "Keyboard shortcuts");
       o.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
@@ -1223,6 +1231,7 @@
       o.querySelector(".rpt-close").onclick = () => o.remove();
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
+      RPT.a11y.trapModal(o);
     },
   };
 
