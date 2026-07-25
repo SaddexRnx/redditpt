@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reddit Power Toolkit — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <header>
+    <h1>Reddit Power Toolkit — Settings</h1>
+    <p>Everything stored here stays in your browser. No accounts, no servers.</p>
+  </header>
+
+  <section>
+    <h2>Thread Cleaner</h2>
+    <label><input type="checkbox" data-f="hideDeleted"> Hide deleted / removed comments</label>
+    <label><input type="checkbox" data-f="hideEmpty"> Hide empty comments</label>
+    <label><input type="checkbox" data-f="hideBots"> Hide AutoModerator & bots</label>
+    <label><input type="checkbox" data-f="hideShort"> Hide very short comments</label>
+    <label>Min length for "short": <input type="number" data-f="minLength" min="1" max="500" style="width:80px"></label>
+    <label><input type="checkbox" data-f="hideLowScore"> Hide low-score comments</label>
+    <label>Min score threshold: <input type="number" data-f="minScore" style="width:80px"></label>
+  </section>
+
+  <section>
+    <h2>Highlighted keywords</h2>
+    <p class="muted">Comma-separated. Matches are highlighted across Reddit.</p>
+    <textarea id="kw" rows="3" placeholder="docker, kubernetes, rust"></textarea>
+    <button id="kw-save">Save keywords</button>
+  </section>
+
+  <section>
+    <h2>User tags</h2>
+    <p class="muted">Assign private labels to Reddit usernames.</p>
+    <div class="tag-row">
+      <input id="tag-user" placeholder="username">
+      <input id="tag-label" placeholder="label (e.g. Expert)">
+      <input id="tag-color" type="color" value="#6366f1">
+      <button id="tag-save">Save</button>
+    </div>
+    <ul id="tag-list"></ul>
+  </section>
+
+  <section>
+    <h2>Local data</h2>
+    <button id="reset" class="danger">Clear all local data</button>
+    <p class="muted">Deletes folded state, filters, keywords, tags, history and analytics.</p>
+  </section>
+
+  <script src="options.js"></script>
+</body>
+</html>

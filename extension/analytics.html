@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reddit Power Toolkit — Analytics</title>
+  <link rel="stylesheet" href="analytics.css">
+</head>
+<body>
+  <header>
+    <h1>Personal Analytics</h1>
+    <p>All numbers below are computed and stored locally in your browser.</p>
+  </header>
+
+  <section class="cards">
+    <div class="card"><div class="k">Posts viewed</div><div class="v" id="posts">0</div></div>
+    <div class="card"><div class="k">Comments read</div><div class="v" id="comments">0</div></div>
+    <div class="card"><div class="k">Reading time</div><div class="v" id="time">0m</div></div>
+    <div class="card"><div class="k">Unique subreddits</div><div class="v" id="subs">0</div></div>
+  </section>
+
+  <section>
+    <h2>Top subreddits</h2>
+    <ol id="top-subs"></ol>
+  </section>
+
+  <section>
+    <h2>Recent threads</h2>
+    <ul id="history"></ul>
+  </section>
+
+  <script src="analytics.js"></script>
+</body>
+</html>
