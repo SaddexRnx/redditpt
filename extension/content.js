@@ -1789,12 +1789,12 @@
       const host = p.querySelector("#rpt-collect-list");
       const all = await RPT.features.collections.list();
       if (!all.length) {
-        host.innerHTML = `<p class="rpt-empty">No saved comments yet. Click the ★ button on any Reddit comment to save it here.</p>`;
+        host.innerHTML = `<p class="rpt-empty">${tr("no_saved_comments")}</p>`;
         return;
       }
       host.innerHTML = all.map((c) => `
         <div class="rpt-collect-item" data-id="${RPT.utils.escapeHtml(c.id)}">
-          <button class="rpt-collect-remove" title="Remove">×</button>
+          <button class="rpt-collect-remove" title="${tr("remove")}" aria-label="${tr("remove")}">×</button>
           <a href="${RPT.utils.escapeHtml(c.url)}" target="_blank" rel="noopener">u/${RPT.utils.escapeHtml(c.author)}</a>
           <p>${RPT.utils.escapeHtml(c.body.slice(0, 200))}${c.body.length > 200 ? "…" : ""}</p>
         </div>`).join("");
@@ -1811,7 +1811,7 @@
       const s = RPT.features.analytics.compute();
       const h = RPT.features.health.analyze();
       const el = p.querySelector('[data-panel="stats"]');
-      if (!s) { el.innerHTML = '<p class="rpt-empty">No comments on this page.</p>'; return; }
+      if (!s) { el.innerHTML = `<p class="rpt-empty">${tr("no_comments_page")}</p>`; return; }
       const jump = (author) => {
         const c = RPT.state.comments.find((x) => x.author === author);
         if (!c) return;
@@ -1832,14 +1832,14 @@
       const chipsHtml = (arr, fmt) => arr.map(([u, n]) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(u)}">${RPT.utils.escapeHtml(u)} <em>${fmt(n)}</em></span>`).join(" ") || "—";
       const branchesHtml = (arr) => arr.map((b) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(b.author)}">${RPT.utils.escapeHtml(b.author)} <em>${b.size}</em></span>`).join(" ") || "—";
       el.innerHTML = `
-        <div class="rpt-card rpt-clickable" data-jump="first" title="Jump to first comment"><div class="rpt-k">Comments loaded</div><div class="rpt-v">${s.total}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Avg length</div><div class="rpt-v">${s.avgLength} chars</div></div>
-        <div class="rpt-card rpt-clickable" data-jump="deepest" title="Jump to deepest comment"><div class="rpt-k">Deepest chain</div><div class="rpt-v">${s.deepest}</div></div>
-        <div class="rpt-card rpt-clickable" data-jump="longest" title="Jump to longest comment"><div class="rpt-k">Longest comment</div><div class="rpt-v">${RPT.utils.escapeHtml(s.longest.author)} — ${s.longest.length} chars</div></div>
-        <div class="rpt-card"><div class="rpt-k">Most replied</div><div class="rpt-v rpt-chips-v">${chipsHtml(s.mostReplied, (n) => `(${n})`)}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Top branches</div><div class="rpt-v rpt-chips-v">${branchesHtml(s.branches)}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="first" title="${tr("jump_first_comment")}"><div class="rpt-k">${tr("comments_loaded")}</div><div class="rpt-v">${s.total}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("avg_length")}</div><div class="rpt-v">${s.avgLength} ${tr("chars")}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="deepest" title="${tr("jump_deepest_comment")}"><div class="rpt-k">${tr("deepest_chain")}</div><div class="rpt-v">${s.deepest}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="longest" title="${tr("jump_longest_comment")}"><div class="rpt-k">${tr("longest_comment")}</div><div class="rpt-v">${RPT.utils.escapeHtml(s.longest.author)} — ${s.longest.length} ${tr("chars")}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("most_replied")}</div><div class="rpt-v rpt-chips-v">${chipsHtml(s.mostReplied, (n) => `(${n})`)}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("top_branches")}</div><div class="rpt-v rpt-chips-v">${branchesHtml(s.branches)}</div></div>
         <div class="rpt-card rpt-health">
-          <div class="rpt-k">Thread health</div>
+          <div class="rpt-k">${tr("thread_health")}</div>
           <div class="rpt-v">${h.score}/100</div>
           <div class="rpt-health-bar"><div class="rpt-health-fill" style="width:${h.score}%"></div></div>
           <ul>${h.notes.map((n) => `<li>${RPT.utils.escapeHtml(n)}</li>`).join("")}</ul>
