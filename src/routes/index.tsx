@@ -302,7 +302,7 @@ function Index() {
       "Docs: reproducible perf-test harness (docs/PERF_TEST.md) across Chrome/Firefox/Kiwi",
       "Website: swapped emerald green for the Reddit palette + added GitHub & Telegram links",
     ]},
-    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "New", i: Zap, items: [
+    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "Recent", i: Zap, items: [
       "New Performance & status panel — see which modules run and how long each scan takes",
       "Per-subreddit rules — enable/disable any feature just inside a specific community",
       "One-click JSON backup & restore for bookmarks, history, keyword tracking, notes and settings",
