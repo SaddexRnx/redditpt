@@ -13,6 +13,8 @@
   if (!window.RPT) return;
   const RPT = window.RPT;
   const V = (RPT.v2 = { modules: {} });
+  const tr = (key) => window.RPT_I18N?.t(key) || key;
+  const tx = (value) => window.RPT_I18N?.text(value) || value;
 
   /* ---------------- shared storage helpers ---------------- */
   const S = {
@@ -37,15 +39,15 @@
     o.className = "rpt-overlay rpt-v2-modal";
     o.setAttribute("role", "dialog");
     o.setAttribute("aria-modal", "true");
-    o.setAttribute("aria-label", title);
+    o.setAttribute("aria-label", tx(title));
     o.innerHTML = `
       <div class="rpt-overlay-panel rpt-v2-panel" style="max-width:${opts.wide ? 960 : 720}px">
         <div class="rpt-overlay-head">
           <h2 style="display:flex;align-items:center;gap:10px">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span>${esc(title)}</span>
+            <span>${esc(tx(title))}</span>
           </h2>
-          <button class="rpt-close" aria-label="Close">${RPT.ICON.close}</button>
+          <button class="rpt-close" aria-label="${tr("close")}">${RPT.ICON.close}</button>
         </div>
         <div class="rpt-v2-body">${bodyHTML}</div>
       </div>`;
@@ -69,7 +71,7 @@
   function toast(msg) {
     let t = document.querySelector(".rpt-toast");
     if (!t) { t = document.createElement("div"); t.className = "rpt-toast"; document.body.appendChild(t); }
-    t.textContent = msg;
+    t.textContent = tx(msg);
     t.classList.add("show");
     clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("show"), 1800);
   }
@@ -1375,7 +1377,7 @@
     const enabled = await V.getEnabled();
     const body = `
       <p class="rpt-muted">36 advanced features — all run locally. Click to launch, or toggle to disable individually.</p>
-      <input id="rpt-hub-q" placeholder="Search features…" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--fg)">
+      <input id="rpt-hub-q" placeholder="${tr("search_features")}" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--fg)">
       ${CATEGORIES.map(([cat, ids]) => `
         <h3 class="rpt-hub-cat">${esc(cat)}</h3>
         <div class="rpt-hub-grid">
@@ -1383,21 +1385,21 @@
             const mod = V.modules[id]; if (!mod) return "";
             return `<div class="rpt-hub-card ${enabled[id] ? "" : "rpt-hub-off"}" data-id="${id}">
               <button class="rpt-hub-run" data-run="${id}">
-                <strong>${esc(mod.name)}</strong>
-                <span>${esc(mod.desc)}</span>
+                <strong>${esc(tx(mod.name))}</strong>
+                <span>${esc(tx(mod.desc))}</span>
               </button>
-              <label class="rpt-hub-toggle" title="Enable/disable">
+              <label class="rpt-hub-toggle" title="${tr("enable_disable")}">
                 <input type="checkbox" data-tog="${id}" ${enabled[id] ? "checked" : ""}>
               </label>
             </div>`;
           }).join("")}
         </div>`).join("")}`;
-    const m = modal("⚡ Power features (36)", body, { wide: true });
+    const m = modal(tr("power_features"), body, { wide: true });
     m.querySelectorAll("[data-run]").forEach((b) => b.onclick = async () => {
       const id = b.dataset.run;
       const en = await V.getEnabled();
-      if (!en[id]) return toast("Feature is disabled — turn it on first");
-      try { m.remove(); V.modules[id].run?.(); } catch (e) { console.error(e); toast("Feature error: " + e.message); }
+      if (!en[id]) return toast(tr("feature_disabled_turn_on"));
+      try { m.remove(); V.modules[id].run?.(); } catch (e) { console.error(e); toast(`${tr("feature_error")}: ${e.message}`); }
     });
     m.querySelectorAll("[data-tog]").forEach((cb) => cb.onclick = async (e) => {
       e.stopPropagation();
@@ -1444,8 +1446,8 @@
       RPT.features.cmdk.commands = function () {
         const base = orig.call(this);
         return base.concat(
-          { id: "v2-hub", label: "⚡ Power features (36) — hub", run: () => V.openHub() },
-          ...Object.values(V.modules).map((m) => ({ id: `v2-${m.id}`, label: `⚡ ${m.name}`, run: () => m.run() }))
+          { id: "v2-hub", label: `${tr("power_features")} — ${tr("hub")}`, run: () => V.openHub() },
+          ...Object.values(V.modules).map((m) => ({ id: `v2-${m.id}`, label: `⚡ ${tx(m.name)}`, run: () => m.run() }))
         );
       };
     }
