@@ -4,6 +4,19 @@
  * module on the RPT namespace, DOM knowledge stays in RPT.selectors.
  */
 (function () {
+  /* -----------------------------------------------------------------
+   * Master enable flag. If the user turned the extension OFF from the
+   * popup, we bail out of every mutation and remove any DOM traces so
+   * hidden comments become visible again.
+   * ----------------------------------------------------------------- */
+  const RPT_ENABLED_KEY = "rpt_enabled";
+  let RPT_ENABLED = true;
+  try {
+    chrome.storage.local.get(RPT_ENABLED_KEY, (v) => {
+      RPT_ENABLED = v?.[RPT_ENABLED_KEY] !== false;
+      document.documentElement.dataset.rptOff = RPT_ENABLED ? "" : "1";
+    });
+  } catch {}
   "use strict";
   if (window.__RPT_LOADED__) return;
   window.__RPT_LOADED__ = true;
