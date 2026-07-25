@@ -716,3 +716,14 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-qb-v2{color:#fbbf24}
 .rpt-qb-v2:hover{color:#f59e0b}
 .rpt-devmode *{outline:1px dashed rgba(16,185,129,.2)}
+
+/* --------- v1.9 System modules (perf, per-subreddit, backup) --------- */
+.rpt-perf-table th, .rpt-perf-table td { padding: 8px 10px; border-bottom: 1px solid var(--rpt-border, rgba(255,255,255,.08)); text-align: left; vertical-align: top; }
+.rpt-perf-table thead th { background: var(--rpt-bg-2, rgba(255,255,255,.03)); font-weight: 600; }
+.rpt-perf-table td:nth-child(1) { width: 24px; text-align: center; color: #10b981; }
+.rpt-badge-on { background: rgba(16,185,129,.15); color: #10b981; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+.rpt-badge-off { background: rgba(148,163,184,.15); color: #94a3b8; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+.rpt-persub-row { display:flex; gap:10px; align-items:flex-start; padding:8px 6px; border-bottom:1px solid var(--rpt-border, rgba(255,255,255,.06)); cursor:pointer; }
+.rpt-persub-row:last-child { border-bottom: none; }
+.rpt-persub-row input { margin-top: 3px; }
+.rpt-v2-secondary { background: var(--rpt-bg-2, rgba(255,255,255,.06)); color: inherit; border: 1px solid var(--rpt-border, rgba(255,255,255,.1)); padding: 8px 12px; border-radius: 6px; font-size: 13px; }

@@ -41,7 +41,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "No tracking", p2d: "No analytics pings, no third-party scripts, no telemetry.",
     p3t: "No AI calls", p3d: "All analysis (stats, health, cleaner) runs with plain JavaScript.",
     p4t: "Local storage", p4d: "Filters, tags, keywords, history and analytics use browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.7.0 · MIT licensed",
+    footerA: "Reddit Power Toolkit v1.9.0 · MIT licensed",
     footerB: "Not affiliated with Reddit, Inc.",
     nav_features: "Features", nav_install: "Install", nav_privacy: "Privacy",
     step_download: "Download the ZIP above and unzip it anywhere on your computer.",
@@ -70,7 +70,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sin rastreo", p2d: "Sin analíticas, scripts de terceros ni telemetría.",
     p3t: "Sin IA", p3d: "Todo el análisis se hace con JavaScript.",
     p4t: "Datos locales", p4d: "Filtros, etiquetas, historial en browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.7.0 · Licencia MIT",
+    footerA: "Reddit Power Toolkit v1.9.0 · Licencia MIT",
     footerB: "No afiliado con Reddit, Inc.",
     nav_features: "Funciones", nav_install: "Instalar", nav_privacy: "Privacidad",
     step_download: "Descarga el ZIP y descomprímelo.",
@@ -99,7 +99,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Aucun traçage", p2d: "Aucune télémétrie ni script tiers.",
     p3t: "Aucune IA", p3d: "Tout est du JavaScript pur.",
     p4t: "Stockage local", p4d: "Tout dans browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.7.0 · Licence MIT",
+    footerA: "Reddit Power Toolkit v1.9.0 · Licence MIT",
     footerB: "Sans affiliation avec Reddit, Inc.",
     nav_features: "Fonctions", nav_install: "Installer", nav_privacy: "Vie privée",
     step_download: "Téléchargez le ZIP et décompressez-le.",
@@ -128,7 +128,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Kein Tracking", p2d: "Keine Telemetrie.",
     p3t: "Keine KI", p3d: "Reines JavaScript.",
     p4t: "Lokaler Speicher", p4d: "Alles in browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.7.0 · MIT-Lizenz",
+    footerA: "Reddit Power Toolkit v1.9.0 · MIT-Lizenz",
     footerB: "Nicht mit Reddit, Inc. verbunden.",
     nav_features: "Funktionen", nav_install: "Installieren", nav_privacy: "Datenschutz",
     step_download: "ZIP herunterladen und entpacken.",
@@ -157,7 +157,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sem rastreio", p2d: "Sem telemetria.",
     p3t: "Sem IA", p3d: "Só JavaScript.",
     p4t: "Só local", p4d: "Tudo em browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.7.0 · Licença MIT",
+    footerA: "Reddit Power Toolkit v1.9.0 · Licença MIT",
     footerB: "Não afiliado à Reddit, Inc.",
     nav_features: "Recursos", nav_install: "Instalar", nav_privacy: "Privacidade",
     step_download: "Baixe o ZIP e descompacte.",
@@ -186,7 +186,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "追跡無し", p2d: "テレメトリー無し。",
     p3t: "AI 呼び出し無し", p3d: "純粋な JavaScript。",
     p4t: "ローカル保存", p4d: "browser.storage.local に保存。",
-    footerA: "Reddit Power Toolkit v1.7.0 · MIT",
+    footerA: "Reddit Power Toolkit v1.9.0 · MIT",
     footerB: "Reddit, Inc. とは無関係。",
     nav_features: "機能", nav_install: "インストール", nav_privacy: "プライバシー",
     step_download: "ZIP をダウンロードして解凍。",
@@ -215,7 +215,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "无追踪", p2d: "无遥测。",
     p3t: "无 AI", p3d: "纯 JavaScript。",
     p4t: "仅本地", p4d: "全部保存在 browser.storage.local。",
-    footerA: "Reddit Power Toolkit v1.7.0 · MIT 许可",
+    footerA: "Reddit Power Toolkit v1.9.0 · MIT 许可",
     footerB: "与 Reddit, Inc. 无关联。",
     nav_features: "功能", nav_install: "安装", nav_privacy: "隐私",
     step_download: "下载 ZIP 并解压。",
@@ -271,6 +271,13 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "New", i: Zap, items: [
+      "New Performance & status panel — see which modules run and how long each scan takes",
+      "Per-subreddit rules — enable/disable any feature just inside a specific community",
+      "One-click JSON backup & restore for bookmarks, history, keyword tracking, notes and settings",
+      "Lazy-loading wrapper — advanced modules only touch the DOM the first time you use them",
+      "Feature cards on this page collapse by default — click a title to expand",
+    ]},
     { v: "1.7", t: "Live-updating help & safer backups", d: "Today", i: KeyRound, items: [
       "Modal keyboard-help text updates instantly when you rebind a shortcut",
       "Options export/import now covers shortcuts, general prefs, accessibility and gallery positions",
@@ -375,6 +382,18 @@ function Index() {
     { i: History, t: "Local Thread History",
       d: "Every Reddit thread you've opened with title, subreddit, date and comment count.",
       h: "Open the popup and click History, or view it inside Analytics. Clear it any time from Options → Local data." },
+    { i: Activity, t: "Performance & status panel",
+      d: "See which modules are running on the current page and how long each scan took.",
+      h: "Open the ⚡ Power features hub → System → Performance & status, or Ctrl+K → \"Performance & status\". Great for spotting lag on big threads." },
+    { i: ListChecks, t: "Per-subreddit rules",
+      d: "Enable or disable any feature just inside a specific community.",
+      h: "Visit a community, then ⚡ hub → System → Per-subreddit rules. Uncheck features to turn them off only there — global settings stay untouched." },
+    { i: FileDown, t: "Backup & restore",
+      d: "One-click JSON snapshot of bookmarks, history, keyword tracking, notes and settings.",
+      h: "⚡ hub → System → Backup & restore → Export. Import the same file on another browser to move your data across devices." },
+    { i: Zap, t: "Lazy-loaded modules",
+      d: "Every advanced tool only touches the DOM the first time you use it, keeping large threads fast.",
+      h: "Automatic — nothing to configure. The Performance panel shows the exact first-run cost of each module." },
   ];
 
   return (
@@ -449,17 +468,25 @@ function Index() {
             <p className={`mt-2 ${subtle}`}>{t("featuresSub")}</p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {FEATURES.map((f) => (
-                <div key={f.t} className={`flex flex-col rounded-xl border p-5 transition ${card} ${cardHover}`}>
-                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
-                    <f.i className="h-5 w-5" />
+                <details
+                  key={f.t}
+                  className={`group rounded-xl border p-5 transition ${card} ${cardHover} [&_summary::-webkit-details-marker]:hidden`}
+                >
+                  <summary className="flex cursor-pointer list-none items-center gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
+                      <f.i className="h-5 w-5" />
+                    </span>
+                    <span className="flex-1 font-semibold">{f.t}</span>
+                    <span className={`text-xs ${muted} transition group-open:rotate-180`} aria-hidden>▾</span>
+                  </summary>
+                  <div className="mt-3">
+                    <p className={`text-sm ${subtle}`}>{f.d}</p>
+                    <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
+                      <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
+                      <p className="mt-1">{f.h}</p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold">{f.t}</h3>
-                  <p className={`mt-2 text-sm ${subtle}`}>{f.d}</p>
-                  <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
-                    <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
-                    <p className="mt-1">{f.h}</p>
-                  </div>
-                </div>
+                </details>
               ))}
             </div>
           </div>
