@@ -280,3 +280,56 @@ async function initCollections() {
   await initCollections();
   await initShortcuts();
 })();
+
+/* -------- Custom keyboard shortcuts (gallery prev/next, collapse all, refresh) -------- */
+const SHORTCUT_DEF = { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" };
+function shortcutEventToStr(e) {
+  if (["Shift","Control","Alt","Meta","OS"].includes(e.key)) return "";
+  const parts = [];
+  if (e.ctrlKey) parts.push("Ctrl");
+  if (e.metaKey) parts.push("Meta");
+  if (e.altKey) parts.push("Alt");
+  if (e.shiftKey && e.key.length > 1) parts.push("Shift");
+  let k = e.key;
+  if (k === " ") k = "Space";
+  if (k.length === 1) k = e.shiftKey ? k.toUpperCase() : k.toLowerCase();
+  parts.push(k);
+  return parts.join("+");
+}
+async function initShortcuts() {
+  const load = async () => {
+    const { [KEYS.shortcuts]: v = {} } = await get(KEYS.shortcuts);
+    return { ...SHORTCUT_DEF, ...v };
+  };
+  const render = async () => {
+    const cur = await load();
+    document.querySelectorAll(".rpt-shortcut-btn").forEach((b) => {
+      b.textContent = cur[b.dataset.s] || "—";
+      b.setAttribute("aria-label", `${b.previousElementSibling?.textContent || b.dataset.s}: ${cur[b.dataset.s]}. Click to change.`);
+    });
+  };
+  document.querySelectorAll(".rpt-shortcut-btn").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (b.classList.contains("capturing")) return;
+      const orig = b.textContent;
+      b.textContent = "Press a key…"; b.classList.add("capturing");
+      const done = () => { b.classList.remove("capturing"); document.removeEventListener("keydown", onKey, true); };
+      const onKey = async (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (["Shift","Control","Alt","Meta","OS"].includes(e.key)) return;
+        if (e.key === "Escape") { done(); b.textContent = orig; return; }
+        const s = shortcutEventToStr(e);
+        if (!s) { done(); b.textContent = orig; return; }
+        const cur = await load(); cur[b.dataset.s] = s;
+        await set({ [KEYS.shortcuts]: cur });
+        done(); render();
+      };
+      document.addEventListener("keydown", onKey, true);
+    });
+  });
+  document.getElementById("shortcuts-reset").addEventListener("click", async () => {
+    await set({ [KEYS.shortcuts]: { ...SHORTCUT_DEF } });
+    render();
+  });
+  render();
+}
