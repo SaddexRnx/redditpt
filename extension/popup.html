@@ -7,30 +7,87 @@
 </head>
 <body>
   <header>
-    <div class="logo">RPT</div>
-    <div>
-      <h1>Reddit Power Toolkit</h1>
-      <p class="tag">Local-first Reddit enhancements</p>
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Reddit Power Toolkit</h1>
+        <p class="tag">Local-first · v1.1</p>
+      </div>
     </div>
+    <button class="icon-btn" data-act="options" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </header>
+
+  <div class="status-row">
+    <span class="status-dot" id="dot"></span>
+    <span id="status">Checking…</span>
+  </div>
+
   <main>
-    <p id="status" class="status">Checking active tab…</p>
+    <button class="hero-btn" data-act="open-panel">
+      <div class="hero-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+      </div>
+      <div>
+        <strong>Open side panel</strong>
+        <span>Tree · filters · saved · stats</span>
+      </div>
+      <kbd>T</kbd>
+    </button>
+
+    <div class="section-title">Quick views</div>
     <div class="grid">
-      <button data-act="open-panel">Open side panel</button>
-      <button data-act="conv">Conversation mode</button>
-      <button data-act="gallery">Image gallery</button>
+      <button data-act="summary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="m3 17 9 5 9-5"/><path d="m3 12 9 5 9-5"/></svg>
+        Smart summary
+      </button>
+      <button data-act="conv">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Conversation
+      </button>
+      <button data-act="gallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        Gallery
+      </button>
+      <button data-act="layers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/></svg>
+        Depth layers
+      </button>
+    </div>
+
+    <div class="section-title">Folding</div>
+    <div class="grid">
       <button data-act="collapse">Collapse all</button>
       <button data-act="expand">Expand all</button>
-      <button data-act="layers">Toggle depth layers</button>
-      <button data-act="md">Export Markdown</button>
-      <button data-act="json">Export JSON</button>
     </div>
+
+    <div class="section-title">Export this thread</div>
+    <div class="grid">
+      <button data-act="md">Markdown</button>
+      <button data-act="json">JSON</button>
+    </div>
+
     <div class="row">
-      <button class="ghost" data-act="analytics">Analytics dashboard</button>
-      <button class="ghost" data-act="options">Settings</button>
+      <button class="ghost" data-act="kbd">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 14h8"/></svg>
+        Shortcuts
+      </button>
+      <button class="ghost" data-act="analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+        Analytics
+      </button>
     </div>
   </main>
-  <footer>v1.0.0 · runs 100% locally in your browser</footer>
+
+  <footer>100% local · no accounts · no servers</footer>
   <script src="popup.js"></script>
 </body>
 </html>
