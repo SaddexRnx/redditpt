@@ -375,6 +375,18 @@ function Index() {
     { i: History, t: "Local Thread History",
       d: "Every Reddit thread you've opened with title, subreddit, date and comment count.",
       h: "Open the popup and click History, or view it inside Analytics. Clear it any time from Options → Local data." },
+    { i: Activity, t: "Performance & status panel",
+      d: "See which modules are running on the current page and how long each scan took.",
+      h: "Open the ⚡ Power features hub → System → Performance & status, or Ctrl+K → \"Performance & status\". Great for spotting lag on big threads." },
+    { i: ListChecks, t: "Per-subreddit rules",
+      d: "Enable or disable any feature just inside a specific community.",
+      h: "Visit a community, then ⚡ hub → System → Per-subreddit rules. Uncheck features to turn them off only there — global settings stay untouched." },
+    { i: FileDown, t: "Backup & restore",
+      d: "One-click JSON snapshot of bookmarks, history, keyword tracking, notes and settings.",
+      h: "⚡ hub → System → Backup & restore → Export. Import the same file on another browser to move your data across devices." },
+    { i: Zap, t: "Lazy-loaded modules",
+      d: "Every advanced tool only touches the DOM the first time you use it, keeping large threads fast.",
+      h: "Automatic — nothing to configure. The Performance panel shows the exact first-run cost of each module." },
   ];
 
   return (
