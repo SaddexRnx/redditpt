@@ -463,7 +463,7 @@ function Index() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <button
                 onClick={downloadZip}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#3b82f6] px-6 py-3 font-semibold text-white shadow-lg shadow-[#3b82f6]/20 transition hover:bg-[#2563eb]"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/20 transition hover:bg-[#2fa84f]"
               >
                 <Download className="h-5 w-5" /> {t("dl")}
               </button>
@@ -498,7 +498,7 @@ function Index() {
                   <div className="mt-3">
                     <p className={`text-sm ${subtle}`}>{f.d}</p>
                     <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
-                      <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
+                      <span className="font-semibold uppercase tracking-wider text-[#46d160]">How to use</span>
                       <p className="mt-1">{f.h}</p>
                     </div>
                   </div>
@@ -540,7 +540,7 @@ function Index() {
                     <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                       {r.items.map((it) => (
                         <li key={it} className={`flex items-start gap-2 text-sm ${subtle}`}>
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#3b82f6]" />
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#46d160]" />
                           <span>{it}</span>
                         </li>
                       ))}
@@ -565,7 +565,7 @@ function Index() {
                 const I = Icon as typeof Shield; const ttl = title as string; const dsc = desc as string;
                 return (
                   <div key={ttl} className={`rounded-xl border p-5 ${card}`}>
-                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
+                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]">
                       <I className="h-5 w-5" />
                     </div>
                     <h3 className="font-semibold">{ttl}</h3>
@@ -657,7 +657,7 @@ function InstallTabs({
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff4500] text-sm font-bold text-black">
                   {i + 1}
                 </span>
-                <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]`}>
+                <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]`}>
                   <Icon className="h-5 w-5" />
                 </div>
               </div>
