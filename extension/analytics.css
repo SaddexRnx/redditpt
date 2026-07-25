@@ -15,7 +15,7 @@ section { max-width: 900px; margin: 0 auto 24px; }
 .v { font-weight:700; font-size:22px; margin-top:4px; }
 ol, ul { padding-left: 18px; }
 #history li { margin-bottom: 8px; }
-#history a { color:#ff4500; text-decoration:none; font-weight:600; }
+#history a { color:#10b981; text-decoration:none; font-weight:600; }
 #history a:hover { text-decoration: underline; }
 .meta { color:#6b7280; font-size:12px; margin-left: 6px; }
 @media (max-width: 640px) { .cards { grid-template-columns: repeat(2, 1fr); } }
