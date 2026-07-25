@@ -12,6 +12,8 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
+    VERSION: "1.7.0",
+    BUILD_DATE: "2026-07-25",
   });
 
   /* ---------------- storage ---------------- */
