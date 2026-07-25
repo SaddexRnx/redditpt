@@ -27,7 +27,23 @@
   backdrop-filter: blur(10px);
   transition: opacity .2s, transform .2s;
 }
-.rpt-qb.rpt-qb-min { padding: 4px; }
+.rpt-qb.rpt-qb-min { padding: 2px; gap: 0; }
+.rpt-qb.rpt-qb-min .rpt-qb-brand,
+.rpt-qb.rpt-qb-min .rpt-qb-sep,
+.rpt-qb.rpt-qb-min .rpt-status-pill,
+.rpt-qb.rpt-qb-min .rpt-live-pill { display: none !important; }
+.rpt-qb.rpt-qb-min .rpt-qb-btn { width: 26px; height: 26px; }
+.rpt-qb.rpt-qb-min .rpt-qb-btn svg { width: 13px; height: 13px; }
+.rpt-qb-power-off { color: var(--rpt-muted) !important; opacity: .7; }
+.rpt-qb-power-off:hover { color: var(--rpt-green) !important; opacity: 1; }
+.rpt-about-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 8px;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  color: var(--rpt-text); text-decoration: none; font-size: 12px;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.rpt-about-link:hover { background: var(--rpt-bg-3); border-color: var(--rpt-green); color: var(--rpt-green); }
 .rpt-qb-btn {
   position: relative; display: inline-grid; place-items: center;
   width: 34px; height: 34px; border: none; border-radius: 999px;
@@ -123,11 +139,16 @@
 @keyframes rpt-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
 
 /* Master OFF: hide every RPT overlay and un-hide filtered comments. */
-html[data-rpt-off="1"] .rpt-qb,
+/* Keep the quick-bar visible so the user can toggle back on without opening the popup. */
 html[data-rpt-off="1"] .rpt-panel,
 html[data-rpt-off="1"] .rpt-tour,
 html[data-rpt-off="1"] .rpt-modal,
 html[data-rpt-off="1"] .rpt-status-pill { display: none !important; }
+html[data-rpt-off="1"] .rpt-qb { opacity: .55; }
+html[data-rpt-off="1"] .rpt-qb .rpt-qb-btn:not([data-act="power"]):not([data-act="size"]):not([data-act="close"]),
+html[data-rpt-off="1"] .rpt-qb .rpt-qb-sep,
+html[data-rpt-off="1"] .rpt-qb .rpt-live-pill,
+html[data-rpt-off="1"] .rpt-qb .rpt-status-pill { display: none !important; }
 html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 
 /* Filter chips (OP / mod / awarded / etc) */

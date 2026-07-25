@@ -4,6 +4,15 @@
   <img src="public/logo.png" alt="Reddit Power Toolkit logo" width="120" height="120">
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/version-1.7.0-10b981?style=flat-square" alt="Version 1.7.0">
+  <img src="https://img.shields.io/badge/manifest-v3-3b82f6?style=flat-square" alt="Manifest V3">
+  <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
+</p>
+
+> **Current release: v1.7.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases) for full history.
+
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
 Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
@@ -286,6 +295,68 @@ Landing site:
 bun install
 bun run dev
 ```
+
+---
+
+## Changelog
+
+Full release history lives on the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases).
+
+### v1.7.0 — current
+
+- **About panel** in the extension (quick-bar `ⓘ` button, popup, and Options) showing the current version, build date, and links to the changelog, GitHub repo, and Telegram.
+- **Version badge** and current-release note added to this README.
+- **Quick-bar customization**: new size toggle (compact / comfortable) and a one-click ON/OFF power button directly on the floating toolbar — no need to open the popup.
+- Compact mode is remembered per browser (`chrome.storage.local → rpt_qb_size`).
+- When the extension is turned off from the quick-bar, the power + size buttons stay visible so users can flip it back on without opening the popup.
+- Version bumped to **1.7.0** across manifest, popup, Options, About panel, site footer, and README.
+- Dynamic keyboard-help updates, full settings export/import, shortcut conflict detection, safer import validation, and a "Reset to defaults" button (rolled up from v1.7 development).
+
+### v1.6 — website + backup portability
+
+- Landing site redesigned with per-feature "How to use" cards.
+- Keyboard-help injected into every modal, wired to `aria-describedby`.
+- Shortcut preferences export/import (JSON).
+
+### v1.5 — accessibility & shortcuts
+
+- Focus trap and focus restoration for the command palette and modals.
+- Configurable keyboard shortcuts for gallery, Collapse all, and Refresh.
+- Gallery resumes at the last-viewed image per thread.
+- `aria-live` region for parsing status.
+
+### v1.4 — reliability & controls
+
+- Gallery keyboard navigation (arrows, Home/End, Esc) with proper ARIA labels.
+- Collapse-all state persisted per URL across SPA navigation.
+- Options toggle + live legend for author colors.
+- Visible parsing status pill and manual Resync/Refresh in the panel header.
+
+### v1.3 — power features
+
+- Command palette (`Ctrl/⌘ + K`).
+- Adaptive live-new polling with visible status.
+- Custom rule builder (keyword, author, flair, regex) with live preview.
+- JSON/CSV export/import for saved collections.
+- Accessibility options: color-blind palettes, high contrast, ARIA labels.
+
+### v1.2 — onboarding, i18n & themes
+
+- Multi-language support (EN, ES, FR, DE, PT, JA, ZH).
+- First-run onboarding overlay.
+- Dark / Light theme toggle for extension and website.
+- Firefox compatibility via `browser_specific_settings`.
+
+### v1.1 — quick-bar era
+
+- Persistent floating quick-bar on Reddit threads.
+- Smart summary, live-new indicator, filter chips, saved collections.
+- Keyboard navigation for the comment tree (`J/K/F/T`, etc.).
+
+### v1.0 — initial release
+
+- Manifest V3 extension with popup, Options, and Analytics pages.
+- Comment tree navigator, folding, conversation mode, gallery, cleaner, statistics, thread health, keyword highlighter, user color tags, formatting toolbar, thread exporter, thread age warning, link preview, local history.
 
 ---
 
