@@ -115,12 +115,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Tabs
-  document.querySelectorAll(".tab").forEach((t) => {
-    t.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach((x) => x.classList.remove("active"));
-      t.classList.add("active");
-      document.querySelector(`.tab-panel[data-panel="${t.dataset.tab}"]`)?.classList.add("active");
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const activateTab = (name, { persist = true } = {}) => {
+    const target = tabs.find((t) => t.dataset.tab === name) || tabs[0];
+    if (!target) return;
+    tabs.forEach((x) => {
+      const on = x === target;
+      x.classList.toggle("active", on);
+      x.setAttribute("aria-selected", on ? "true" : "false");
+      x.setAttribute("tabindex", on ? "0" : "-1");
+    });
+    document.querySelectorAll(".tab-panel").forEach((p) =>
+      p.classList.toggle("active", p.dataset.panel === target.dataset.tab));
+    if (persist) chrome.storage.local.set({ rpt_popup_tab: target.dataset.tab });
+  };
+  // Restore last tab
+  chrome.storage.local.get("rpt_popup_tab", (v) => {
+    activateTab(v?.rpt_popup_tab || "home", { persist: false });
+  });
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", () => activateTab(t.dataset.tab));
+    // Roving tabindex + arrow-key navigation (WAI-ARIA tab pattern)
+    t.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        const dir = e.key === "ArrowRight" ? 1 : -1;
+        const next = tabs[(i + dir + tabs.length) % tabs.length];
+        activateTab(next.dataset.tab);
+        next.focus();
+      } else if (e.key === "Home") { e.preventDefault(); activateTab(tabs[0].dataset.tab); tabs[0].focus(); }
+      else if (e.key === "End")   { e.preventDefault(); const last = tabs[tabs.length - 1]; activateTab(last.dataset.tab); last.focus(); }
     });
   });
 

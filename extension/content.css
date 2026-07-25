@@ -301,6 +301,20 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
   background: var(--rpt-bg-1);
   box-shadow: 0 8px 18px -14px rgba(0,0,0,.75);
 }
+/* On narrow viewports Reddit's own sticky headers can overlap; lower our
+   sticky offset and z-index so the toolbar tucks under Reddit chrome
+   instead of colliding with it. */
+@media (max-width: 640px) {
+  .rpt-tabpane[data-panel="tree"] .rpt-tree-toolbar {
+    top: 0; z-index: 4; padding: 8px;
+  }
+}
+@media (max-width: 420px) {
+  .rpt-tree-toolbar { padding: 8px; gap: 6px; }
+  .rpt-tree-toolbar .rpt-search-box,
+  .rpt-tree-toolbar select { min-height: 36px; font-size: 12px; }
+  .rpt-tree-toolbar select { flex: 1 1 100%; max-width: 100%; }
+}
 .rpt-tree-toolbar .rpt-search-box {
   flex: 1 1 160px; margin: 0;
   background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
@@ -1014,6 +1028,39 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-btnrow button:focus-visible, .rpt-chip:focus-visible,
 .rpt-hub-run:focus-visible, .rpt-panel-close:focus-visible {
   outline: 2px solid var(--rpt-green) !important; outline-offset: 2px !important;
+}
+.rpt-tree-toolbar select:focus-visible,
+.rpt-tree-toolbar .rpt-search-box:focus-visible,
+.rpt-match-prev:focus-visible, .rpt-match-next:focus-visible,
+.rpt-tree-share:focus-visible, .rpt-save-btn:focus-visible,
+.rpt-stat-chip:focus-visible, .rpt-about-link:focus-visible,
+.rpt-tb-btn:focus-visible {
+  outline: 2px solid var(--rpt-green) !important; outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--rpt-green) 25%, transparent) !important;
+}
+/* Bumped muted contrast for light-mode Reddit so secondary text stays AA. */
+html:not([data-rpt-theme])[data-theme="light"],
+html:not([data-rpt-theme]).theme-light,
+html:not([data-rpt-theme])[data-color-scheme="light"],
+html[data-rpt-theme="light"] { --rpt-muted: #4a5566; }
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]):not([data-theme]):not(.theme-dark) { --rpt-muted: #4a5566; }
+}
+/* Toggle / switch checked state: force strong contrast against every theme. */
+.rpt-tabpane input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--rpt-green); outline-offset: 2px;
+}
+
+/* Respect user motion preferences globally across every RPT overlay. */
+@media (prefers-reduced-motion: reduce) {
+  .rpt-panel, .rpt-overlay, .rpt-tour, .rpt-qb, .rpt-onboard,
+  .rpt-onboard-pulse, .rpt-onboard-arrow, .rpt-panel-refresh.rpt-spin svg,
+  .rpt-jump-flash, .rpt-live-pill[data-state="live"] .rpt-live-dot,
+  .rpt-status-pill[data-state="parsing"] .rpt-status-dot,
+  .rpt-wizard-card, .rpt-cmdk {
+    animation: none !important; transition: none !important;
+  }
+  .rpt-jump-flash { box-shadow: 0 0 0 3px var(--rpt-green) !important; }
 }
 
 /* Center visible labels inside panel action buttons while keeping icon+text grouped. */
