@@ -296,6 +296,28 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 }
 .rpt-jump-flash { animation: rpt-jump-flash 1.6s ease-out; border-radius: 6px; }
 
+/* Reduced-motion fallback: static outline instead of the pulse. Still shows
+   which comment we jumped to, without any animation. */
+.rpt-jump-static { outline: 3px solid var(--rpt-green) !important; outline-offset: 2px; border-radius: 6px; }
+html[data-rpt-motion="reduced"] .rpt-jump-flash { animation: none !important; box-shadow: 0 0 0 3px var(--rpt-green) !important; }
+
+/* Tree row: share-link button + match-cycling controls. */
+.rpt-tree-share {
+  margin-left: auto; background: transparent; color: var(--rpt-muted);
+  border: 1px solid transparent; border-radius: 6px; cursor: pointer;
+  font-size: 12px; padding: 2px 6px; opacity: 0; transition: opacity .15s;
+}
+.rpt-tree-item:hover .rpt-tree-share, .rpt-tree-share:focus-visible { opacity: 1; }
+.rpt-tree-share:hover { color: var(--rpt-green); border-color: var(--rpt-border); }
+.rpt-match-prev, .rpt-match-next {
+  background: var(--rpt-bg-1); color: var(--rpt-text);
+  border: 1px solid var(--rpt-border); border-radius: 8px;
+  height: 32px; min-width: 32px; padding: 0 8px; cursor: pointer; font-size: 13px;
+}
+.rpt-match-prev:hover, .rpt-match-next:hover { border-color: var(--rpt-green); color: var(--rpt-green); }
+.rpt-match-count { font-variant-numeric: tabular-nums; color: var(--rpt-muted); font-size: 12px; }
+.rpt-tree-current { outline: 2px solid var(--rpt-green); outline-offset: 1px; }
+
 .rpt-kw {
   width: 100%; box-sizing: border-box; background: var(--rpt-bg-1);
   color: var(--rpt-text); border: 1px solid var(--rpt-border);
