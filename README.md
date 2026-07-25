@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.8.0-10b981?style=flat-square" alt="Version 1.8.0">
+  <img src="https://img.shields.io/badge/version-1.9.0-10b981?style=flat-square" alt="Version 1.9.0">
   <img src="https://img.shields.io/badge/manifest-v3-3b82f6?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.8.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases) for full history.
+> **Current release: v1.9.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -302,7 +302,7 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases).
 
-### v1.8.0 — current
+### v1.9.0 — current
 
 - **Power features hub (36 new tools)** accessible from a ⚡ button on the quick-bar, from the popup, and from the command palette.
 - **Community**: comparison tool, subreddit analyzer dashboard, activity calendar, health monitor, timeline, trend tracker, subreddit groups, content exporter.
