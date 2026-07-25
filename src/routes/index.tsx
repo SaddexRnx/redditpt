@@ -270,6 +270,62 @@ function Index() {
   const border = isDark ? "border-white/5" : "border-slate-200";
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
+  const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.7", t: "Live-updating help & safer backups", d: "Today", i: KeyRound, items: [
+      "Modal keyboard-help text updates instantly when you rebind a shortcut",
+      "Options export/import now covers shortcuts, general prefs, accessibility and gallery positions",
+      "Duplicate keybindings show a conflict banner with one-click resolve",
+      "Import validates every field and shows a clear message on invalid JSON",
+      "New Reset-to-defaults confirmation for shortcut bindings",
+    ]},
+    { v: "1.6", t: "Keyboard help wired to aria-describedby", d: "Recent", i: Accessibility, items: [
+      "Every modal shows explicit Esc / Tab hints for screen readers",
+      "Export & import for your custom shortcut preferences (JSON)",
+      "Landing page: full description + How-to-use for every feature",
+    ]},
+    { v: "1.5", t: "Focus trap, custom shortcuts & live regions", d: "Recent", i: Command, items: [
+      "Command palette, gallery and all modals trap Tab and restore focus on close",
+      "Configurable keys for gallery prev/next, collapse-all and refresh",
+      "Gallery resumes on the last-viewed image per thread",
+      "Parsing status announced via a dedicated aria-live region",
+    ]},
+    { v: "1.4", t: "Live status & true resync", d: "Recent", i: Activity, items: [
+      "Full keyboard support and ARIA labels for the gallery",
+      "Collapse-all persists across SPA navigation",
+      "Options toggle + preview swatches for author colours",
+      "Pulsing status pill shows parsing progress; new Resync button in the panel",
+    ]},
+    { v: "1.3", t: "Accessibility, palette & rule builder", d: "Recent", i: Palette, items: [
+      "Color-blind palettes (Deuteranopia, Protanopia, Tritanopia, Mono) + high-contrast mode",
+      "Ctrl+K command palette to trigger any tool",
+      "Adaptive polling for Live-New with visible status",
+      "Custom keyword / author / regex rule builder with live preview",
+      "JSON / CSV export & import for saved collections",
+      "Redesigned 3-step installation guide",
+    ]},
+    { v: "1.2", t: "Onboarding, i18n & themes", d: "Recent", i: Languages, items: [
+      "Popup activation status + one-click tab reload prompt",
+      "Full-page onboarding spotlight on first Reddit visit",
+      "7 languages (EN, ES, FR, DE, PT, JA, ZH)",
+      "Light & Dark mode across extension and site",
+      "Quick-bar mounts immediately, no first-click required",
+      "Firefox compatibility via browser_specific_settings",
+    ]},
+    { v: "1.1", t: "Midnight redesign & power tools", d: "Recent", i: Sparkle, items: [
+      "Dark glassy UI with green/blue accents",
+      "Smart Summary (top, discussed, controversial) — 100% local",
+      "Live-New polling of Reddit's own thread JSON",
+      "OP / Mod / Awarded filter chips + Saved collections with ★",
+      "Keyboard shortcuts (T, J/K, F, N, ?)",
+    ]},
+    { v: "1.0", t: "First public release", d: "Launch", i: Rocket, items: [
+      "Manifest V3 extension for Chrome, Edge, Brave and Firefox",
+      "16 client-side tools: tree, folding, cleaner, gallery, analytics…",
+      "Local history, user color tags, keyword highlighter, thread exporter",
+      "Zero backend, zero tracking, fully open-source",
+    ]},
+  ];
+
   const FEATURES = [
     { i: GitBranch, t: "Comment Tree Navigator",
       d: "A collapsible sidebar showing every comment as a tree, one dot per author.",
