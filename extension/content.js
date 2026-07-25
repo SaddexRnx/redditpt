@@ -904,6 +904,8 @@
       back.addEventListener("click", (e) => { if (e.target === back) this.close(); });
       document.body.appendChild(back);
       render();
+      // Trap Tab within the palette; input keeps first focus.
+      RPT.a11y.trapModal(back);
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
