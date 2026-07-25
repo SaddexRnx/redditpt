@@ -506,6 +506,13 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.10.0", t: "Portable settings, focus overlay & popup shortcut help", d: "New", i: Rocket, items: [
+      "Full settings backup — Options → Export / Import now covers shortcuts, general prefs, accessibility, cleaner filters, keywords, user tags, automation, custom rules and gallery positions in one JSON file",
+      "Accessibility focus-order overlay — press Alt + Shift + A on any Reddit page to number every tabbable element (Esc to close). 100% local, no data leaves the tab",
+      "Popup keyboard-shortcuts help — click the (?) icon in the popup header for a categorized cheatsheet covering popup tabs, tree toolbar and global keys",
+      "Reset-to-defaults for popup and panel state — clears the last tab, theme, quick-bar size and panel state without touching your keywords, tags, saved comments or history",
+      "Manifest, popup, Options, README, site footer and About modal synced to v1.10.0",
+    ]},
     { v: "1.9.7", t: "Full extension redesign & onboarding wizard", d: "New", i: Rocket, items: [
       "First-run onboarding wizard: pick your language, toggle each feature with a short note, and Skip or Use defaults",
       "Comment Tree Navigator search/author bar is now sticky — prev/next stays pinned while scrolling long threads",
