@@ -221,3 +221,9 @@ Issues and PRs welcome. Because Reddit changes its DOM frequently, selector upda
 ## License
 
 MIT
+
+---
+
+## Contact
+
+Telegram: [@Saddex_x](https://t.me/Saddex_x)
