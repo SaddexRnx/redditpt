@@ -304,9 +304,10 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 
 ### v1.9.7 — current
 
-- **French translation fix** — removed Spanish bleed-through on the website feature cards and forced missing non-English strings to fall back only to English, never another language.
-- **Extension activation clarity** — panel controls now show a clear active/off visual state so selected features are visibly running.
-- **Button readability pass** — centered labels, wider tap targets, and stronger text contrast for the side panel, quick views and power hub.
+- **Full extension redesign** — consistent spacing, aligned button labels, and a fixed-size About icon in the popup (no more oversized SVG).
+- **First-run onboarding wizard** — pick your language, toggle each feature with a short note under it, and either Skip or Use defaults.
+- **Sticky Comment Tree toolbar** — search, author filter and ◀/▶ match cycling stay pinned while you scroll long threads.
+- **Repo migrated** — every extension, popup, options and README link now points to [github.com/Saddexrnx/redditpt](https://github.com/Saddexrnx/redditpt).
 - **Version sync** — manifest, popup, Options, README, website footer and About panel now show v1.9.7.
 
 ### v1.9.5
