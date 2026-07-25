@@ -32,14 +32,14 @@
   </header>
 
   <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="home" role="tab" data-i18n="tab_home">Home</button>
-    <button class="tab" data-tab="tools" role="tab" data-i18n="tab_tools">Tools</button>
-    <button class="tab" data-tab="export" role="tab" data-i18n="tab_export">Export</button>
+    <button class="tab active" data-tab="home"   role="tab" aria-selected="true"  tabindex="0"  aria-controls="panel-home"   id="tab-home"   data-i18n="tab_home">Home</button>
+    <button class="tab"        data-tab="tools"  role="tab" aria-selected="false" tabindex="-1" aria-controls="panel-tools"  id="tab-tools"  data-i18n="tab_tools">Tools</button>
+    <button class="tab"        data-tab="export" role="tab" aria-selected="false" tabindex="-1" aria-controls="panel-export" id="tab-export" data-i18n="tab_export">Export</button>
   </nav>
 
   <main>
     <!-- HOME -->
-    <section class="tab-panel active" data-panel="home">
+    <section class="tab-panel active" data-panel="home" role="tabpanel" id="panel-home" aria-labelledby="tab-home">
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-head">
@@ -122,7 +122,7 @@
     </section>
 
     <!-- TOOLS -->
-    <section class="tab-panel" data-panel="tools">
+    <section class="tab-panel" data-panel="tools" role="tabpanel" id="panel-tools" aria-labelledby="tab-tools">
       <div class="section-title" data-i18n="quick_views">Quick views</div>
       <div class="tool-grid">
         <button class="tool-btn" data-act="summary">
@@ -178,7 +178,7 @@
     </section>
 
     <!-- EXPORT -->
-    <section class="tab-panel" data-panel="export">
+    <section class="tab-panel" data-panel="export" role="tabpanel" id="panel-export" aria-labelledby="tab-export">
       <div class="card">
         <div class="card-head">
           <div class="card-icon">
