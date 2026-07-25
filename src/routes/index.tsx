@@ -7,6 +7,7 @@ import {
   Chrome, Globe, Smartphone, ShieldCheck, Github,
   Package, Puzzle, ToggleRight, FolderOpen, ArrowRight, Copy, Check, MessageCircle,
   Rocket, Palette, Command, Accessibility, KeyRound, Sparkle,
+  Link2,
 } from "lucide-react";
 
 /* Telegram paper-plane glyph — lucide has no Telegram icon, so we ship
@@ -51,7 +52,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "No tracking", p2d: "No analytics pings, no third-party scripts, no telemetry.",
     p3t: "No AI calls", p3d: "All analysis (stats, health, cleaner) runs with plain JavaScript.",
     p4t: "Local storage", p4d: "Filters, tags, keywords, history and analytics use browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT licensed",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT licensed",
     footerB: "Not affiliated with Reddit, Inc.",
     nav_features: "Features", nav_install: "Install", nav_privacy: "Privacy",
     step_download: "Download the ZIP above and unzip it anywhere on your computer.",
@@ -65,6 +66,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Open kiwibrowser://extensions in Kiwi Browser on Android.",
     step_kiwi_dev: "Enable Developer mode and tap +(from .zip).",
     step_kiwi_pick: "Select the downloaded ZIP directly — Kiwi installs it as-is.",
+    choose_browser: "Choose your browser", install_for: "Install for",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   es: {
@@ -80,7 +82,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sin rastreo", p2d: "Sin analíticas, scripts de terceros ni telemetría.",
     p3t: "Sin IA", p3d: "Todo el análisis se hace con JavaScript.",
     p4t: "Datos locales", p4d: "Filtros, etiquetas, historial en browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licencia MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licencia MIT",
     footerB: "No afiliado con Reddit, Inc.",
     nav_features: "Funciones", nav_install: "Instalar", nav_privacy: "Privacidad",
     step_download: "Descarga el ZIP y descomprímelo.",
@@ -94,6 +96,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Abre kiwibrowser://extensions en Kiwi (Android).",
     step_kiwi_dev: "Activa modo desarrollador y toca +(from .zip).",
     step_kiwi_pick: "Selecciona el ZIP descargado.",
+    choose_browser: "Elige tu navegador", install_for: "Instalar para",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   fr: {
@@ -109,7 +112,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Aucun traçage", p2d: "Aucune télémétrie ni script tiers.",
     p3t: "Aucune IA", p3d: "Tout est du JavaScript pur.",
     p4t: "Stockage local", p4d: "Tout dans browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licence MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licence MIT",
     footerB: "Sans affiliation avec Reddit, Inc.",
     nav_features: "Fonctions", nav_install: "Installer", nav_privacy: "Vie privée",
     step_download: "Téléchargez le ZIP et décompressez-le.",
@@ -123,6 +126,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Ouvrez kiwibrowser://extensions.",
     step_kiwi_dev: "Activez le mode dev, touchez +(from .zip).",
     step_kiwi_pick: "Choisissez le ZIP.",
+    choose_browser: "Choisissez votre navigateur", install_for: "Installer pour",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   de: {
@@ -138,7 +142,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Kein Tracking", p2d: "Keine Telemetrie.",
     p3t: "Keine KI", p3d: "Reines JavaScript.",
     p4t: "Lokaler Speicher", p4d: "Alles in browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT-Lizenz",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT-Lizenz",
     footerB: "Nicht mit Reddit, Inc. verbunden.",
     nav_features: "Funktionen", nav_install: "Installieren", nav_privacy: "Datenschutz",
     step_download: "ZIP herunterladen und entpacken.",
@@ -152,6 +156,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "kiwibrowser://extensions öffnen.",
     step_kiwi_dev: "Dev-Modus an, +(from .zip) tippen.",
     step_kiwi_pick: "ZIP auswählen.",
+    choose_browser: "Wähle deinen Browser", install_for: "Installieren für",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   pt: {
@@ -167,7 +172,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "Sem rastreio", p2d: "Sem telemetria.",
     p3t: "Sem IA", p3d: "Só JavaScript.",
     p4t: "Só local", p4d: "Tudo em browser.storage.local.",
-    footerA: "Reddit Power Toolkit v1.9.0 · Licença MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · Licença MIT",
     footerB: "Não afiliado à Reddit, Inc.",
     nav_features: "Recursos", nav_install: "Instalar", nav_privacy: "Privacidade",
     step_download: "Baixe o ZIP e descompacte.",
@@ -181,6 +186,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Abra kiwibrowser://extensions.",
     step_kiwi_dev: "Modo dev, +(from .zip).",
     step_kiwi_pick: "Escolha o ZIP.",
+    choose_browser: "Escolha seu navegador", install_for: "Instalar para",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   ja: {
@@ -196,7 +202,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "追跡無し", p2d: "テレメトリー無し。",
     p3t: "AI 呼び出し無し", p3d: "純粋な JavaScript。",
     p4t: "ローカル保存", p4d: "browser.storage.local に保存。",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT",
     footerB: "Reddit, Inc. とは無関係。",
     nav_features: "機能", nav_install: "インストール", nav_privacy: "プライバシー",
     step_download: "ZIP をダウンロードして解凍。",
@@ -210,6 +216,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "kiwibrowser://extensions を開く。",
     step_kiwi_dev: "開発者モード ON、+(from .zip)。",
     step_kiwi_pick: "ZIP を選択。",
+    choose_browser: "ブラウザを選択", install_for: "インストール先",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   zh: {
@@ -225,7 +232,7 @@ const T: Record<Lang, Record<string, string>> = {
     p2t: "无追踪", p2d: "无遥测。",
     p3t: "无 AI", p3d: "纯 JavaScript。",
     p4t: "仅本地", p4d: "全部保存在 browser.storage.local。",
-    footerA: "Reddit Power Toolkit v1.9.0 · MIT 许可",
+    footerA: "Reddit Power Toolkit v1.9.3 · MIT 许可",
     footerB: "与 Reddit, Inc. 无关联。",
     nav_features: "功能", nav_install: "安装", nav_privacy: "隐私",
     step_download: "下载 ZIP 并解压。",
@@ -239,6 +246,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "打开 kiwibrowser://extensions。",
     step_kiwi_dev: "开启开发者模式，点 +(from .zip)。",
     step_kiwi_pick: "选择下载的 ZIP。",
+    choose_browser: "选择你的浏览器", install_for: "安装到",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
 };
@@ -252,6 +260,38 @@ function downloadZip() {
       URL.revokeObjectURL(a.href);
     })
     .catch((err) => alert(err.message));
+}
+
+/* Hero browser picker: one card per supported browser. Clicking jumps
+   to the install section, opens the right tab, then triggers the download
+   so the user reads the correct instructions before the ZIP lands. */
+function BrowserPick({
+  icon, label, sub, tab, isDark, border, t,
+}: {
+  icon: ReactNode; label: string; sub: string; tab: "chrome" | "ff" | "kiwi";
+  isDark: boolean; border: string; t: (k: string) => string;
+}) {
+  return (
+    <button
+      onClick={() => {
+        document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: tab }));
+        const el = document.getElementById("install");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(downloadZip, 350);
+      }}
+      className={`group flex items-center gap-3 rounded-xl border px-4 py-4 text-left transition ${border} ${isDark ? "bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#46d160]/60" : "bg-white hover:bg-slate-50 hover:border-[#46d160]"}`}
+      aria-label={`${t("install_for")} ${label}`}
+    >
+      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate font-semibold">{label}</span>
+        <span className={`block text-xs ${isDark ? "text-white/50" : "text-slate-500"}`}>{sub}</span>
+      </span>
+      <Download className="h-4 w-4 shrink-0 text-[#46d160] opacity-0 transition group-hover:opacity-100" />
+    </button>
+  );
 }
 
 function useThemeAndLang() {
@@ -281,7 +321,27 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "New", i: Zap, items: [
+    { v: "1.9.3", t: "Shareable deep links, match cycling & reduced-motion focus", d: "New", i: Link2, items: [
+      "Shareable comment links — hover any row in the Tree, click 🔗 to copy a URL that reopens the panel and flash-highlights the exact comment",
+      "Also supports #rpt-author=<username> for jumping to a user's first comment in the thread",
+      "New ◀ / ▶ match-cycling buttons walk through search & author filter results without expanding every node",
+      "Reduced-motion mode swaps the pulse animation for a static outline so navigation still works with animation off",
+      "Website: separate install buttons per browser (Chrome, Firefox, Kiwi) instead of one generic download",
+    ]},
+    { v: "1.9.2", t: "Extension UI hardening for Chrome, Firefox & Kiwi", d: "Recent", i: Palette, items: [
+      "Rewrote every RPT surface with !important resets so Reddit's global button styles can't hide labels",
+      "Panel widened to 440 px, tab bar padded, filter chips readable, buttons min 40 px tall",
+      "Firefox-specific line-height normaliser + Kiwi/mobile 44 px tap targets",
+      "⚡ Power features hub retinted to design tokens; primary v2 CTA is a single Reddit-green button",
+    ]},
+    { v: "1.9.1", t: "Mobile Tree Navigator, live preview & site polish", d: "Recent", i: GitBranch, items: [
+      "Comment Tree Navigator now has quick text search + author filter with a live count",
+      "Hover any tree row for a preview bubble; click to deep-expand ancestors and flash-jump",
+      "Mobile: quickbar wraps, panels go full-width, ⚡ hub switches to single-column",
+      "Docs: reproducible perf-test harness (docs/PERF_TEST.md) across Chrome/Firefox/Kiwi",
+      "Website: swapped emerald green for the Reddit palette + added GitHub & Telegram links",
+    ]},
+    { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "Recent", i: Zap, items: [
       "New Performance & status panel — see which modules run and how long each scan takes",
       "Per-subreddit rules — enable/disable any feature just inside a specific community",
       "One-click JSON backup & restore for bookmarks, history, keyword tracking, notes and settings",
@@ -421,7 +481,7 @@ function Index() {
         </nav>
         <div className="flex items-center gap-2">
           <a
-            href="https://github.com/Saddex"
+            href="https://github.com/Saddexrnxrnx"
             target="_blank" rel="noreferrer"
             aria-label="GitHub"
             className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
@@ -470,39 +530,20 @@ function Index() {
               <span className="text-[#ff4500]">{t("hero2")}</span>
             </h1>
             <p className={`mt-6 max-w-2xl text-lg ${subtle}`}>{t("heroP")}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              {/* Primary download button (same ZIP, always) */}
-              <button
-                onClick={downloadZip}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/25 transition hover:bg-[#2fa84f]"
-              >
-                <Download className="h-5 w-5" /> {t("dl")}
-              </button>
-              <a
-                href="#install"
-                className={`inline-flex items-center gap-2 rounded-lg border ${border} px-6 py-3 font-medium transition ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}
-              >
-                <Zap className="h-5 w-5" /> {t("how")}
-              </a>
+            {/* No generic download — user picks their browser first so we
+                can send them straight to matching install steps. */}
+            <div className="mt-8">
+              <p className={`mb-3 text-sm font-medium ${subtle}`}>{t("choose_browser")}</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <BrowserPick icon={<Chrome className="h-6 w-6" />} label="Chrome · Edge · Brave"
+                             sub="Chromium desktop" tab="chrome" isDark={isDark} border={border} t={t} />
+                <BrowserPick icon={<Globe className="h-6 w-6" />} label="Firefox 128+"
+                             sub="Gecko desktop" tab="ff" isDark={isDark} border={border} t={t} />
+                <BrowserPick icon={<Smartphone className="h-6 w-6" />} label="Kiwi Browser"
+                             sub="Android · Chromium" tab="kiwi" isDark={isDark} border={border} t={t} />
+              </div>
+              <p className={`mt-4 text-xs ${muted}`}>{t("worksIn")}</p>
             </div>
-            {/* Per-browser quick links so Firefox / Kiwi users know it works
-                for them too — they jump straight to their install steps. */}
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className={`text-xs ${muted} mr-1`}>Install for:</span>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "chrome" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Chrome className="h-3.5 w-3.5 text-[#46d160]" /> Chrome · Edge · Brave
-              </a>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "ff" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Globe className="h-3.5 w-3.5 text-[#ff4500]" /> Firefox 128+
-              </a>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "kiwi" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Smartphone className="h-3.5 w-3.5 text-[#46d160]" /> Kiwi (Android)
-              </a>
-            </div>
-            <p className={`mt-3 text-xs ${muted}`}>{t("worksIn")}</p>
           </div>
         </section>
 
@@ -608,10 +649,10 @@ function Index() {
 
       <footer className={`border-t ${border}`}>
         <div className={`mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-sm sm:flex-row sm:items-center ${muted}`}>
-          <span>Uses the Reddit color palette · 100% local, zero tracking.</span>
+          <span>100% local · Zero tracking · Open source</span>
           <div className="flex flex-wrap items-center gap-4">
-            <a href="https://github.com/Saddex" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
-              <Github className="h-4 w-4" /> github.com/Saddex
+            <a href="https://github.com/Saddexrnxrnx" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
+              <Github className="h-4 w-4" /> github.com/Saddexrnx
             </a>
             <a href="https://t.me/Saddex_x" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
               <TelegramIcon className="h-4 w-4" /> @Saddex_x
