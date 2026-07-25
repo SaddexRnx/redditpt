@@ -246,13 +246,16 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 
 /* ---------------- Mobile: quickbar, panel and hub ---------------- */
 @media (max-width: 640px) {
-  .rpt-quickbar {
+  .rpt-qb {
     right: 8px !important; bottom: 8px !important;
     padding: 5px 6px !important; gap: 4px !important;
     max-width: calc(100vw - 16px); flex-wrap: wrap;
   }
-  .rpt-qb-btn { min-width: 34px; height: 34px; padding: 6px !important; }
+  .rpt-qb-btn { width: 38px !important; height: 38px !important; }
+  .rpt-qb-btn svg { width: 18px !important; height: 18px !important; }
+  .rpt-qb-brand { display: none; }
   .rpt-qb-sep { display: none; }
+  .rpt-qb-tip { display: none !important; }
   .rpt-panel { width: 100vw !important; border-left: none; }
   .rpt-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .rpt-tabs button { flex-shrink: 0; }
