@@ -2,6 +2,7 @@ const KEYS = {
   filters: "rpt_filters", keywords: "rpt_keywords", tags: "rpt_user_tags",
   autorun: "rpt_autorun", general: "rpt_general",
   a11y: "rpt_a11y", rules: "rpt_rules", collections: "rpt_collections",
+  shortcuts: "rpt_shortcuts",
 };
 const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
 const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
@@ -277,4 +278,5 @@ async function initCollections() {
   await initA11y();
   await initRules();
   await initCollections();
+  await initShortcuts();
 })();
