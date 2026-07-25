@@ -911,6 +911,8 @@
       document.addEventListener("keydown", (e) => {
         const tag = (e.target?.tagName || "").toLowerCase();
         if (tag === "input" || tag === "textarea" || e.target?.isContentEditable) return;
+        // Command palette: Ctrl/Cmd+K (works even in inputs)
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); RPT.features.cmdk.open(); return; }
         if (e.metaKey || e.ctrlKey || e.altKey) return;
         const k = e.key;
         if (k === "?") { e.preventDefault(); this.cheatsheet(); return; }
@@ -995,11 +997,18 @@
         ${btn("gallery", I.image, "Gallery", "G")}
         ${btn("fold", I.fold, "Collapse all", "⇧C")}
         <div class="rpt-qb-sep"></div>
+      <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
+        <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
+      </span>
         <button class="rpt-qb-btn" data-act="new" aria-label="New comments">
           ${I.bell}
           <span class="rpt-qb-badge" style="display:none">0</span>
           <span class="rpt-qb-tip">New comments<kbd>N</kbd></span>
         </button>
+      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
+        <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
+      </button>
         ${btn("kbd", I.kbd, "Shortcuts", "?")}
         ${btn("close", I.close, "Hide toolbar")}`;
       bar.addEventListener("click", (e) => {
@@ -1012,10 +1021,13 @@
         else if (a === "gallery") RPT.features.gallery.open();
         else if (a === "fold")    RPT.features.folding.collapseAll();
         else if (a === "new")     RPT.features.shortcuts._jumpToNewest();
+      else if (a === "cmdk")    RPT.features.cmdk.open();
         else if (a === "kbd")     RPT.features.shortcuts.cheatsheet();
         else if (a === "close")   { bar.remove(); RPT.autorun.load().then((v) => RPT.autorun.save({ ...v, quickBar: false })); }
       });
       document.body.appendChild(bar);
+    // Refresh live-pill label after the DOM node exists
+    RPT.features.liveNew._renderStatus();
     },
     updateNewBadge(n) {
       const badge = document.querySelector(".rpt-qb-badge");
@@ -1292,6 +1304,8 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
+    await RPT.features.rules.apply();
+    RPT.features.chips.apply();
     await RPT.features.collections.attach();
     RPT.features.toolbar.attach();
     if (auto.ageWarning) RPT.features.ageWarning.check();
@@ -1303,11 +1317,20 @@
     // Ensure theme + i18n are ready for injected UI
     window.RPT_THEME?.load();
     window.RPT_I18N?.load();
+    window.RPT_A11Y?.load();
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
     RPT.tour.maybeShow();
+    // Re-apply rules whenever they change from Options
+    try {
+      chrome.storage.onChanged.addListener((changes, area) => {
+        if (area !== "local") return;
+        if (changes.rpt_rules) RPT.features.rules.apply();
+        if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
+      });
+    } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
     (async () => {
       if (!RPT.utils.isRedditThread()) return;
