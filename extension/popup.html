@@ -9,7 +9,7 @@
   <header>
     <div class="brand">
       <div class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <img src="icons/icon.png" alt="RPT logo" width="24" height="24" style="border-radius:6px">
       </div>
       <div>
         <h1 data-i18n="appName">Reddit Power Toolkit</h1>
@@ -28,6 +28,13 @@
   </header>
 
   <div class="activation" id="activation">
+    <label class="master-toggle" for="master-enable">
+      <input type="checkbox" id="master-enable" checked>
+      <span class="master-slider" aria-hidden="true"></span>
+      <span class="master-label"><strong data-i18n="enable_toolkit">Enable toolkit</strong>
+        <span class="master-sub" data-i18n="enable_toolkit_sub">Turn off to restore hidden comments</span>
+      </span>
+    </label>
     <div class="activation-head">
       <span class="status-dot" id="dot"></span>
       <div class="activation-meta">
