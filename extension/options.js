@@ -5,7 +5,7 @@ const KEYS = {
 };
 const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
 const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
-const G_DEF = { autoOpenPanel: true, showOnboarding: true };
+const G_DEF = { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
 
@@ -84,6 +84,25 @@ document.getElementById("reset").onclick = async () => {
   await new Promise((r) => chrome.storage.local.clear(r));
   location.reload();
 };
+
+/* -------- Author color legend (deterministic HSL per username) -------- */
+function authorColor(name) {
+  const s = String(name || "unknown");
+  let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return `hsl(${h % 360} 70% 60%)`;
+}
+function renderAuthorLegend() {
+  const host = document.getElementById("author-color-swatches");
+  if (!host) return;
+  const sample = ["spez", "AutoModerator", "gallowboob", "shitty_watercolour", "poem_for_your_sprog", "unidan", "you"];
+  host.innerHTML = sample.map((u) => {
+    const c = authorColor(u);
+    return `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--bg-2);border:1px solid var(--border);font-size:12px">
+      <span style="width:10px;height:10px;border-radius:999px;background:${c}"></span>
+      <span style="color:${c};font-weight:600">u/${u}</span>
+    </span>`;
+  }).join("");
+}
 
 /* -------- Accessibility -------- */
 async function initA11y() {
@@ -250,6 +269,7 @@ async function initCollections() {
   window.RPT_I18N.apply(document);
   await initLangTheme();
   await bindGroup("g", KEYS.general, G_DEF);
+  renderAuthorLegend();
   await bindGroup("a", KEYS.autorun, A_DEF);
   await bindGroup("f", KEYS.filters, F_DEF);
   await loadKeywords();

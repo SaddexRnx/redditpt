@@ -32,6 +32,11 @@
     </div>
     <label><input type="checkbox" data-g="autoOpenPanel"> <span data-i18n="auto_open_panel">Auto-open side panel on first visit to a comment thread</span></label>
     <label><input type="checkbox" data-g="showOnboarding"> <span data-i18n="show_onboarding">Show onboarding overlay on first Reddit thread</span></label>
+    <label><input type="checkbox" data-g="showAuthorColors"> <span>Color-code comment authors (colored side-stripe + tinted username)</span></label>
+    <div id="author-color-legend" class="muted" style="margin-top:8px">
+      <div style="margin-bottom:6px;font-size:12px">Preview — same username always gets the same color:</div>
+      <div id="author-color-swatches" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
   </section>
 
   <section id="a11y">

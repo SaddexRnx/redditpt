@@ -113,7 +113,7 @@
   /* ---------------- General preferences ---------------- */
   RPT.general = {
     KEY: "rpt_general",
-    defaults: { autoOpenPanel: true, showOnboarding: true },
+    defaults: { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true },
     async load() {
       const { [this.KEY]: v } = await RPT.storage.get(this.KEY);
       return { ...this.defaults, ...(v || {}) };
@@ -187,7 +187,24 @@
    * Applies a colored left border + author-name tint to each comment so users
    * are visually distinguishable at a glance. Works on both new and old Reddit. */
   RPT.features.authorColors = {
-    apply() {
+    _lastEnabled: true,
+    async apply() {
+      const gen = await RPT.general.load();
+      const enabled = gen.showAuthorColors !== false;
+      if (!enabled) {
+        // Remove any previously applied color styling.
+        document.querySelectorAll(".rpt-authored").forEach((el) => {
+          el.classList.remove("rpt-authored");
+          el.style.removeProperty("--rpt-author-color");
+        });
+        document.querySelectorAll("[data-rpt-tinted]").forEach((el) => {
+          el.style.color = "";
+          delete el.dataset.rptTinted;
+        });
+        this._lastEnabled = false;
+        return;
+      }
+      this._lastEnabled = true;
       RPT.state.comments.forEach((c) => {
         const color = RPT.utils.authorColor(c.author);
         c.el.classList.add("rpt-authored");
@@ -217,6 +234,7 @@
   /* ---------------- Folding ---------------- */
   RPT.features.folding = {
     STORAGE_KEY: "rpt_folded",
+    PAGE_KEY: "rpt_folded_all_pages",
     async toggle(id, forceState) {
       const c = RPT.state.comments.find((x) => x.id === id);
       if (!c) return;
@@ -241,6 +259,11 @@
         // Old-Reddit fallback: uses its own `.collapsed` class on `.thing.comment`.
         if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
       });
+      // Remember that this path is fully collapsed so SPA re-parse or newly
+      // streamed comments stay hidden.
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      pages[location.pathname] = true;
+      await RPT.storage.set({ [this.PAGE_KEY]: pages });
     },
     async expandAll() {
       RPT.features.commentTree.parse();
@@ -249,12 +272,25 @@
         c.el.removeAttribute?.("collapsed");
         if (c.el.classList?.contains("thing")) c.el.classList.remove("collapsed");
       });
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      delete pages[location.pathname];
+      await RPT.storage.set({ [this.PAGE_KEY]: pages });
+      // Also clear per-comment folded state for this path.
+      const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
+      delete map[location.pathname];
+      await RPT.storage.set({ [this.STORAGE_KEY]: map });
     },
     async restore() {
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const saved = map[location.pathname] || {};
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      const pageCollapsed = !!pages[location.pathname];
       RPT.state.comments.forEach((c) => {
-        if (saved[c.id]) { c.el.classList.add("rpt-collapsed"); c.el.setAttribute?.("collapsed", ""); }
+        if (pageCollapsed || saved[c.id]) {
+          c.el.classList.add("rpt-collapsed");
+          c.el.setAttribute?.("collapsed", "");
+          if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
+        }
       });
     },
   };
@@ -858,19 +894,51 @@
       let idx = 0;
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-gallery";
+      o.setAttribute("role", "dialog");
+      o.setAttribute("aria-modal", "true");
+      o.setAttribute("aria-label", "Image gallery");
+      o.tabIndex = -1;
       o.innerHTML = `
-        <button class="rpt-g-prev">‹</button>
-        <img class="rpt-g-img" src="${unique[0]}">
-        <button class="rpt-g-next">›</button>
-        <button class="rpt-close rpt-g-close">×</button>
-        <div class="rpt-g-count">1 / ${unique.length}</div>`;
+        <button class="rpt-g-prev" type="button" aria-label="Previous image (Left arrow)" title="Previous (←)">‹</button>
+        <img class="rpt-g-img" alt="Gallery image 1 of ${unique.length}" src="${unique[0]}">
+        <button class="rpt-g-next" type="button" aria-label="Next image (Right arrow)" title="Next (→)">›</button>
+        <button class="rpt-close rpt-g-close" type="button" aria-label="Close gallery (Esc)" title="Close (Esc)">×</button>
+        <div class="rpt-g-count" aria-live="polite">1 / ${unique.length}</div>`;
       const img = o.querySelector(".rpt-g-img");
       const count = o.querySelector(".rpt-g-count");
-      const go = (n) => { idx = (n + unique.length) % unique.length; img.src = unique[idx]; count.textContent = `${idx + 1} / ${unique.length}`; };
-      o.querySelector(".rpt-g-prev").onclick = () => go(idx - 1);
-      o.querySelector(".rpt-g-next").onclick = () => go(idx + 1);
-      o.querySelector(".rpt-g-close").onclick = () => o.remove();
+      const go = (n) => {
+        idx = (n + unique.length) % unique.length;
+        img.src = unique[idx];
+        img.alt = `Gallery image ${idx + 1} of ${unique.length}`;
+        count.textContent = `${idx + 1} / ${unique.length}`;
+      };
+      const prev = () => go(idx - 1);
+      const next = () => go(idx + 1);
+      const close = () => {
+        document.removeEventListener("keydown", onKey, true);
+        o.remove();
+      };
+      const stop = (e) => e.stopPropagation();
+      const bindBtn = (sel, fn) => {
+        const b = o.querySelector(sel);
+        b.addEventListener("click", (e) => { stop(e); e.preventDefault(); fn(); });
+      };
+      bindBtn(".rpt-g-prev", prev);
+      bindBtn(".rpt-g-next", next);
+      bindBtn(".rpt-g-close", close);
+      // Click on the dark backdrop closes; click on the image/buttons does not.
+      o.addEventListener("click", (e) => { if (e.target === o) close(); });
+      const onKey = (e) => {
+        if (e.key === "ArrowLeft")  { e.preventDefault(); e.stopPropagation(); prev(); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); next(); }
+        else if (e.key === "Home")  { e.preventDefault(); go(0); }
+        else if (e.key === "End")   { e.preventDefault(); go(unique.length - 1); }
+        else if (e.key === "Escape") { e.preventDefault(); close(); }
+      };
+      document.addEventListener("keydown", onKey, true);
       document.body.appendChild(o);
+      // Move focus into the dialog so arrow keys / Escape are captured immediately.
+      setTimeout(() => o.focus(), 0);
     },
   };
 
@@ -1050,6 +1118,9 @@
         ${btn("gallery", I.image, "Gallery", "G")}
         ${btn("fold", I.fold, "Collapse all", "⇧C")}
         <div class="rpt-qb-sep"></div>
+      <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="Parsing status" title="Thread parsing status">
+        <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+      </span>
       <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
         <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
       </span>
@@ -1081,6 +1152,9 @@
       document.body.appendChild(bar);
     // Refresh live-pill label after the DOM node exists
     RPT.features.liveNew._renderStatus();
+    // Reflect current status on the freshly mounted pill.
+    RPT.status.set(RPT.state.comments.length ? "ready" : "idle",
+      RPT.state.comments.length ? `Ready · ${RPT.state.comments.length} comments` : "Idle");
     },
     updateNewBadge(n) {
       const badge = document.querySelector(".rpt-qb-badge");
@@ -1101,7 +1175,15 @@
       return `
         <header class="rpt-panel-head">
           <div class="rpt-brand"><span class="rpt-brand-dot"></span>Reddit Power Toolkit</div>
-          <button class="rpt-panel-close" aria-label="Close">×</button>
+          <div class="rpt-panel-head-actions">
+            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" title="Thread parsing status">
+              <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+            </span>
+            <button class="rpt-panel-refresh" type="button" aria-label="Re-parse this thread" title="Refresh — re-parse comments, stats and colors">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+            </button>
+            <button class="rpt-panel-close" aria-label="Close panel">×</button>
+          </div>
         </header>
         <div class="rpt-chips">
           <span class="rpt-chip" data-chip="op">OP only</span>
@@ -1185,6 +1267,15 @@
         });
       };
       p.querySelector(".rpt-panel-close").onclick = () => p.remove();
+      const refreshBtn = p.querySelector(".rpt-panel-refresh");
+      if (refreshBtn) {
+        refreshBtn.onclick = async () => {
+          refreshBtn.classList.add("rpt-spin");
+          try { await RPT.resync(); } finally {
+            setTimeout(() => refreshBtn.classList.remove("rpt-spin"), 400);
+          }
+        };
+      }
       p.querySelectorAll(".rpt-chip").forEach((ch) => {
         ch.onclick = () => {
           const k = ch.dataset.chip;
@@ -1378,7 +1469,18 @@
   };
 
   /* ---------------- Bootstrap ---------------- */
-  const runAll = RPT.utils.debounce(async () => {
+  RPT.status = {
+    set(state, msg) {
+      // state: "parsing" | "ready" | "idle"
+      document.querySelectorAll(".rpt-status-pill").forEach((el) => {
+        el.dataset.state = state;
+        const t = el.querySelector(".rpt-status-txt");
+        if (t) t.textContent = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
+      });
+    },
+  };
+  const _runAllImpl = async () => {
+    RPT.status.set("parsing", "Parsing thread…");
     const auto = await RPT.autorun.load();
     RPT.features.commentTree.parse();
     RPT.features.layers.remove();
@@ -1387,7 +1489,7 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
-    RPT.features.authorColors.apply();
+    await RPT.features.authorColors.apply();
     await RPT.features.rules.apply();
     RPT.features.chips.apply();
     await RPT.features.collections.attach();
@@ -1395,7 +1497,22 @@
     if (auto.ageWarning) RPT.features.ageWarning.check();
     RPT.features.history.record();
     RPT.features.history.trackAnalytics();
-  }, 400);
+    RPT.status.set("ready", `Ready · ${RPT.state.comments.length} comments`);
+  };
+  const runAll = RPT.utils.debounce(_runAllImpl, 400);
+  // Force immediate re-parse — used by the panel Refresh button.
+  RPT.resync = async () => {
+    RPT.state = { tree: null, comments: [], post: null };
+    await _runAllImpl();
+    // Refresh open panel tabs so stats/tree reflect the new parse.
+    const p = document.querySelector(".rpt-panel");
+    if (p) {
+      const active = p.querySelector(".rpt-tabs button.active")?.dataset.tab;
+      RPT.features.commentTree.renderInto(p.querySelector(".rpt-tree-container"));
+      if (active === "stats") RPT.ui.renderStats(p);
+      if (active === "collect") RPT.ui.renderCollections(p);
+    }
+  };
 
   const boot = () => {
     // Ensure theme + i18n are ready for injected UI
@@ -1428,6 +1545,7 @@
         if (area !== "local") return;
         if (changes.rpt_rules) RPT.features.rules.apply();
         if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
+        if (changes.rpt_general) RPT.features.authorColors.apply();
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)

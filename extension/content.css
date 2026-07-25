@@ -91,6 +91,36 @@
 }
 .rpt-panel-close:hover { color: var(--rpt-text); }
 
+/* Panel-head actions cluster (status pill + refresh + close) */
+.rpt-panel-head-actions { display: flex; align-items: center; gap: 6px; }
+.rpt-panel-refresh {
+  background: transparent; border: 1px solid var(--rpt-border);
+  color: var(--rpt-muted); border-radius: 6px; padding: 4px 6px;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  transition: color .15s, border-color .15s, transform .4s;
+}
+.rpt-panel-refresh:hover { color: var(--rpt-green); border-color: var(--rpt-green); }
+.rpt-panel-refresh.rpt-spin svg { animation: rpt-spin .6s linear; }
+@keyframes rpt-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+/* Parsing / loading status pill (used in quick-bar and panel head) */
+.rpt-status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+  background: var(--rpt-bg-2); color: var(--rpt-muted);
+  border: 1px solid var(--rpt-border);
+}
+.rpt-status-dot {
+  width: 6px; height: 6px; border-radius: 999px; background: var(--rpt-muted);
+}
+.rpt-status-pill[data-state="parsing"] { color: var(--rpt-blue); border-color: var(--rpt-blue); }
+.rpt-status-pill[data-state="parsing"] .rpt-status-dot {
+  background: var(--rpt-blue); animation: rpt-pulse 1s ease-in-out infinite;
+}
+.rpt-status-pill[data-state="ready"] { color: var(--rpt-green); border-color: var(--rpt-green); }
+.rpt-status-pill[data-state="ready"] .rpt-status-dot { background: var(--rpt-green); box-shadow: 0 0 6px var(--rpt-green); }
+@keyframes rpt-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+
 /* Filter chips (OP / mod / awarded / etc) */
 .rpt-chips {
   display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 14px;
