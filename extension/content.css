@@ -556,3 +556,12 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-cmdk-empty { padding: 20px; text-align: center; color: var(--rpt-muted); font-size: 12px; }
 .rpt-cmdk-foot { padding: 8px 12px; border-top: 1px solid var(--rpt-border); color: var(--rpt-muted); font-size: 11px; display: flex; gap: 12px; }
 .rpt-cmdk-foot kbd { background: var(--rpt-bg-2); border: 1px solid var(--rpt-border); border-radius: 3px; padding: 0 5px; }
+
+/* Visually-hidden aria-live region for status announcements. */
+.rpt-sr-live {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}

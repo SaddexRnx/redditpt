@@ -76,6 +76,22 @@
       let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
       return `hsl(${h % 360} 70% 60%)`;
     },
+    /* Normalize a KeyboardEvent to a stable string used by the custom-shortcut
+     * config (e.g. "ArrowLeft", "Shift+C", "R", "Ctrl+K"). Kept in one place so
+     * the Options capture UI and the runtime matcher always agree. */
+    keyEventToStr(e) {
+      if (["Shift","Control","Alt","Meta","OS"].includes(e.key)) return null;
+      const parts = [];
+      if (e.ctrlKey) parts.push("Ctrl");
+      if (e.metaKey) parts.push("Meta");
+      if (e.altKey) parts.push("Alt");
+      if (e.shiftKey && e.key.length > 1) parts.push("Shift");
+      let k = e.key;
+      if (k === " ") k = "Space";
+      if (k.length === 1) k = e.shiftKey ? k.toUpperCase() : k.toLowerCase();
+      parts.push(k);
+      return parts.join("+");
+    },
   };
 
   /* ---------------- icon set (inline SVG) ---------------- */
@@ -98,6 +114,107 @@
     close:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
   };
   RPT.ICON = I;
+
+  /* ---------------- Accessibility helpers (focus trap, live region) ---------------- *
+   * Every modal (command palette, gallery, summary, conversation, cheatsheet)
+   * runs through RPT.a11y.trapModal so keyboard users can Tab within the
+   * dialog, don't fall back to the page, and land back on the trigger element
+   * when the modal closes. A single visually-hidden aria-live region
+   * announces parsing/loading status to screen readers.                     */
+  RPT.a11y = {
+    _liveEl: null,
+    ensureLive() {
+      if (this._liveEl && document.body.contains(this._liveEl)) return this._liveEl;
+      const el = document.createElement("div");
+      el.className = "rpt-sr-live";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      el.setAttribute("aria-atomic", "true");
+      document.body.appendChild(el);
+      this._liveEl = el;
+      return el;
+    },
+    announce(msg) {
+      const el = this.ensureLive();
+      // Clear then set so identical consecutive messages are re-announced.
+      el.textContent = "";
+      setTimeout(() => { el.textContent = String(msg || ""); }, 30);
+    },
+    _focusables(root) {
+      const sel = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.from(root.querySelectorAll(sel))
+        .filter((el) => !el.hasAttribute("disabled") && el.getClientRects().length > 0);
+    },
+    /* Traps Tab inside `root`, moves initial focus in, and restores focus
+     * to the previously-active element when `root` leaves the DOM.        */
+    trapModal(root) {
+      const prev = document.activeElement;
+      if (!root.hasAttribute("tabindex")) root.tabIndex = -1;
+      const onKey = (e) => {
+        if (e.key !== "Tab") return;
+        if (!root.contains(document.activeElement)) {
+          e.preventDefault(); (this._focusables(root)[0] || root).focus?.(); return;
+        }
+        const list = this._focusables(root);
+        if (!list.length) { e.preventDefault(); root.focus?.(); return; }
+        const first = list[0], last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      };
+      document.addEventListener("keydown", onKey, true);
+      setTimeout(() => {
+        const list = this._focusables(root);
+        (list[0] || root).focus?.();
+      }, 20);
+      const cleanup = () => {
+        document.removeEventListener("keydown", onKey, true);
+        obs.disconnect();
+        try { prev && prev.focus && prev.focus({ preventScroll: true }); } catch {}
+      };
+      const obs = new MutationObserver(() => {
+        if (!document.body.contains(root)) cleanup();
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      return cleanup;
+    },
+  };
+
+  /* ---------------- Custom keyboard shortcuts config ---------------- *
+   * Loaded from chrome.storage (rpt_shortcuts) with sensible defaults so
+   * runtime code can call RPT.customKeys.cfg synchronously.              */
+  RPT.customKeys = {
+    KEY: "rpt_shortcuts",
+    DEFAULTS: { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" },
+    cfg: { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" },
+    async load() {
+      const { [this.KEY]: v = {} } = await RPT.storage.get(this.KEY);
+      this.cfg = { ...this.DEFAULTS, ...v };
+      return this.cfg;
+    },
+  };
+
+  /* ---------------- Per-thread gallery position ---------------- *
+   * Remembers the last-viewed image index per Reddit path so revisiting
+   * a thread resumes the gallery where the user left off.                */
+  RPT.galleryPos = {
+    KEY: "rpt_gallery_pos",
+    _cache: null,
+    async _read() {
+      if (this._cache) return this._cache;
+      const { [this.KEY]: v = {} } = await RPT.storage.get(this.KEY);
+      this._cache = v; return v;
+    },
+    async get(path) { const v = await this._read(); return Number(v[path]) || 0; },
+    async set(path, idx) {
+      const v = await this._read();
+      v[path] = idx;
+      // Cap history at 100 threads to keep storage tiny.
+      const keys = Object.keys(v);
+      if (keys.length > 100) delete v[keys[0]];
+      this._cache = v;
+      await RPT.storage.set({ [this.KEY]: v });
+    },
+  };
 
   /* ---------------- Auto-run preferences ---------------- */
   RPT.autorun = {
@@ -349,6 +466,7 @@
       overlay.querySelector(".rpt-close").onclick = () => overlay.remove();
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
+      RPT.a11y.trapModal(overlay);
     },
   };
 
@@ -449,6 +567,7 @@
         };
       });
       document.body.appendChild(o);
+      RPT.a11y.trapModal(o);
     },
   };
 
@@ -785,6 +904,8 @@
       back.addEventListener("click", (e) => { if (e.target === back) this.close(); });
       document.body.appendChild(back);
       render();
+      // Trap Tab within the palette; input keeps first focus.
+      RPT.a11y.trapModal(back);
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
@@ -892,6 +1013,8 @@
       const unique = Array.from(new Set(imgs));
       if (!unique.length) { alert("No images detected on this page."); return; }
       let idx = 0;
+      const path = location.pathname;
+      const savePos = RPT.utils.debounce((i) => RPT.galleryPos.set(path, i), 300);
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-gallery";
       o.setAttribute("role", "dialog");
@@ -911,6 +1034,7 @@
         img.src = unique[idx];
         img.alt = `Gallery image ${idx + 1} of ${unique.length}`;
         count.textContent = `${idx + 1} / ${unique.length}`;
+        savePos(idx);
       };
       const prev = () => go(idx - 1);
       const next = () => go(idx + 1);
@@ -929,16 +1053,22 @@
       // Click on the dark backdrop closes; click on the image/buttons does not.
       o.addEventListener("click", (e) => { if (e.target === o) close(); });
       const onKey = (e) => {
-        if (e.key === "ArrowLeft")  { e.preventDefault(); e.stopPropagation(); prev(); }
-        else if (e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); next(); }
-        else if (e.key === "Home")  { e.preventDefault(); go(0); }
-        else if (e.key === "End")   { e.preventDefault(); go(unique.length - 1); }
-        else if (e.key === "Escape") { e.preventDefault(); close(); }
+        const s = RPT.utils.keyEventToStr(e);
+        const c = RPT.customKeys.cfg;
+        if (s === c.galleryPrev)      { e.preventDefault(); e.stopPropagation(); prev(); }
+        else if (s === c.galleryNext) { e.preventDefault(); e.stopPropagation(); next(); }
+        else if (e.key === "Home")    { e.preventDefault(); go(0); }
+        else if (e.key === "End")     { e.preventDefault(); go(unique.length - 1); }
+        else if (e.key === "Escape")  { e.preventDefault(); close(); }
       };
       document.addEventListener("keydown", onKey, true);
       document.body.appendChild(o);
-      // Move focus into the dialog so arrow keys / Escape are captured immediately.
-      setTimeout(() => o.focus(), 0);
+      // Focus trap + restore-on-close.
+      RPT.a11y.trapModal(o);
+      // Resume at the last-viewed image for this thread.
+      RPT.galleryPos.get(path).then((saved) => {
+        if (saved > 0 && saved < unique.length) go(saved);
+      });
     },
   };
 
@@ -1035,6 +1165,12 @@
         // Command palette: Ctrl/Cmd+K (works even in inputs)
         if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); RPT.features.cmdk.open(); return; }
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        // Configurable shortcuts (collapse-all, refresh) — matched first so
+        // user overrides beat the legacy single-key defaults below.
+        const s = RPT.utils.keyEventToStr(e);
+        const cfg = RPT.customKeys.cfg;
+        if (s && s === cfg.collapseAll) { e.preventDefault(); RPT.features.folding.collapseAll(); return; }
+        if (s && s === cfg.refresh)     { e.preventDefault(); RPT.resync?.(); return; }
         const k = e.key;
         if (k === "?") { e.preventDefault(); this.cheatsheet(); return; }
         if (k === "Escape") { document.querySelectorAll(".rpt-overlay").forEach((o) => o.remove()); return; }
@@ -1048,7 +1184,6 @@
           else RPT.features.layers.remove();
           return;
         }
-        if (k === "C") { RPT.features.folding.collapseAll(); return; }
         if (k === "E") { RPT.features.folding.expandAll(); return; }
         if (k === "j") { e.preventDefault(); this._move(1); return; }
         if (k === "k") { e.preventDefault(); this._move(-1); return; }
@@ -1078,6 +1213,9 @@
       if (document.querySelector(".rpt-cheat-overlay")) return;
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-cheat-overlay";
+      o.setAttribute("role", "dialog");
+      o.setAttribute("aria-modal", "true");
+      o.setAttribute("aria-label", "Keyboard shortcuts");
       o.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
@@ -1093,6 +1231,7 @@
       o.querySelector(".rpt-close").onclick = () => o.remove();
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
+      RPT.a11y.trapModal(o);
     },
   };
 
@@ -1472,11 +1611,16 @@
   RPT.status = {
     set(state, msg) {
       // state: "parsing" | "ready" | "idle"
+      const label = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
       document.querySelectorAll(".rpt-status-pill").forEach((el) => {
         el.dataset.state = state;
         const t = el.querySelector(".rpt-status-txt");
-        if (t) t.textContent = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
+        if (t) t.textContent = label;
       });
+      // Reliable screen-reader announcement — the pill itself may not be
+      // visible when the panel is closed, so route through a dedicated
+      // visually-hidden aria-live region.
+      try { RPT.a11y?.announce(`Thread status: ${label}`); } catch {}
     },
   };
   const _runAllImpl = async () => {
@@ -1519,6 +1663,8 @@
     window.RPT_THEME?.load();
     window.RPT_I18N?.load();
     window.RPT_A11Y?.load();
+    RPT.a11y.ensureLive();
+    RPT.customKeys.load();
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
@@ -1546,6 +1692,7 @@
         if (changes.rpt_rules) RPT.features.rules.apply();
         if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
         if (changes.rpt_general) RPT.features.authorColors.apply();
+        if (changes.rpt_shortcuts) RPT.customKeys.load();
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
