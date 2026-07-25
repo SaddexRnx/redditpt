@@ -1037,7 +1037,7 @@
       const bar = document.createElement("div");
       bar.className = "rpt-qb";
       const btn = (act, icon, label, sc) => `
-        <button class="rpt-qb-btn" data-act="${act}" aria-label="${label}">
+        <button class="rpt-qb-btn" data-act="${act}" aria-label="${label}" title="${label}${sc ? ` (${sc})` : ""}">
           ${icon}
           <span class="rpt-qb-tip">${label}${sc ? `<kbd>${sc}</kbd>` : ""}</span>
         </button>`;
@@ -1053,12 +1053,12 @@
       <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
         <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
       </span>
-        <button class="rpt-qb-btn" data-act="new" aria-label="New comments">
+        <button class="rpt-qb-btn" data-act="new" aria-label="New comments" title="Jump to newest (N)">
           ${I.bell}
           <span class="rpt-qb-badge" style="display:none">0</span>
           <span class="rpt-qb-tip">New comments<kbd>N</kbd></span>
         </button>
-      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette">
+      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette" title="Command palette (⌘K)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
         <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
       </button>
