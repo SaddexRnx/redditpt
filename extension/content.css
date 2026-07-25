@@ -1,0 +1,182 @@
+/* Reddit Power Toolkit — injected styles. All classes are prefixed rpt- to
+   avoid colliding with Reddit's own styles. */
+
+.rpt-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4500, #ff8717);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  z-index: 2147483000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease;
+}
+.rpt-fab:hover { transform: scale(1.06); }
+
+.rpt-panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 380px;
+  background: #fff;
+  color: #111827;
+  z-index: 2147483001;
+  box-shadow: -8px 0 30px rgba(0,0,0,0.15);
+  display: flex; flex-direction: column;
+  font: 13px system-ui, -apple-system, Segoe UI, sans-serif;
+}
+.rpt-panel-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 16px; border-bottom: 1px solid #eee;
+  background: linear-gradient(135deg,#ff4500,#ff8717); color:#fff;
+}
+.rpt-brand { font-weight: 700; }
+.rpt-panel-close {
+  background: transparent; border:none; color:#fff; font-size:22px; cursor:pointer;
+}
+.rpt-tabs {
+  display: flex; gap: 2px; padding: 8px; border-bottom:1px solid #eee;
+  overflow-x: auto;
+}
+.rpt-tabs button {
+  border: none; background:#f3f4f6; padding: 6px 10px; border-radius: 6px;
+  cursor: pointer; font-size: 12px; color:#374151; white-space: nowrap;
+}
+.rpt-tabs button.active { background:#ff4500; color:#fff; }
+.rpt-tab-body { flex: 1; overflow: auto; padding: 12px 16px; }
+.rpt-tabpane { display:none; }
+.rpt-tabpane.active { display:block; }
+.rpt-tabpane label { display:block; margin:6px 0; }
+
+.rpt-btnrow { display: flex; flex-direction: column; gap: 8px; }
+.rpt-btnrow button, .rpt-kw-save {
+  background:#111827; color:#fff; border:none; padding:8px 12px;
+  border-radius:6px; cursor:pointer; font-size:13px;
+}
+.rpt-btnrow button:hover, .rpt-kw-save:hover { background:#ff4500; }
+
+.rpt-kw {
+  width:100%; box-sizing:border-box; border:1px solid #d1d5db;
+  border-radius:6px; padding:8px; margin-bottom:8px; font: inherit;
+}
+.rpt-muted { color:#6b7280; margin: 0 0 8px; }
+
+.rpt-tree { list-style: none; padding-left: 12px; margin: 0; }
+.rpt-tree ul { list-style: none; padding-left: 14px; border-left: 1px dashed #d1d5db; margin: 4px 0; }
+.rpt-tree-item {
+  padding: 4px 6px; border-radius: 4px; cursor: pointer;
+  display: flex; gap: 6px; align-items: baseline;
+}
+.rpt-tree-item:hover { background: #fff4ef; }
+.rpt-author { font-weight: 600; color:#ff4500; }
+.rpt-score { font-size: 11px; color:#6b7280; }
+.rpt-preview { color:#374151; font-size:12px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rpt-empty { color:#6b7280; }
+
+.rpt-flash { outline: 3px solid #ff4500; outline-offset: 2px; transition: outline .3s; }
+
+/* Folding */
+.rpt-collapsed [slot="comment"],
+.rpt-collapsed .child,
+.rpt-collapsed .usertext,
+.rpt-collapsed .md { display: none !important; }
+
+/* Cleaner hidden */
+.rpt-hidden { display: none !important; }
+
+/* Depth layers */
+body.rpt-layers-on shreddit-comment.rpt-layer,
+body.rpt-layers-on .thing.comment.rpt-layer {
+  border-left: 3px solid transparent;
+  padding-left: 8px;
+}
+body.rpt-layers-on .rpt-layer-0 { border-left-color:#ef4444; }
+body.rpt-layers-on .rpt-layer-1 { border-left-color:#f97316; }
+body.rpt-layers-on .rpt-layer-2 { border-left-color:#eab308; }
+body.rpt-layers-on .rpt-layer-3 { border-left-color:#22c55e; }
+body.rpt-layers-on .rpt-layer-4 { border-left-color:#06b6d4; }
+body.rpt-layers-on .rpt-layer-5 { border-left-color:#6366f1; }
+body.rpt-layers-on .rpt-layer-6 { border-left-color:#a855f7; }
+body.rpt-layers-on .rpt-layer-7 { border-left-color:#ec4899; }
+body.rpt-layers-on .rpt-layer-8 { border-left-color:#111827; }
+
+/* Highlighter */
+mark.rpt-hl { background:#fde68a; color:#111827; padding:0 2px; border-radius:2px; }
+
+/* User tags */
+.rpt-user-tag {
+  display:inline-block; margin-left:6px; padding:1px 6px; border-radius:999px;
+  font-size:10px; color:#fff; font-weight:600; vertical-align: middle;
+}
+
+/* Toolbar */
+.rpt-toolbar { display:flex; gap:4px; margin: 4px 0; }
+.rpt-tb-btn {
+  border: 1px solid #d1d5db; background:#fff; padding:2px 8px;
+  border-radius:4px; cursor:pointer; font-size:12px;
+}
+.rpt-tb-btn:hover { background:#ff4500; color:#fff; border-color:#ff4500; }
+
+/* Overlays: conversation + gallery */
+.rpt-overlay {
+  position: fixed; inset:0; background: rgba(0,0,0,.65);
+  display:flex; align-items:center; justify-content:center;
+  z-index: 2147483002;
+}
+.rpt-overlay-panel {
+  background:#fff; width: min(760px, 92vw); max-height: 88vh;
+  border-radius: 12px; overflow: hidden; display:flex; flex-direction:column;
+  font: 14px system-ui;
+}
+.rpt-overlay-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 16px; border-bottom:1px solid #eee;
+  background: linear-gradient(135deg,#ff4500,#ff8717); color:#fff;
+}
+.rpt-overlay-head h2 { margin:0; font-size:15px; }
+.rpt-close { background:transparent; border:none; color:#fff; font-size:22px; cursor:pointer; }
+.rpt-convo-body { padding: 16px; overflow:auto; }
+.rpt-msg { margin: 8px 0; }
+.rpt-msg-author { font-weight:600; color:#ff4500; font-size:12px; }
+.rpt-msg-bubble {
+  display:inline-block; background:#f3f4f6; padding: 8px 12px;
+  border-radius: 12px; white-space: pre-wrap; max-width: 100%;
+}
+
+.rpt-gallery { flex-direction: row; }
+.rpt-g-img { max-width: 90vw; max-height: 85vh; object-fit: contain; background:#000; }
+.rpt-g-prev, .rpt-g-next {
+  background: rgba(255,255,255,.15); color:#fff; border:none; font-size:40px;
+  padding: 8px 16px; cursor:pointer; border-radius: 8px; margin: 0 12px;
+}
+.rpt-g-close { position: absolute; top: 16px; right: 20px; font-size: 32px; }
+.rpt-g-count { position: absolute; bottom: 20px; color:#fff; font-size:14px; }
+
+/* Stats cards */
+.rpt-stats { display:grid; gap:8px; }
+.rpt-card { border:1px solid #e5e7eb; border-radius:8px; padding:10px; }
+.rpt-k { font-size:11px; color:#6b7280; text-transform: uppercase; letter-spacing:.04em; }
+.rpt-v { font-weight:600; font-size:14px; margin-top:2px; }
+.rpt-health ul { margin: 6px 0 0 16px; padding:0; font-size:12px; color:#374151; }
+
+/* Age warning */
+.rpt-age-warn {
+  background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:8px;
+  margin:8px 12px; font-weight:600;
+}
+
+/* Link preview tooltip */
+.rpt-linktip {
+  position: absolute; z-index: 2147483003; background:#111827; color:#fff;
+  padding: 8px 10px; border-radius: 6px; font-size:12px; max-width: 320px;
+  pointer-events: none; box-shadow: 0 8px 20px rgba(0,0,0,.25);
+}
+.rpt-linktip-url { color:#9ca3af; word-break: break-all; margin-top:2px; }
+.rpt-linktip-kind { color:#fbbf24; margin-top:4px; text-transform: uppercase; font-size:10px; }
