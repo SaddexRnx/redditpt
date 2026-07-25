@@ -160,12 +160,15 @@
       const walk = (nodes, parent) => {
         nodes.forEach((n) => {
           const li = document.createElement("li");
+          const color = RPT.utils.authorColor(n.author);
           li.innerHTML = `
             <div class="rpt-tree-item" data-id="${RPT.utils.escapeHtml(n.id)}">
+              <span class="rpt-author-dot" style="background:${color}"></span>
               <span class="rpt-author">${RPT.utils.escapeHtml(n.author)}</span>
               <span class="rpt-score">${n.score}</span>
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
             </div>`;
+          li.querySelector(".rpt-author").style.color = color;
           li.querySelector(".rpt-tree-item").addEventListener("click", () => {
             n.el.scrollIntoView({ behavior: "smooth", block: "center" });
             n.el.classList.add("rpt-flash");
@@ -177,6 +180,24 @@
       };
       walk(roots, ul);
       container.appendChild(ul);
+    },
+  };
+
+  /* ---------------- Author auto-coloring on live comments ---------------- *
+   * Applies a colored left border + author-name tint to each comment so users
+   * are visually distinguishable at a glance. Works on both new and old Reddit. */
+  RPT.features.authorColors = {
+    apply() {
+      RPT.state.comments.forEach((c) => {
+        const color = RPT.utils.authorColor(c.author);
+        c.el.classList.add("rpt-authored");
+        c.el.style.setProperty("--rpt-author-color", color);
+        const authorEl = c.el.querySelector?.("a[href*='/user/'], [slot='authorName'] a, .author");
+        if (authorEl && !authorEl.dataset.rptTinted) {
+          authorEl.dataset.rptTinted = "1";
+          authorEl.style.color = color;
+        }
+      });
     },
   };
 
