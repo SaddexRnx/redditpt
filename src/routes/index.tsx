@@ -642,7 +642,7 @@ function Index() {
 
       <footer className={`border-t ${border}`}>
         <div className={`mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-sm sm:flex-row sm:items-center ${muted}`}>
-          <span>Uses the Reddit color palette · 100% local, zero tracking.</span>
+          <span>100% local · Zero tracking · Open source</span>
           <div className="flex flex-wrap items-center gap-4">
             <a href="https://github.com/Saddexrnxrnx" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
               <Github className="h-4 w-4" /> github.com/Saddexrnx
