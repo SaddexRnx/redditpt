@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.9.6-10b981?style=flat-square" alt="Version 1.9.6">
+  <img src="https://img.shields.io/badge/version-1.9.7-10b981?style=flat-square" alt="Version 1.9.7">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.9.6** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
+> **Current release: v1.9.7** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -300,14 +300,14 @@ bun run dev
 
 ## Changelog
 
-Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases).
+Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases).
 
-### v1.9.6 — current
+### v1.9.7 — current
 
 - **French translation fix** — removed Spanish bleed-through on the website feature cards and forced missing non-English strings to fall back only to English, never another language.
 - **Extension activation clarity** — panel controls now show a clear active/off visual state so selected features are visibly running.
 - **Button readability pass** — centered labels, wider tap targets, and stronger text contrast for the side panel, quick views and power hub.
-- **Version sync** — manifest, popup, Options, README, website footer and About panel now show v1.9.6.
+- **Version sync** — manifest, popup, Options, README, website footer and About panel now show v1.9.7.
 
 ### v1.9.5
 
@@ -430,7 +430,7 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 - **v1.7** — Full settings backup, conflict detection, safer import, reset to defaults
 - **v1.8** — 36 advanced local-first power modules
 - **v1.9** — Performance panel, per-subreddit rules, backup/restore, lazy loading
-- **v1.9.1–1.9.6** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup and French translation repair
+- **v1.9.1–1.9.7** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup and French translation repair
 
 ---
 

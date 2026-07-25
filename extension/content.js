@@ -12,8 +12,8 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.9.6",
-    BUILD_DATE: "2026-07-25",
+    VERSION: "1.9.7",
+    BUILD_DATE: "2026-07-26",
   });
   const tr = (key) => window.RPT_I18N?.t(key) || key;
   const tx = (value) => window.RPT_I18N?.text(value) || value;
@@ -1250,10 +1250,10 @@
               ${tr("about_desc")}
             </p>
             <div style="display:grid;gap:8px">
-              <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener">
+              <a class="rpt-about-link" href="https://github.com/Saddexrnx/redditpt/releases" target="_blank" rel="noopener">
                 <span>${tr("changelog_releases")}</span><span aria-hidden="true">↗</span>
               </a>
-              <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener">
+              <a class="rpt-about-link" href="https://github.com/Saddexrnx/redditpt" target="_blank" rel="noopener">
                 <span>${tr("github_repository")}</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
