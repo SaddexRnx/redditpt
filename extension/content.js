@@ -483,6 +483,7 @@
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
       RPT.a11y.trapModal(overlay);
+      RPT.a11y.addKeyHelp(overlay, "Keyboard: Esc closes this dialog. Tab and Shift+Tab move focus between the close button and the conversation.");
     },
   };
 
@@ -584,6 +585,7 @@
       });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
+      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes. Tab and Shift+Tab move focus between items. Enter or Space jumps to the selected comment.");
     },
   };
 
