@@ -1531,6 +1531,14 @@
       document.body.appendChild(p);
       this.wirePanel(p);
     },
+    /* Ensure the panel is open on the Tree tab, returning the mounted node. */
+    ensurePanel() {
+      let p = document.querySelector(".rpt-panel");
+      if (!p) { this.togglePanel(); p = document.querySelector(".rpt-panel"); }
+      const treeBtn = p && p.querySelector('.rpt-tabs button[data-tab="tree"]');
+      if (treeBtn && !treeBtn.classList.contains("active")) treeBtn.click();
+      return p;
+    },
     panelHTML() {
       return `
         <header class="rpt-panel-head">
