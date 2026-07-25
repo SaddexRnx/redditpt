@@ -1039,7 +1039,7 @@
       render();
       // Trap Tab within the palette; input keeps first focus.
       RPT.a11y.trapModal(back);
-      RPT.a11y.addKeyHelp(back, () => "Keyboard: Type to filter. Up and Down arrows navigate. Enter runs the selected command. Esc closes. Tab cycles focus inside the palette.");
+      RPT.a11y.addKeyHelp(back, () => tr("kbd_help_cmdk"));
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
