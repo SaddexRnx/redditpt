@@ -8,7 +8,7 @@
   width: 52px;
   height: 52px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff4500, #ff8717);
+  background: #10b981;
   color: white;
   font-weight: 700;
   font-size: 13px;
@@ -34,7 +34,7 @@
 .rpt-panel-head {
   display:flex; align-items:center; justify-content:space-between;
   padding: 12px 16px; border-bottom: 1px solid #eee;
-  background: linear-gradient(135deg,#ff4500,#ff8717); color:#fff;
+  background: #10b981; color:#fff;
 }
 .rpt-brand { font-weight: 700; }
 .rpt-panel-close {
@@ -48,7 +48,7 @@
   border: none; background:#f3f4f6; padding: 6px 10px; border-radius: 6px;
   cursor: pointer; font-size: 12px; color:#374151; white-space: nowrap;
 }
-.rpt-tabs button.active { background:#ff4500; color:#fff; }
+.rpt-tabs button.active { background:#10b981; color:#fff; }
 .rpt-tab-body { flex: 1; overflow: auto; padding: 12px 16px; }
 .rpt-tabpane { display:none; }
 .rpt-tabpane.active { display:block; }
@@ -59,7 +59,7 @@
   background:#111827; color:#fff; border:none; padding:8px 12px;
   border-radius:6px; cursor:pointer; font-size:13px;
 }
-.rpt-btnrow button:hover, .rpt-kw-save:hover { background:#ff4500; }
+.rpt-btnrow button:hover, .rpt-kw-save:hover { background:#10b981; }
 
 .rpt-kw {
   width:100%; box-sizing:border-box; border:1px solid #d1d5db;
@@ -74,13 +74,13 @@
   display: flex; gap: 6px; align-items: baseline;
 }
 .rpt-tree-item:hover { background: #fff4ef; }
-.rpt-author { font-weight: 600; color:#ff4500; }
+.rpt-author { font-weight: 600; color:#10b981; }
 .rpt-score { font-size: 11px; color:#6b7280; }
 .rpt-preview { color:#374151; font-size:12px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rpt-empty { color:#6b7280; }
 
-.rpt-flash { outline: 3px solid #ff4500; outline-offset: 2px; transition: outline .3s; }
+.rpt-flash { outline: 3px solid #10b981; outline-offset: 2px; transition: outline .3s; }
 
 /* Folding */
 .rpt-collapsed [slot="comment"],
@@ -122,7 +122,7 @@ mark.rpt-hl { background:#fde68a; color:#111827; padding:0 2px; border-radius:2p
   border: 1px solid #d1d5db; background:#fff; padding:2px 8px;
   border-radius:4px; cursor:pointer; font-size:12px;
 }
-.rpt-tb-btn:hover { background:#ff4500; color:#fff; border-color:#ff4500; }
+.rpt-tb-btn:hover { background:#10b981; color:#fff; border-color:#10b981; }
 
 /* Overlays: conversation + gallery */
 .rpt-overlay {
@@ -138,13 +138,13 @@ mark.rpt-hl { background:#fde68a; color:#111827; padding:0 2px; border-radius:2p
 .rpt-overlay-head {
   display:flex; align-items:center; justify-content:space-between;
   padding: 12px 16px; border-bottom:1px solid #eee;
-  background: linear-gradient(135deg,#ff4500,#ff8717); color:#fff;
+  background: #10b981; color:#fff;
 }
 .rpt-overlay-head h2 { margin:0; font-size:15px; }
 .rpt-close { background:transparent; border:none; color:#fff; font-size:22px; cursor:pointer; }
 .rpt-convo-body { padding: 16px; overflow:auto; }
 .rpt-msg { margin: 8px 0; }
-.rpt-msg-author { font-weight:600; color:#ff4500; font-size:12px; }
+.rpt-msg-author { font-weight:600; color:#10b981; font-size:12px; }
 .rpt-msg-bubble {
   display:inline-block; background:#f3f4f6; padding: 8px 12px;
   border-radius: 12px; white-space: pre-wrap; max-width: 100%;

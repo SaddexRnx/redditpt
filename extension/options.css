@@ -20,7 +20,7 @@ button {
   background:#111827; color:#fff; border:none; padding:8px 14px;
   border-radius:6px; cursor:pointer; margin-top:8px;
 }
-button:hover { background:#ff4500; }
+button:hover { background:#10b981; }
 button.danger { background:#dc2626; }
 .tag-row { display:flex; gap:8px; align-items:center; }
 .tag-row input[type=text], .tag-row input:not([type=color]) { flex:1; }
