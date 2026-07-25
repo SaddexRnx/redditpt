@@ -1074,7 +1074,7 @@
         const badge = document.createElement("span");
         badge.className = "rpt-user-tag";
         badge.textContent = t.label;
-        badge.style.background = t.color || "#3b82f6";
+        badge.style.background = t.color || "#46d160";
         authorEl.after(badge);
       });
     },

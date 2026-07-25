@@ -1,7 +1,7 @@
 * { box-sizing: border-box; }
 :root {
   --bg-0: #0b0f14; --bg-1: #141a22; --bg-2: #1b232e; --border: #2a3542;
-  --text: #e6edf5; --muted: #8a95a5; --green: #ff4500; --blue: #3b82f6;
+  --text: #e6edf5; --muted: #8a95a5; --green: #ff4500; --blue: #46d160;
   --red: #ef4444; --amber: #f59e0b; --btn-fg: #001912;
 }
 [data-rpt-theme="light"] {
