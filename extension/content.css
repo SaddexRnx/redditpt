@@ -103,7 +103,8 @@ html:not([data-rpt-theme])[data-color-scheme="light"] {
 
 /* ---------------- Side panel ---------------- */
 .rpt-panel {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 400px;
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: clamp(320px, 32vw, 440px);
   background: var(--rpt-bg-0); color: var(--rpt-text);
   z-index: 2147483001; box-shadow: var(--rpt-shadow);
   display: flex; flex-direction: column; font: 13px var(--rpt-font);
