@@ -1,39 +1,24 @@
-// Settings page — reads/writes chrome.storage.local. No network calls.
 const KEYS = {
   filters: "rpt_filters", keywords: "rpt_keywords", tags: "rpt_user_tags",
-  autorun: "rpt_autorun",
+  autorun: "rpt_autorun", general: "rpt_general",
 };
-const F_DEFAULTS = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
-const A_DEFAULTS = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
+const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
+const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
+const G_DEF = { autoOpenPanel: true, showOnboarding: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
 
-async function loadFilters() {
-  const { [KEYS.filters]: f } = await get(KEYS.filters);
-  const cur = { ...F_DEFAULTS, ...(f || {}) };
-  document.querySelectorAll("[data-f]").forEach((el) => {
-    const k = el.dataset.f;
+async function bindGroup(attr, storeKey, defaults) {
+  const { [storeKey]: v } = await get(storeKey);
+  const cur = { ...defaults, ...(v || {}) };
+  document.querySelectorAll(`[data-${attr}]`).forEach((el) => {
+    const k = el.dataset[attr];
     if (el.type === "checkbox") el.checked = !!cur[k]; else el.value = cur[k];
     el.addEventListener("change", async () => {
-      const { [KEYS.filters]: cf } = await get(KEYS.filters);
-      const merged = { ...F_DEFAULTS, ...(cf || {}) };
+      const { [storeKey]: cf } = await get(storeKey);
+      const merged = { ...defaults, ...(cf || {}) };
       merged[k] = el.type === "checkbox" ? el.checked : Number(el.value);
-      await set({ [KEYS.filters]: merged });
-    });
-  });
-}
-
-async function loadAutorun() {
-  const { [KEYS.autorun]: a } = await get(KEYS.autorun);
-  const cur = { ...A_DEFAULTS, ...(a || {}) };
-  document.querySelectorAll("[data-a]").forEach((el) => {
-    const k = el.dataset.a;
-    el.checked = !!cur[k];
-    el.addEventListener("change", async () => {
-      const { [KEYS.autorun]: ca } = await get(KEYS.autorun);
-      const merged = { ...A_DEFAULTS, ...(ca || {}) };
-      merged[k] = el.checked;
-      await set({ [KEYS.autorun]: merged });
+      await set({ [storeKey]: merged });
     });
   });
 }
@@ -44,7 +29,6 @@ async function loadKeywords() {
   document.getElementById("kw-save").onclick = async () => {
     const list = document.getElementById("kw").value.split(",").map((s) => s.trim()).filter(Boolean);
     await set({ [KEYS.keywords]: list });
-    alert("Keywords saved.");
   };
 }
 
@@ -54,10 +38,7 @@ async function renderTags() {
   ul.innerHTML = "";
   Object.entries(tags).forEach(([user, t]) => {
     const li = document.createElement("li");
-    li.innerHTML = `<strong>u/${user}</strong>
-      <span class="badge" style="background:${t.color}">${t.label}</span>
-      <span class="spacer"></span>
-      <button class="remove">Remove</button>`;
+    li.innerHTML = `<strong>u/${user}</strong><span class="badge" style="background:${t.color}">${t.label}</span><span class="spacer"></span><button class="remove">${window.RPT_I18N.t("remove")}</button>`;
     li.querySelector(".remove").onclick = async () => {
       const { [KEYS.tags]: cur = {} } = await get(KEYS.tags);
       delete cur[user]; await set({ [KEYS.tags]: cur }); renderTags();
@@ -81,11 +62,36 @@ async function loadTags() {
   renderTags();
 }
 
+async function initLangTheme() {
+  const langSel = document.getElementById("lang-select");
+  window.RPT_I18N.LANGS.forEach(([code, label]) => {
+    const o = document.createElement("option"); o.value = code; o.textContent = label;
+    if (code === window.RPT_I18N.current) o.selected = true;
+    langSel.appendChild(o);
+  });
+  langSel.addEventListener("change", async () => {
+    await window.RPT_I18N.set(langSel.value);
+    window.RPT_I18N.apply(document); renderTags();
+  });
+  const themeSel = document.getElementById("theme-select");
+  themeSel.value = window.RPT_THEME.current;
+  themeSel.addEventListener("change", () => window.RPT_THEME.set(themeSel.value));
+}
+
 document.getElementById("reset").onclick = async () => {
   if (!confirm("Erase all Reddit Power Toolkit local data?")) return;
   await new Promise((r) => chrome.storage.local.clear(r));
-  alert("Local data cleared.");
   location.reload();
 };
 
-loadAutorun(); loadFilters(); loadKeywords(); loadTags();
+(async () => {
+  await window.RPT_I18N.load();
+  await window.RPT_THEME.load();
+  window.RPT_I18N.apply(document);
+  await initLangTheme();
+  await bindGroup("g", KEYS.general, G_DEF);
+  await bindGroup("a", KEYS.autorun, A_DEF);
+  await bindGroup("f", KEYS.filters, F_DEF);
+  await loadKeywords();
+  await loadTags();
+})();

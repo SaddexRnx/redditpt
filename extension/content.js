@@ -104,6 +104,16 @@
     async save(v) { await RPT.storage.set({ [this.KEY]: v }); },
   };
 
+  /* ---------------- General preferences ---------------- */
+  RPT.general = {
+    KEY: "rpt_general",
+    defaults: { autoOpenPanel: true, showOnboarding: true },
+    async load() {
+      const { [this.KEY]: v } = await RPT.storage.get(this.KEY);
+      return { ...this.defaults, ...(v || {}) };
+    },
+  };
+
   /* ---------------- Comment tree parser ---------------- */
   RPT.features.commentTree = {
     parse() {
@@ -1045,23 +1055,30 @@
       const { [this.KEY]: seen } = await RPT.storage.get(this.KEY);
       if (seen) return;
       if (!RPT.utils.isRedditThread()) return;
-      const t = document.createElement("div");
-      t.className = "rpt-tour";
-      t.innerHTML = `
-        <h4>Reddit Power Toolkit is active</h4>
-        <p>Look for the toolbar in the bottom-right. Press <kbd>?</kbd> anytime for shortcuts, or <kbd>T</kbd> to open the panel.</p>
-        <div class="rpt-tour-actions">
-          <button data-act="dismiss">Got it</button>
-          <button class="rpt-primary-btn" data-act="tour">Open panel</button>
+      const gen = await RPT.general.load();
+      if (!gen.showOnboarding) return;
+      const t = window.RPT_I18N ? (k) => window.RPT_I18N.t(k) : (k) => k;
+      const wrap = document.createElement("div");
+      wrap.className = "rpt-onboard";
+      wrap.innerHTML = `
+        <div class="rpt-onboard-pulse"></div>
+        <div class="rpt-onboard-arrow"></div>
+        <div class="rpt-onboard-card">
+          <h4>${t("onboard_title")}</h4>
+          <p>${t("onboard_body")}</p>
+          <div class="rpt-onboard-actions">
+            <button data-act="dismiss">${t("onboard_ok")}</button>
+            <button class="rpt-primary-btn" data-act="tour">${t("onboard_open")}</button>
+          </div>
         </div>`;
-      t.addEventListener("click", async (e) => {
+      wrap.addEventListener("click", async (e) => {
         const b = e.target.closest?.("button"); if (!b) return;
         await RPT.storage.set({ [this.KEY]: true });
         if (b.dataset.act === "tour") RPT.ui.togglePanel();
-        t.remove();
+        wrap.remove();
       });
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 25000);
+      document.body.appendChild(wrap);
+      setTimeout(() => wrap.remove(), 40000);
     },
   };
 
@@ -1083,11 +1100,27 @@
   }, 400);
 
   const boot = () => {
+    // Ensure theme + i18n are ready for injected UI
+    window.RPT_THEME?.load();
+    window.RPT_I18N?.load();
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
     RPT.tour.maybeShow();
+    // Auto-open the panel on first visit to a comment thread (opt-out via Options)
+    (async () => {
+      if (!RPT.utils.isRedditThread()) return;
+      const gen = await RPT.general.load();
+      if (!gen.autoOpenPanel) return;
+      const KEY = "rpt_auto_open_seen";
+      const { [KEY]: seen } = await RPT.storage.get(KEY);
+      if (seen) return;
+      await RPT.storage.set({ [KEY]: true });
+      setTimeout(() => {
+        if (!document.querySelector(".rpt-panel")) RPT.ui.togglePanel();
+      }, 900);
+    })();
     runAll();
     new MutationObserver(runAll).observe(document.body, { childList: true, subtree: true });
   };
