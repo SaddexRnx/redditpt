@@ -173,6 +173,24 @@ main { padding: 14px; }
 }
 .switch input:checked + .slider { background: var(--accent); border-color: var(--accent); }
 .switch input:checked + .slider::before { transform: translateX(18px); background: var(--accent-fg); }
+.switch input:focus-visible + .slider {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent);
+}
+.tab:focus-visible, .icon-btn:focus-visible, .tool-btn:focus-visible,
+.primary-card:focus-visible, .btn-primary:focus-visible, .pill-select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+/* Lift muted contrast in light theme to meet WCAG AA. */
+[data-rpt-theme="light"] { --muted: #4a5566; }
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]) { --muted: #4a5566; }
+}
 
 /* Buttons */
 .btn-primary {
