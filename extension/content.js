@@ -76,6 +76,22 @@
       let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
       return `hsl(${h % 360} 70% 60%)`;
     },
+    /* Normalize a KeyboardEvent to a stable string used by the custom-shortcut
+     * config (e.g. "ArrowLeft", "Shift+C", "R", "Ctrl+K"). Kept in one place so
+     * the Options capture UI and the runtime matcher always agree. */
+    keyEventToStr(e) {
+      if (["Shift","Control","Alt","Meta","OS"].includes(e.key)) return null;
+      const parts = [];
+      if (e.ctrlKey) parts.push("Ctrl");
+      if (e.metaKey) parts.push("Meta");
+      if (e.altKey) parts.push("Alt");
+      if (e.shiftKey && e.key.length > 1) parts.push("Shift");
+      let k = e.key;
+      if (k === " ") k = "Space";
+      if (k.length === 1) k = e.shiftKey ? k.toUpperCase() : k.toLowerCase();
+      parts.push(k);
+      return parts.join("+");
+    },
   };
 
   /* ---------------- icon set (inline SVG) ---------------- */
