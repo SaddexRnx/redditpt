@@ -1650,6 +1650,16 @@
       search.oninput = applyFilter;
       authorSel.onchange = applyFilter;
       applyFilter();
+      /* Prev/Next match cycling — jumps through visible tree rows so the
+         user can walk keyword/author matches without expanding each node.
+         Resets the cursor whenever the filter changes. */
+      const prevBtn = p.querySelector(".rpt-match-prev");
+      const nextBtn = p.querySelector(".rpt-match-next");
+      const resetIdx = () => { RPT.features.commentTree._matchIdx = -1; };
+      search.addEventListener("input", resetIdx);
+      authorSel.addEventListener("change", resetIdx);
+      if (prevBtn) prevBtn.onclick = () => RPT.features.commentTree.cycle("prev", p);
+      if (nextBtn) nextBtn.onclick = () => RPT.features.commentTree.cycle("next", p);
       p.querySelector(".rpt-panel-close").onclick = () => p.remove();
       const refreshBtn = p.querySelector(".rpt-panel-refresh");
       if (refreshBtn) {
