@@ -282,6 +282,26 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.9.3", t: "Shareable deep links, match cycling & reduced-motion focus", d: "New", i: Link2, items: [
+      "Shareable comment links — hover any row in the Tree, click 🔗 to copy a URL that reopens the panel and flash-highlights the exact comment",
+      "Also supports #rpt-author=<username> for jumping to a user's first comment in the thread",
+      "New ◀ / ▶ match-cycling buttons walk through search & author filter results without expanding every node",
+      "Reduced-motion mode swaps the pulse animation for a static outline so navigation still works with animation off",
+      "Website: separate install buttons per browser (Chrome, Firefox, Kiwi) instead of one generic download",
+    ]},
+    { v: "1.9.2", t: "Extension UI hardening for Chrome, Firefox & Kiwi", d: "Recent", i: Palette, items: [
+      "Rewrote every RPT surface with !important resets so Reddit's global button styles can't hide labels",
+      "Panel widened to 440 px, tab bar padded, filter chips readable, buttons min 40 px tall",
+      "Firefox-specific line-height normaliser + Kiwi/mobile 44 px tap targets",
+      "⚡ Power features hub retinted to design tokens; primary v2 CTA is a single Reddit-green button",
+    ]},
+    { v: "1.9.1", t: "Mobile Tree Navigator, live preview & site polish", d: "Recent", i: GitBranch, items: [
+      "Comment Tree Navigator now has quick text search + author filter with a live count",
+      "Hover any tree row for a preview bubble; click to deep-expand ancestors and flash-jump",
+      "Mobile: quickbar wraps, panels go full-width, ⚡ hub switches to single-column",
+      "Docs: reproducible perf-test harness (docs/PERF_TEST.md) across Chrome/Firefox/Kiwi",
+      "Website: swapped emerald green for the Reddit palette + added GitHub & Telegram links",
+    ]},
     { v: "1.9", t: "System panel, per-subreddit rules & backups", d: "New", i: Zap, items: [
       "New Performance & status panel — see which modules run and how long each scan takes",
       "Per-subreddit rules — enable/disable any feature just inside a specific community",
