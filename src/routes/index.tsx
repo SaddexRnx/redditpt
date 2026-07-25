@@ -7,7 +7,7 @@ import {
   Chrome, Globe, Smartphone, ShieldCheck, Github,
   Package, Puzzle, ToggleRight, FolderOpen, ArrowRight, Copy, Check, MessageCircle,
   Rocket, Palette, Command, Accessibility, KeyRound, Sparkle,
-  Link2, MoveHorizontal, EyeOff,
+  Link2,
 } from "lucide-react";
 
 /* Telegram paper-plane glyph — lucide has no Telegram icon, so we ship
