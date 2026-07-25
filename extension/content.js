@@ -115,6 +115,107 @@
   };
   RPT.ICON = I;
 
+  /* ---------------- Accessibility helpers (focus trap, live region) ---------------- *
+   * Every modal (command palette, gallery, summary, conversation, cheatsheet)
+   * runs through RPT.a11y.trapModal so keyboard users can Tab within the
+   * dialog, don't fall back to the page, and land back on the trigger element
+   * when the modal closes. A single visually-hidden aria-live region
+   * announces parsing/loading status to screen readers.                     */
+  RPT.a11y = {
+    _liveEl: null,
+    ensureLive() {
+      if (this._liveEl && document.body.contains(this._liveEl)) return this._liveEl;
+      const el = document.createElement("div");
+      el.className = "rpt-sr-live";
+      el.setAttribute("role", "status");
+      el.setAttribute("aria-live", "polite");
+      el.setAttribute("aria-atomic", "true");
+      document.body.appendChild(el);
+      this._liveEl = el;
+      return el;
+    },
+    announce(msg) {
+      const el = this.ensureLive();
+      // Clear then set so identical consecutive messages are re-announced.
+      el.textContent = "";
+      setTimeout(() => { el.textContent = String(msg || ""); }, 30);
+    },
+    _focusables(root) {
+      const sel = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      return Array.from(root.querySelectorAll(sel))
+        .filter((el) => !el.hasAttribute("disabled") && el.getClientRects().length > 0);
+    },
+    /* Traps Tab inside `root`, moves initial focus in, and restores focus
+     * to the previously-active element when `root` leaves the DOM.        */
+    trapModal(root) {
+      const prev = document.activeElement;
+      if (!root.hasAttribute("tabindex")) root.tabIndex = -1;
+      const onKey = (e) => {
+        if (e.key !== "Tab") return;
+        if (!root.contains(document.activeElement)) {
+          e.preventDefault(); (this._focusables(root)[0] || root).focus?.(); return;
+        }
+        const list = this._focusables(root);
+        if (!list.length) { e.preventDefault(); root.focus?.(); return; }
+        const first = list[0], last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      };
+      document.addEventListener("keydown", onKey, true);
+      setTimeout(() => {
+        const list = this._focusables(root);
+        (list[0] || root).focus?.();
+      }, 20);
+      const cleanup = () => {
+        document.removeEventListener("keydown", onKey, true);
+        obs.disconnect();
+        try { prev && prev.focus && prev.focus({ preventScroll: true }); } catch {}
+      };
+      const obs = new MutationObserver(() => {
+        if (!document.body.contains(root)) cleanup();
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      return cleanup;
+    },
+  };
+
+  /* ---------------- Custom keyboard shortcuts config ---------------- *
+   * Loaded from chrome.storage (rpt_shortcuts) with sensible defaults so
+   * runtime code can call RPT.customKeys.cfg synchronously.              */
+  RPT.customKeys = {
+    KEY: "rpt_shortcuts",
+    DEFAULTS: { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" },
+    cfg: { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" },
+    async load() {
+      const { [this.KEY]: v = {} } = await RPT.storage.get(this.KEY);
+      this.cfg = { ...this.DEFAULTS, ...v };
+      return this.cfg;
+    },
+  };
+
+  /* ---------------- Per-thread gallery position ---------------- *
+   * Remembers the last-viewed image index per Reddit path so revisiting
+   * a thread resumes the gallery where the user left off.                */
+  RPT.galleryPos = {
+    KEY: "rpt_gallery_pos",
+    _cache: null,
+    async _read() {
+      if (this._cache) return this._cache;
+      const { [this.KEY]: v = {} } = await RPT.storage.get(this.KEY);
+      this._cache = v; return v;
+    },
+    async get(path) { const v = await this._read(); return Number(v[path]) || 0; },
+    async set(path, idx) {
+      const v = await this._read();
+      v[path] = idx;
+      // Cap history at 100 threads to keep storage tiny.
+      const keys = Object.keys(v);
+      if (keys.length > 100) delete v[keys[0]];
+      this._cache = v;
+      await RPT.storage.set({ [this.KEY]: v });
+    },
+  };
+
   /* ---------------- Auto-run preferences ---------------- */
   RPT.autorun = {
     KEY: "rpt_autorun",
