@@ -7,7 +7,7 @@
 
   const DICTS = {
     en: {
-      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.10.0",
       status_active: "Active on this Reddit tab", status_notReddit: "Open a Reddit page to use the tools",
       status_notInjected: "Extension not injected on this tab", status_injectFail: "Couldn't inject on this page",
       reload_prompt: "This tab was open before the extension was installed. Reload it to activate the toolkit here.",
@@ -52,7 +52,7 @@
 
     },
     es: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.10.0",
       status_active: "Activo en esta pestaña de Reddit", status_notReddit: "Abre una página de Reddit para usarlo",
       status_notInjected: "La extensión no está inyectada en esta pestaña", status_injectFail: "No se pudo inyectar aquí",
       reload_prompt: "Esta pestaña estaba abierta antes de instalar la extensión. Recárgala para activarla aquí.",
@@ -92,7 +92,7 @@
 
     },
     fr: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.10.0",
       status_active: "Actif sur cet onglet Reddit", status_notReddit: "Ouvrez une page Reddit pour utiliser les outils",
       status_notInjected: "Extension non injectée sur cet onglet", status_injectFail: "Injection impossible ici",
       reload_prompt: "Cet onglet était ouvert avant l'installation. Rechargez-le pour l'activer.",
@@ -132,7 +132,7 @@
 
     },
     de: {
-      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.10.0",
       status_active: "Aktiv auf diesem Reddit-Tab", status_notReddit: "Öffne eine Reddit-Seite",
       status_notInjected: "Erweiterung nicht in diesen Tab injiziert", status_injectFail: "Injektion fehlgeschlagen",
       reload_prompt: "Dieser Tab war bereits offen. Neu laden zum Aktivieren.",
@@ -172,7 +172,7 @@
 
     },
     pt: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.10.0",
       status_active: "Ativo nesta aba do Reddit", status_notReddit: "Abra uma página do Reddit",
       status_notInjected: "Extensão não injetada nesta aba", status_injectFail: "Falha ao injetar",
       reload_prompt: "Esta aba estava aberta antes da instalação. Recarregue para ativar.",
@@ -212,7 +212,7 @@
 
     },
     ja: {
-      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.10.0",
       status_active: "このRedditタブで有効", status_notReddit: "Redditページを開いてください",
       status_notInjected: "このタブに拡張機能が注入されていません", status_injectFail: "注入に失敗",
       reload_prompt: "このタブはインストール前から開いていました。再読み込みで有効化されます。",
@@ -252,7 +252,7 @@
 
     },
     zh_CN: {
-      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.7",
+      appName: "Reddit Power Toolkit", tagline: "本地 · v1.10.0",
       status_active: "在此Reddit标签页已激活", status_notReddit: "请打开一个Reddit页面",
       status_notInjected: "扩展未在此标签页注入", status_injectFail: "注入失败",
       reload_prompt: "此标签在扩展安装前已打开，请重新加载以激活。",
@@ -417,21 +417,21 @@
      localizer can translate late-rendered HTML from v2 modules. */
   const COMMON_TEXT = {
     en: {
-      tagline: "Local-first · v1.9.7", chip_op_only: "OP only", chip_mod_only: "Mod only", chip_awarded: "Awarded", chip_reset: "Reset", kw_placeholder: "docker, kubernetes, rust", active_on: "Active — click to turn off", inactive_off: "Inactive — click to turn on",
+      tagline: "Local-first · v1.10.0", chip_op_only: "OP only", chip_mod_only: "Mod only", chip_awarded: "Awarded", chip_reset: "Reset", kw_placeholder: "docker, kubernetes, rust", active_on: "Active — click to turn off", inactive_off: "Inactive — click to turn on",
       "Subreddit": "Subreddit", "Posts": "Posts", "Avg comm.": "Avg comm.", "img/vid/link/txt": "img/vid/link/txt", "Most posts loaded:": "Most posts loaded:", "Highest avg score:": "Highest avg score:", "Most discussion:": "Most discussion:", "Most images:": "Most images:", "Most videos:": "Most videos:", "Most links:": "Most links:", "Most text-heavy:": "Most text-heavy:", "in branch": "in branch", "depth": "depth", "markdown": "markdown", "plain": "plain", "Export JSON": "Export JSON", "Type": "Type", "Engage": "Engage", "self": "self", "Hide": "Hide", "Darker = more posts.": "Darker = more posts.", "From": "From", "loaded posts": "loaded posts", "No possible reposts detected among loaded posts.": "No possible reposts detected among loaded posts.", "No sidebar detected.": "No sidebar detected.", "No groups yet.": "No groups yet.", "No subs yet": "No subs yet", "New name:": "New name:", "Delete group?": "Delete group?", "Dead posts": "Dead posts", "Deleted comments": "Deleted comments", "Spam hints": "Spam hints", "Min title length": "Min title length", "Hide short titles (<20 chars)": "Hide short titles (<20 chars)", "No timestamped posts detected.": "No timestamped posts detected.", "Old but active": "Old but active", "Highest engagement": "Highest engagement", "No links found.": "No links found.", "Title + URL": "Title + URL", "Markdown link": "Markdown link", "Thread structure": "Thread structure", "Threads read": "Threads read", "Subs visited": "Subs visited", "Exports made": "Exports made", "Bookmarks added": "Bookmarks added", "Random post on page": "Random post on page", "Random popular subreddit": "Random popular subreddit", "Random bookmark": "Random bookmark", "Note (optional):": "Note (optional):", "Added": "Added", "Set an active bundle first": "Set an active bundle first", "Only images": "Only images", "Only videos": "Only videos", "Only text": "Only text", "Only links": "Only links", "Show all": "Show all", "All": "All", "Dev mode off": "Dev mode off", "Dev mode on — hover elements": "Dev mode on — hover elements"
     },
     es: {
-      tagline: "Local · v1.9.7", chip_op_only: "Solo OP", chip_mod_only: "Solo mods", chip_awarded: "Premiados", chip_reset: "Restablecer", kw_placeholder: "docker, kubernetes, rust", active_on: "Activo — clic para apagar", inactive_off: "Inactivo — clic para activar",
+      tagline: "Local · v1.10.0", chip_op_only: "Solo OP", chip_mod_only: "Solo mods", chip_awarded: "Premiados", chip_reset: "Restablecer", kw_placeholder: "docker, kubernetes, rust", active_on: "Activo — clic para apagar", inactive_off: "Inactivo — clic para activar",
       "Subreddit": "Subreddit", "Posts": "Publicaciones", "Avg comm.": "Com. media", "img/vid/link/txt": "img/vid/enlace/txt", "Most posts loaded:": "Más posts cargados:", "Highest avg score:": "Mayor puntuación media:", "Most discussion:": "Más discusión:", "Most images:": "Más imágenes:", "Most videos:": "Más vídeos:", "Most links:": "Más enlaces:", "Most text-heavy:": "Más texto:", "in branch": "en rama", "depth": "profundidad", "markdown": "markdown", "plain": "texto", "Export JSON": "Exportar JSON", "Type": "Tipo", "Engage": "Interacción", "self": "propio", "Hide": "Ocultar", "Darker = more posts.": "Más oscuro = más publicaciones.", "From": "De", "loaded posts": "publicaciones cargadas", "No possible reposts detected among loaded posts.": "No se detectaron posibles reposts.", "No sidebar detected.": "No se detectó barra lateral.", "No groups yet.": "Aún no hay grupos.", "No subs yet": "Aún no hay subs", "New name:": "Nuevo nombre:", "Delete group?": "¿Eliminar grupo?", "Dead posts": "Posts muertos", "Deleted comments": "Comentarios eliminados", "Spam hints": "Señales de spam", "Min title length": "Longitud mínima del título", "Hide short titles (<20 chars)": "Ocultar títulos cortos (<20 caracteres)", "No timestamped posts detected.": "No se detectaron posts con fecha.", "Old but active": "Antiguos pero activos", "Highest engagement": "Mayor interacción", "No links found.": "No se encontraron enlaces.", "Title + URL": "Título + URL", "Markdown link": "Enlace Markdown", "Thread structure": "Estructura del hilo", "Threads read": "Hilos leídos", "Subs visited": "Subs visitados", "Exports made": "Exportaciones", "Bookmarks added": "Marcadores añadidos", "Random post on page": "Post aleatorio", "Random popular subreddit": "Subreddit popular aleatorio", "Random bookmark": "Marcador aleatorio", "Note (optional):": "Nota (opcional):", "Added": "Añadido", "Set an active bundle first": "Activa un paquete primero", "Only images": "Solo imágenes", "Only videos": "Solo vídeos", "Only text": "Solo texto", "Only links": "Solo enlaces", "Show all": "Mostrar todo", "All": "Todo", "Dev mode off": "Modo dev apagado", "Dev mode on — hover elements": "Modo dev activo — pasa por elementos"
     },
     fr: {
-      tagline: "Local · v1.9.7", chip_op_only: "OP seul", chip_mod_only: "Mods seuls", chip_awarded: "Récompensés", chip_reset: "Réinitialiser", kw_placeholder: "docker, kubernetes, rust", active_on: "Actif — cliquez pour désactiver", inactive_off: "Inactif — cliquez pour activer",
+      tagline: "Local · v1.10.0", chip_op_only: "OP seul", chip_mod_only: "Mods seuls", chip_awarded: "Récompensés", chip_reset: "Réinitialiser", kw_placeholder: "docker, kubernetes, rust", active_on: "Actif — cliquez pour désactiver", inactive_off: "Inactif — cliquez pour activer",
       "Subreddit": "Subreddit", "Posts": "Publications", "Avg comm.": "Comm. moy.", "img/vid/link/txt": "img/vid/lien/txt", "Most posts loaded:": "Plus de posts chargés :", "Highest avg score:": "Meilleur score moyen :", "Most discussion:": "Plus de discussion :", "Most images:": "Plus d’images :", "Most videos:": "Plus de vidéos :", "Most links:": "Plus de liens :", "Most text-heavy:": "Plus de texte :", "in branch": "dans la branche", "depth": "profondeur", "markdown": "markdown", "plain": "texte", "Export JSON": "Exporter JSON", "Type": "Type", "Engage": "Engagement", "self": "interne", "Hide": "Masquer", "Darker = more posts.": "Plus sombre = plus de publications.", "From": "Depuis", "loaded posts": "publications chargées", "No possible reposts detected among loaded posts.": "Aucun repost possible détecté.", "No sidebar detected.": "Aucune barre latérale détectée.", "No groups yet.": "Aucun groupe pour l’instant.", "No subs yet": "Aucun sub pour l’instant", "New name:": "Nouveau nom :", "Delete group?": "Supprimer le groupe ?", "Dead posts": "Posts morts", "Deleted comments": "Commentaires supprimés", "Spam hints": "Indices de spam", "Min title length": "Longueur minimale du titre", "Hide short titles (<20 chars)": "Masquer titres courts (<20 caractères)", "No timestamped posts detected.": "Aucun post daté détecté.", "Old but active": "Anciens mais actifs", "Highest engagement": "Engagement maximal", "No links found.": "Aucun lien trouvé.", "Title + URL": "Titre + URL", "Markdown link": "Lien Markdown", "Thread structure": "Structure du fil", "Threads read": "Fils lus", "Subs visited": "Subs visités", "Exports made": "Exports créés", "Bookmarks added": "Favoris ajoutés", "Random post on page": "Post aléatoire", "Random popular subreddit": "Subreddit populaire aléatoire", "Random bookmark": "Favori aléatoire", "Note (optional):": "Note (facultative) :", "Added": "Ajouté", "Set an active bundle first": "Choisissez d’abord un dossier actif", "Only images": "Images seulement", "Only videos": "Vidéos seulement", "Only text": "Texte seulement", "Only links": "Liens seulement", "Show all": "Tout afficher", "All": "Tout", "Dev mode off": "Mode dev désactivé", "Dev mode on — hover elements": "Mode dev actif — survolez les éléments"
     },
-    de: { tagline: "Lokal · v1.9.7", chip_op_only: "Nur OP", chip_mod_only: "Nur Mods", chip_awarded: "Ausgezeichnet", chip_reset: "Zurücksetzen", kw_placeholder: "docker, kubernetes, rust", active_on: "Aktiv — klicken zum Ausschalten", inactive_off: "Inaktiv — klicken zum Einschalten" },
-    pt: { tagline: "Local · v1.9.7", chip_op_only: "Só OP", chip_mod_only: "Só mods", chip_awarded: "Premiados", chip_reset: "Redefinir", kw_placeholder: "docker, kubernetes, rust", active_on: "Ativo — clique para desligar", inactive_off: "Inativo — clique para ligar" },
-    ja: { tagline: "ローカル · v1.9.7", chip_op_only: "OPのみ", chip_mod_only: "Modのみ", chip_awarded: "受賞", chip_reset: "リセット", kw_placeholder: "docker, kubernetes, rust", active_on: "有効 — クリックでオフ", inactive_off: "無効 — クリックでオン" },
-    zh_CN: { tagline: "本地 · v1.9.7", chip_op_only: "仅 OP", chip_mod_only: "仅版主", chip_awarded: "获奖", chip_reset: "重置", kw_placeholder: "docker, kubernetes, rust", active_on: "已启用 — 点击关闭", inactive_off: "未启用 — 点击开启" }
+    de: { tagline: "Lokal · v1.10.0", chip_op_only: "Nur OP", chip_mod_only: "Nur Mods", chip_awarded: "Ausgezeichnet", chip_reset: "Zurücksetzen", kw_placeholder: "docker, kubernetes, rust", active_on: "Aktiv — klicken zum Ausschalten", inactive_off: "Inaktiv — klicken zum Einschalten" },
+    pt: { tagline: "Local · v1.10.0", chip_op_only: "Só OP", chip_mod_only: "Só mods", chip_awarded: "Premiados", chip_reset: "Redefinir", kw_placeholder: "docker, kubernetes, rust", active_on: "Ativo — clique para desligar", inactive_off: "Inativo — clique para ligar" },
+    ja: { tagline: "ローカル · v1.10.0", chip_op_only: "OPのみ", chip_mod_only: "Modのみ", chip_awarded: "受賞", chip_reset: "リセット", kw_placeholder: "docker, kubernetes, rust", active_on: "有効 — クリックでオフ", inactive_off: "無効 — クリックでオン" },
+    zh_CN: { tagline: "本地 · v1.10.0", chip_op_only: "仅 OP", chip_mod_only: "仅版主", chip_awarded: "获奖", chip_reset: "重置", kw_placeholder: "docker, kubernetes, rust", active_on: "已启用 — 点击关闭", inactive_off: "未启用 — 点击开启" }
   };
   Object.keys(COMMON_TEXT).forEach((lang) => Object.assign(EXTRA[lang] || (EXTRA[lang] = {}), COMMON_TEXT[lang]));
   Object.keys(EXTRA).forEach((lang) => Object.assign(DICTS[lang] || (DICTS[lang] = {}), EXTRA[lang]));
