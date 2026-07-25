@@ -1231,33 +1231,33 @@
       m.className = "rpt-modal rpt-about";
       m.setAttribute("role", "dialog");
       m.setAttribute("aria-modal", "true");
-      m.setAttribute("aria-label", "About Reddit Power Toolkit");
+      m.setAttribute("aria-label", tr("about_title"));
       m.innerHTML = `
         <div class="rpt-modal-card" style="max-width:420px">
           <header class="rpt-modal-head">
-            <strong>About Reddit Power Toolkit</strong>
-            <button class="rpt-x" data-x aria-label="Close">×</button>
+            <strong>${tr("about_title")}</strong>
+            <button class="rpt-x" data-x aria-label="${tr("close")}">×</button>
           </header>
           <div class="rpt-modal-body" style="padding:16px">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
               <div style="width:44px;height:44px;border-radius:10px;background:var(--rpt-green);color:#001912;display:grid;place-items:center;font-weight:800">RPT</div>
               <div>
                 <div style="font-weight:700;font-size:14px">Reddit Power Toolkit</div>
-                <div style="color:var(--rpt-muted);font-size:12px">Version <strong>${RPT.VERSION}</strong> · Built ${RPT.BUILD_DATE}</div>
+                <div style="color:var(--rpt-muted);font-size:12px">${tr("about_version_built")} <strong>${RPT.VERSION}</strong> · ${tr("built")} ${RPT.BUILD_DATE}</div>
               </div>
             </div>
             <p style="color:var(--rpt-muted);font-size:12px;line-height:1.5;margin:0 0 14px">
-              A 100% local browser extension that upgrades Reddit reading and writing. No accounts, no servers, no tracking.
+              ${tr("about_desc")}
             </p>
             <div style="display:grid;gap:8px">
               <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener">
-                <span>Changelog & releases</span><span aria-hidden="true">↗</span>
+                <span>${tr("changelog_releases")}</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener">
-                <span>GitHub repository</span><span aria-hidden="true">↗</span>
+                <span>${tr("github_repository")}</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
-                <span>Telegram — @Saddex_x</span><span aria-hidden="true">↗</span>
+                <span>${tr("telegram_contact")}</span><span aria-hidden="true">↗</span>
               </a>
             </div>
           </div>
