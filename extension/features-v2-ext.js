@@ -81,7 +81,7 @@
    * ============================================================= */
   V.modules.perfStatus = {
     id: "perfStatus", name: "Performance & status",
-    desc: "Which modules are active, when they last ran, and how long they took.",
+    desc: tr("perf_status_desc"),
     async open() {
       const en = await V.getEnabled();
       const perSub = await V.getPerSub();
@@ -130,7 +130,7 @@
    * ============================================================= */
   V.modules.perSubreddit = {
     id: "perSubreddit", name: "Per-subreddit rules",
-    desc: "Turn features on/off differently in each community.",
+    desc: tr("per_subreddit_desc"),
     async open() {
       const sub = currentSub();
       const perSub = await V.getPerSub();
@@ -178,7 +178,7 @@
    * ============================================================= */
   V.modules.backup = {
     id: "backup", name: "Backup & restore",
-    desc: "Export or import bookmarks, history, keyword tracking, notes and settings.",
+    desc: tr("backup_restore_desc"),
     async exportAll() {
       const all = await new Promise((r) => chrome.storage.local.get(null, r));
       const payload = { app: "reddit-power-toolkit", version: "1.9.0", exportedAt: new Date().toISOString(), data: all };
