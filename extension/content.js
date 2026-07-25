@@ -113,7 +113,7 @@
   /* ---------------- General preferences ---------------- */
   RPT.general = {
     KEY: "rpt_general",
-    defaults: { autoOpenPanel: true, showOnboarding: true },
+    defaults: { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true },
     async load() {
       const { [this.KEY]: v } = await RPT.storage.get(this.KEY);
       return { ...this.defaults, ...(v || {}) };
@@ -187,7 +187,24 @@
    * Applies a colored left border + author-name tint to each comment so users
    * are visually distinguishable at a glance. Works on both new and old Reddit. */
   RPT.features.authorColors = {
-    apply() {
+    _lastEnabled: true,
+    async apply() {
+      const gen = await RPT.general.load();
+      const enabled = gen.showAuthorColors !== false;
+      if (!enabled) {
+        // Remove any previously applied color styling.
+        document.querySelectorAll(".rpt-authored").forEach((el) => {
+          el.classList.remove("rpt-authored");
+          el.style.removeProperty("--rpt-author-color");
+        });
+        document.querySelectorAll("[data-rpt-tinted]").forEach((el) => {
+          el.style.color = "";
+          delete el.dataset.rptTinted;
+        });
+        this._lastEnabled = false;
+        return;
+      }
+      this._lastEnabled = true;
       RPT.state.comments.forEach((c) => {
         const color = RPT.utils.authorColor(c.author);
         c.el.classList.add("rpt-authored");
@@ -217,6 +234,7 @@
   /* ---------------- Folding ---------------- */
   RPT.features.folding = {
     STORAGE_KEY: "rpt_folded",
+    PAGE_KEY: "rpt_folded_all_pages",
     async toggle(id, forceState) {
       const c = RPT.state.comments.find((x) => x.id === id);
       if (!c) return;
@@ -241,6 +259,11 @@
         // Old-Reddit fallback: uses its own `.collapsed` class on `.thing.comment`.
         if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
       });
+      // Remember that this path is fully collapsed so SPA re-parse or newly
+      // streamed comments stay hidden.
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      pages[location.pathname] = true;
+      await RPT.storage.set({ [this.PAGE_KEY]: pages });
     },
     async expandAll() {
       RPT.features.commentTree.parse();
@@ -249,12 +272,25 @@
         c.el.removeAttribute?.("collapsed");
         if (c.el.classList?.contains("thing")) c.el.classList.remove("collapsed");
       });
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      delete pages[location.pathname];
+      await RPT.storage.set({ [this.PAGE_KEY]: pages });
+      // Also clear per-comment folded state for this path.
+      const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
+      delete map[location.pathname];
+      await RPT.storage.set({ [this.STORAGE_KEY]: map });
     },
     async restore() {
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const saved = map[location.pathname] || {};
+      const { [this.PAGE_KEY]: pages = {} } = await RPT.storage.get(this.PAGE_KEY);
+      const pageCollapsed = !!pages[location.pathname];
       RPT.state.comments.forEach((c) => {
-        if (saved[c.id]) { c.el.classList.add("rpt-collapsed"); c.el.setAttribute?.("collapsed", ""); }
+        if (pageCollapsed || saved[c.id]) {
+          c.el.classList.add("rpt-collapsed");
+          c.el.setAttribute?.("collapsed", "");
+          if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
+        }
       });
     },
   };
