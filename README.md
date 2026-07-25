@@ -143,27 +143,6 @@ What the extension **never** does:
 
 ---
 
-## Screenshots
-
-Drop your own captures into `docs/screenshots/` using the filenames below and they will render here automatically. GIFs work the same way.
-
-| Preview | What it shows |
-|---------|----------------|
-| ![Side panel](docs/screenshots/side-panel.png) | **Side Panel** — the main dashboard mounted on a Reddit thread |
-| ![Command palette](docs/screenshots/command-palette.gif) | **Command Palette** (`Ctrl+K`) — fuzzy-search every action |
-| ![Smart summary](docs/screenshots/smart-summary.png) | **Smart Summary modal** — top / discussed / controversial |
-| ![Rule builder](docs/screenshots/rule-builder.gif) | **Rule Builder modal** — live keyword / author / regex preview |
-| ![Gallery](docs/screenshots/gallery.gif) | **Image Gallery Mode** — keyboard navigation with resume |
-| ![Collections](docs/screenshots/collections.png) | **Collections modal** — saved comments with JSON/CSV export |
-| ![Options — general](docs/screenshots/options-general.png) | **Options → General** — theme, language, auto-open, author colors |
-| ![Options — shortcuts](docs/screenshots/options-shortcuts.png) | **Options → Shortcuts** — remap keys with conflict detection |
-| ![Options — accessibility](docs/screenshots/options-a11y.png) | **Options → Accessibility** — color-blind palettes & high contrast |
-| ![Analytics dashboard](docs/screenshots/analytics.png) | **Analytics dashboard** — local usage stats |
-
-> Recording tip: use Chrome's built-in **DevTools → Recorder** or [Peek](https://github.com/firecow/peek) to capture short (< 5 s) MP4/GIFs of each modal, then commit them to `docs/screenshots/`.
-
----
-
 ## FAQ & Troubleshooting
 
 **The extension icon does nothing on Reddit.**
@@ -242,3 +221,9 @@ Issues and PRs welcome. Because Reddit changes its DOM frequently, selector upda
 ## License
 
 MIT
+
+---
+
+## Contact
+
+Telegram: [@Saddex_x](https://t.me/Saddex_x)
