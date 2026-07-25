@@ -1698,6 +1698,7 @@
           p.querySelectorAll(".rpt-tabs button").forEach((x) => x.classList.remove("active"));
           p.querySelectorAll(".rpt-tabpane").forEach((x) => x.classList.remove("active"));
           b.classList.add("active");
+          try { b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); } catch {}
           p.querySelector(`[data-panel="${b.dataset.tab}"]`).classList.add("active");
           if (b.dataset.tab === "stats") this.renderStats(p);
           if (b.dataset.tab === "collect") this.renderCollections(p);

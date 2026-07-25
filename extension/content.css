@@ -200,15 +200,18 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 .rpt-chip.rpt-chip-blue.rpt-active { background: var(--rpt-blue); color: #001028; border-color: var(--rpt-blue); }
 
 .rpt-tabs {
-  display: flex; gap: 4px; padding: 10px 12px 0; border-bottom: 1px solid var(--rpt-border);
-  overflow-x: auto; background: var(--rpt-bg-0);
+  display: flex; gap: 2px; padding: 8px 10px 0; border-bottom: 1px solid var(--rpt-border);
+  overflow-x: auto; overflow-y: hidden; background: var(--rpt-bg-0);
+  scrollbar-width: thin; scroll-behavior: smooth;
 }
+.rpt-tabs::-webkit-scrollbar { height: 4px; }
+.rpt-tabs::-webkit-scrollbar-thumb { background: var(--rpt-border); border-radius: 2px; }
 .rpt-tabs button {
   display: inline-flex; align-items: center; gap: 6px;
-  border: none; background: transparent; padding: 8px 12px;
+  border: none; background: transparent; padding: 8px 9px; flex-shrink: 0;
   border-radius: 6px 6px 0 0; margin-bottom: -1px;
   border-bottom: 2px solid transparent;
-  cursor: pointer; font: 500 12px var(--rpt-font); color: var(--rpt-muted);
+  cursor: pointer; font: 500 11.5px var(--rpt-font); color: var(--rpt-muted);
   white-space: nowrap; transition: color .15s, border-color .15s;
 }
 .rpt-tabs button:hover { color: var(--rpt-text); }
