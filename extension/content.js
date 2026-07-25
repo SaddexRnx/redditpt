@@ -1663,6 +1663,8 @@
     window.RPT_THEME?.load();
     window.RPT_I18N?.load();
     window.RPT_A11Y?.load();
+    RPT.a11y.ensureLive();
+    RPT.customKeys.load();
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
@@ -1690,6 +1692,7 @@
         if (changes.rpt_rules) RPT.features.rules.apply();
         if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
         if (changes.rpt_general) RPT.features.authorColors.apply();
+        if (changes.rpt_shortcuts) RPT.customKeys.load();
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
