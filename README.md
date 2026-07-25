@@ -219,7 +219,14 @@ Kiwi occasionally needs a full app restart after enabling a new extension. Force
 
 ## Development
 
-*(kept above)*
+Extension: edit files under `extension/` and reload from `chrome://extensions`.
+
+Landing site:
+
+```bash
+bun install
+bun run dev
+```
 
 ---
 
