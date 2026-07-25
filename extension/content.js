@@ -1569,6 +1569,7 @@
           <button data-tab="filters">${I.filter} ${tr("clean")}</button>
           <button data-tab="highlight">${I.tag} ${tr("keywords_tab")}</button>
           <button data-tab="stats">${I.stats} ${tr("stats")}</button>
+          <button data-tab="power">${I.summary} ${tr("power")}</button>
           <button data-tab="export">${I.export} ${tr("export")}</button>
         </nav>
         <section class="rpt-tab-body">
@@ -1623,6 +1624,7 @@
             <button class="rpt-kw-save">${tr("save_keywords")}</button>
           </div>
           <div data-panel="stats" class="rpt-tabpane rpt-stats"></div>
+          <div data-panel="power" class="rpt-tabpane rpt-power"></div>
           <div data-panel="export" class="rpt-tabpane">
             <p class="rpt-muted">${tr("export_thread_desc")}</p>
             <div class="rpt-btnrow">
