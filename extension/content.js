@@ -178,6 +178,22 @@
       return cleanup;
     },
   };
+  /* Attach explicit keyboard-help text to a modal and wire it to
+   * aria-describedby so screen readers announce the shortcuts as soon as
+   * the dialog opens. Visible for sighted keyboard users too.           */
+  RPT.a11y._helpSeq = 0;
+  RPT.a11y.addKeyHelp = function (root, text) {
+    if (!root || !text) return;
+    const id = `rpt-kbd-help-${++this._helpSeq}`;
+    const el = document.createElement("div");
+    el.className = "rpt-kbd-help";
+    el.id = id;
+    el.textContent = text;
+    const panel = root.querySelector(".rpt-overlay-panel, .rpt-cmdk") || root;
+    panel.appendChild(el);
+    const prev = root.getAttribute("aria-describedby");
+    root.setAttribute("aria-describedby", prev ? `${prev} ${id}` : id);
+  };
 
   /* ---------------- Custom keyboard shortcuts config ---------------- *
    * Loaded from chrome.storage (rpt_shortcuts) with sensible defaults so
