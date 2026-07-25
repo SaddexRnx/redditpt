@@ -243,3 +243,41 @@ footer {
   font-size: 11px; color: var(--muted);
   border-top: 1px solid var(--border); background: var(--panel);
 }
+/* ---- Keyboard shortcuts help dialog ---- */
+.kbd-modal[hidden] { display: none !important; }
+.kbd-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 12px;
+}
+.kbd-modal-card {
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--border-strong); border-radius: 14px;
+  width: 100%; max-width: 340px; max-height: 82vh; overflow: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.kbd-modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+}
+.kbd-modal-head h2 { margin: 0; font-size: 14px; }
+.kbd-modal-body { padding: 12px 14px; }
+.kbd-modal-body h3 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); margin: 10px 0 6px; font-weight: 700;
+}
+.kbd-modal-body h3:first-child { margin-top: 0; }
+.kbd-list { list-style: none; padding: 0; margin: 0 0 4px; }
+.kbd-list li {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 0; border-bottom: 1px dashed var(--border);
+  font-size: 12.5px;
+}
+.kbd-list li:last-child { border-bottom: 0; }
+.kbd-list span { flex: 1; }
+.kbd-list kbd {
+  background: var(--panel-2); border: 1px solid var(--border-strong);
+  border-radius: 5px; padding: 2px 6px; font: 600 11px ui-monospace, Menlo, monospace;
+  color: var(--text);
+}
+.kbd-hint { color: var(--muted); font-size: 11.5px; margin: 8px 0 0; }

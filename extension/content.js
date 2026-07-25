@@ -2113,6 +2113,57 @@
     };
     RPT.handleDeepLink();
     window.addEventListener("hashchange", () => RPT.handleDeepLink());
+    // ---------- Accessibility focus-order overlay ----------
+    // Shortcut: Alt+Shift+A toggles a lightweight overlay that numbers every
+    // tabbable element in the DOM (buttons, links, inputs, [tabindex>=0]) so
+    // keyboard users can audit focus order. Esc closes it. 100% local, no data
+    // leaves the page. Also exposed as window.RPT.a11yOverlay.toggle().
+    RPT.a11yOverlay = (function () {
+      const HOST_ID = "rpt-a11y-overlay";
+      const isVisible = (el) => {
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return false;
+        const s = getComputedStyle(el);
+        return s.visibility !== "hidden" && s.display !== "none";
+      };
+      function tabbables() {
+        const sel = 'a[href], area[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), iframe, [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
+        return [...document.querySelectorAll(sel)].filter((el) => isVisible(el) && !el.closest("#" + HOST_ID));
+      }
+      function render() {
+        remove();
+        const host = document.createElement("div");
+        host.id = HOST_ID;
+        host.setAttribute("role", "region");
+        host.setAttribute("aria-label", "Accessibility focus-order overlay");
+        host.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2147483646";
+        const legend = document.createElement("div");
+        legend.style.cssText = "position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#0d1117;color:#fff;border:1px solid #ff4500;padding:8px 14px;border-radius:10px;font:600 13px system-ui;pointer-events:auto;box-shadow:0 8px 30px rgba(0,0,0,.4)";
+        legend.textContent = "Focus-order overlay — Esc to close";
+        host.appendChild(legend);
+        tabbables().forEach((el, i) => {
+          const r = el.getBoundingClientRect();
+          const ring = document.createElement("div");
+          ring.style.cssText = `position:fixed;left:${r.left - 2}px;top:${r.top - 2}px;width:${r.width + 4}px;height:${r.height + 4}px;outline:2px solid #ff4500;outline-offset:0;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)`;
+          const badge = document.createElement("div");
+          badge.textContent = String(i + 1);
+          badge.style.cssText = `position:fixed;left:${r.left - 10}px;top:${r.top - 10}px;background:#ff4500;color:#fff;font:700 11px system-ui;min-width:18px;height:18px;padding:0 4px;border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.35)`;
+          host.appendChild(ring); host.appendChild(badge);
+        });
+        document.documentElement.appendChild(host);
+      }
+      function remove() { document.getElementById(HOST_ID)?.remove(); }
+      function toggle() { document.getElementById(HOST_ID) ? remove() : render(); }
+      document.addEventListener("keydown", (e) => {
+        if (e.altKey && e.shiftKey && (e.key === "A" || e.key === "a")) { e.preventDefault(); toggle(); }
+        else if (e.key === "Escape" && document.getElementById(HOST_ID)) { remove(); }
+      }, true);
+      // Reposition on scroll/resize while visible
+      const reflow = () => { if (document.getElementById(HOST_ID)) render(); };
+      window.addEventListener("resize", reflow);
+      window.addEventListener("scroll", reflow, true);
+      return { toggle, show: render, hide: remove };
+    })();
     // Only re-parse on real Reddit comment DOM changes. Ignore mutations
     // caused by RPT itself (marked with the rpt- prefix or inside our UI)
     // and skip while a parse is in flight — this fixes the constant

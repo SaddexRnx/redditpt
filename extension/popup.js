@@ -169,3 +169,47 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   refreshActivation();
 });
+
+/* ---------- Keyboard shortcuts help modal ---------- */
+function openKbdHelp() {
+  const m = document.getElementById("kbd-help-modal");
+  if (!m) return;
+  m.hidden = false;
+  const focusable = m.querySelectorAll('button, [href], input, [tabindex]:not([tabindex="-1"])');
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  first?.focus();
+  m._trap = (e) => {
+    if (e.key === "Escape") { e.preventDefault(); closeKbdHelp(); }
+    else if (e.key === "Tab" && focusable.length) {
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+  m.addEventListener("keydown", m._trap);
+}
+function closeKbdHelp() {
+  const m = document.getElementById("kbd-help-modal");
+  if (!m) return;
+  m.hidden = true;
+  if (m._trap) m.removeEventListener("keydown", m._trap);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("shortcuts-help-btn")?.addEventListener("click", openKbdHelp);
+  document.getElementById("kbd-help-close")?.addEventListener("click", closeKbdHelp);
+  document.getElementById("kbd-help-modal")?.addEventListener("click", (e) => {
+    if (e.target.id === "kbd-help-modal") closeKbdHelp();
+  });
+  // Reset popup + panel settings (keeps user data: keywords, tags, collections)
+  document.getElementById("reset-popup-btn")?.addEventListener("click", async () => {
+    const msg = window.RPT_I18N?.t("reset_popup_confirm") ||
+      "Reset popup tab, theme, quick-bar size and panel state to defaults? Your keywords, tags, saved comments and history are kept.";
+    if (!confirm(msg)) return;
+    const KEYS = [
+      "rpt_popup_tab", "rpt_theme", "rpt_quickbar_size",
+      "rpt_panel_state", "rpt_auto_open_seen", "rpt_v2_pos",
+      "rpt_gallery_pos", "rpt_folded_by_url",
+    ];
+    await new Promise((r) => chrome.storage.local.remove(KEYS, r));
+    location.reload();
+  });
+});
