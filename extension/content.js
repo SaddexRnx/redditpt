@@ -317,6 +317,8 @@
         nodes.forEach((n) => {
           const li = document.createElement("li");
           const color = RPT.utils.authorColor(n.author);
+          li.dataset.author = (n.author || "").toLowerCase();
+          li.dataset.text = (n.body || "").toLowerCase();
           li.innerHTML = `
             <div class="rpt-tree-item" data-id="${RPT.utils.escapeHtml(n.id)}">
               <span class="rpt-author-dot" style="background:${color}"></span>
@@ -325,10 +327,36 @@
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
             </div>`;
           li.querySelector(".rpt-author").style.color = color;
-          li.querySelector(".rpt-tree-item").addEventListener("click", () => {
+          const row = li.querySelector(".rpt-tree-item");
+          /* Hover: quick preview bubble showing the full first ~400 chars,
+             so a user can survey comments without leaving the tree. */
+          let pv;
+          row.addEventListener("mouseenter", (ev) => {
+            pv = document.createElement("div");
+            pv.className = "rpt-tree-hoverpv";
+            pv.innerHTML = `<b>u/${RPT.utils.escapeHtml(n.author)} · ${n.score}</b>${RPT.utils.escapeHtml((n.body || "(no text)").slice(0, 400))}`;
+            document.body.appendChild(pv);
+            const r = row.getBoundingClientRect();
+            const top = Math.max(8, Math.min(window.innerHeight - 180, r.top));
+            pv.style.top = top + "px";
+            pv.style.left = Math.max(8, r.left - 330) + "px";
+          });
+          row.addEventListener("mouseleave", () => { pv && pv.remove(); pv = null; });
+          /* Click: expand ancestors, scroll into view, trigger big highlight. */
+          row.addEventListener("click", () => {
+            pv && pv.remove(); pv = null;
+            try {
+              let p = n.el.parentElement;
+              while (p && p !== document.body) {
+                if (p.tagName === "SHREDDIT-COMMENT" && p.hasAttribute("collapsed")) p.removeAttribute("collapsed");
+                if (p.classList && p.classList.contains("collapsed")) p.classList.remove("collapsed");
+                p = p.parentElement;
+              }
+              if (n.el.tagName === "SHREDDIT-COMMENT" && n.el.hasAttribute("collapsed")) n.el.removeAttribute("collapsed");
+            } catch {}
             n.el.scrollIntoView({ behavior: "smooth", block: "center" });
-            n.el.classList.add("rpt-flash");
-            setTimeout(() => n.el.classList.remove("rpt-flash"), 1500);
+            n.el.classList.add("rpt-jump-flash");
+            setTimeout(() => n.el.classList.remove("rpt-jump-flash"), 1700);
           });
           if (n.children.length) { const c = document.createElement("ul"); walk(n.children, c); li.appendChild(c); }
           parent.appendChild(li);
@@ -336,6 +364,12 @@
       };
       walk(roots, ul);
       container.appendChild(ul);
+    },
+    /* Unique sorted list of authors present in the currently parsed tree. */
+    authorList() {
+      const set = new Set();
+      (RPT.state.comments || []).forEach((c) => c.author && set.add(c.author));
+      return Array.from(set).sort((a, b) => a.localeCompare(b));
     },
   };
 
@@ -1042,7 +1076,7 @@
       const esc = RPT.utils.escapeHtml;
       const walk = (nodes) => `<ul>${nodes.map((n) => `<li><strong>${esc(n.author)}</strong> (${n.score})<br>${esc(n.body)}${n.children.length ? walk(n.children) : ""}</li>`).join("")}</ul>`;
       const p = RPT.state.post || {};
-      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#10b981}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>Comments</h2>${walk(RPT.state.tree || [])}`;
+      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#ff4500}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>Comments</h2>${walk(RPT.state.tree || [])}`;
       this._download("reddit-thread.html", "text/html", out);
     },
   };
@@ -1473,7 +1507,11 @@
         </nav>
         <section class="rpt-tab-body">
           <div data-panel="tree" class="rpt-tabpane active">
-            <input class="rpt-search-box" placeholder="Search comments by author or text…">
+            <div class="rpt-tree-toolbar">
+              <input class="rpt-search-box" placeholder="Search text or author…" aria-label="Search comments">
+              <select class="rpt-author-filter" aria-label="Filter by author"><option value="">All authors</option></select>
+              <span class="rpt-tree-count" aria-live="polite"></span>
+            </div>
             <div class="rpt-tree-container"></div>
           </div>
           <div data-panel="tools" class="rpt-tabpane">
@@ -1529,13 +1567,30 @@
     async wirePanel(p) {
       RPT.features.commentTree.parse();
       RPT.features.commentTree.renderInto(p.querySelector(".rpt-tree-container"));
+      /* Populate author dropdown and wire combined text+author filter. */
       const search = p.querySelector(".rpt-search-box");
-      search.oninput = () => {
-        const q = search.value.toLowerCase();
+      const authorSel = p.querySelector(".rpt-author-filter");
+      const countEl = p.querySelector(".rpt-tree-count");
+      const authors = RPT.features.commentTree.authorList();
+      authorSel.innerHTML = '<option value="">All authors</option>' +
+        authors.map((a) => `<option value="${RPT.utils.escapeHtml(a.toLowerCase())}">${RPT.utils.escapeHtml(a)}</option>`).join("");
+      const applyFilter = () => {
+        const q = search.value.trim().toLowerCase();
+        const a = authorSel.value;
+        let shown = 0, total = 0;
         p.querySelectorAll(".rpt-tree li").forEach((li) => {
-          li.style.display = !q || li.textContent.toLowerCase().includes(q) ? "" : "none";
+          total++;
+          const okText = !q || (li.dataset.text || "").includes(q) || (li.dataset.author || "").includes(q);
+          const okAuthor = !a || li.dataset.author === a;
+          const visible = okText && okAuthor;
+          li.style.display = visible ? "" : "none";
+          if (visible) shown++;
         });
+        countEl.textContent = q || a ? `${shown}/${total}` : `${total}`;
       };
+      search.oninput = applyFilter;
+      authorSel.onchange = applyFilter;
+      applyFilter();
       p.querySelector(".rpt-panel-close").onclick = () => p.remove();
       const refreshBtn = p.querySelector(".rpt-panel-refresh");
       if (refreshBtn) {

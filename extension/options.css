@@ -1,7 +1,7 @@
 * { box-sizing: border-box; }
 :root {
   --bg-0: #0b0f14; --bg-1: #141a22; --bg-2: #1b232e; --border: #2a3542;
-  --text: #e6edf5; --muted: #8a95a5; --green: #10b981; --blue: #3b82f6; --red: #ef4444;
+  --text: #e6edf5; --muted: #8a95a5; --green: #ff4500; --blue: #3b82f6; --red: #ef4444;
   --btn-fg: #001912;
 }
 [data-rpt-theme="light"] {
@@ -57,6 +57,6 @@ button.danger { background: var(--red); color: #fff; }
 .shortcut-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 12px; background:var(--bg-2); border:1px solid var(--border); border-radius:8px; }
 .shortcut-row span { color:var(--text); font-size:13px; }
 .rpt-shortcut-btn { min-width:140px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; padding:6px 10px; background:var(--bg); color:var(--text); border:1px solid var(--border); border-radius:6px; cursor:pointer; }
-.rpt-shortcut-btn:hover { border-color:var(--accent, #10b981); }
-.rpt-shortcut-btn.capturing { border-color:var(--accent, #10b981); color:var(--accent, #10b981); background:transparent; animation: rpt-cap-pulse 1s infinite; }
-@keyframes rpt-cap-pulse { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,.4);} 50% { box-shadow:0 0 0 4px rgba(16,185,129,0);} }
+.rpt-shortcut-btn:hover { border-color:var(--accent, #ff4500); }
+.rpt-shortcut-btn.capturing { border-color:var(--accent, #ff4500); color:var(--accent, #ff4500); background:transparent; animation: rpt-cap-pulse 1s infinite; }
+@keyframes rpt-cap-pulse { 0%,100% { box-shadow:0 0 0 0 rgba(255,69,0,.4);} 50% { box-shadow:0 0 0 4px rgba(255,69,0,0);} }

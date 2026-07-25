@@ -559,7 +559,7 @@
       const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
       const body = `<p class="rpt-muted">Darker = more posts. From ${posts.length} loaded posts.</p>
         <table class="rpt-v2-cal"><thead><tr><th></th>${Array.from({length:24}, (_,h)=>`<th>${h}</th>`).join("")}</tr></thead>
-        <tbody>${days.map((d,di)=>`<tr><th>${d}</th>${grid[di].map((v)=>`<td style="background:rgba(16,185,129,${v/max})" title="${v} posts">${v||""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+        <tbody>${days.map((d,di)=>`<tr><th>${d}</th>${grid[di].map((v)=>`<td style="background:rgba(255,69,0,${v/max})" title="${v} posts">${v||""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
       modal("Activity calendar", body, { wide: true });
     },
     run() { this.open(); },
