@@ -27,7 +27,10 @@
       <button class="icon-btn" id="shortcuts-help-btn" title="Keyboard shortcuts help" aria-label="Keyboard shortcuts help">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </button>
-      <button class="icon-btn lang-chip" id="lang-chip" title="Language">EN</button>
+      <div class="lang-wrap">
+        <button class="icon-btn lang-chip" id="lang-chip" title="Language" aria-haspopup="listbox" aria-expanded="false">EN</button>
+        <ul class="lang-menu" id="lang-menu" role="listbox" hidden></ul>
+      </div>
       <button class="icon-btn" data-act="options" data-i18n-title="settings" title="Settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -43,6 +46,22 @@
   <main>
     <!-- HOME -->
     <section class="tab-panel active" data-panel="home" role="tabpanel" id="panel-home" aria-labelledby="tab-home">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="enable_toolkit">Enable toolkit</strong>
+            <span data-i18n="enable_toolkit_sub">Turn off to restore hidden comments</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="master-enable" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-head">
@@ -84,22 +103,6 @@
       <div class="card">
         <div class="card-head">
           <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-          </div>
-          <div class="card-title">
-            <strong data-i18n="enable_toolkit">Enable toolkit</strong>
-            <span data-i18n="enable_toolkit_sub">Turn off to restore hidden comments</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="master-enable" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
           <div class="card-title">
@@ -108,19 +111,6 @@
           </div>
         </div>
         <button class="btn-primary" data-act="v2" data-i18n="open_hub">Open hub</button>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-          </div>
-          <div class="card-title">
-            <strong data-i18n="language">Language</strong>
-            <span data-i18n="language_sub">Interface & panels</span>
-          </div>
-          <select id="lang-select" class="pill-select"></select>
-        </div>
       </div>
     </section>
 
