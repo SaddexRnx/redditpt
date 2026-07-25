@@ -506,12 +506,21 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.10.3", t: "Portable settings, focus overlay & popup shortcut help", d: "New", i: Rocket, items: [
+    { v: "1.10.3", t: "Side panel fix & full TabBankruptcy theme sync", d: "Latest", i: Rocket, items: [
+      "Side panel now opens reliably with all 8 tabs (Tree, Tools, Saved, Clean, Keywords, Stats, Power, Export) — the tab bar auto-scrolls the active tab into view on 400 px panels",
+      "TabBankruptcy dark theme applied end-to-end: identical tokens, spacing and typography across popup, side panel, options, analytics and the Power features hub",
+      "Manifest, popup, Options, README, site footer, About modal and language taglines all synced to v1.10.3",
+    ]},
+    { v: "1.10.2", t: "Power tab lands in the side panel", d: "", i: Rocket, items: [
+      "New ⚡ Power tab lists all 36 modules grouped by category, with per-module Run button and enable/disable toggle",
+      "Live search inside the Power tab filters cards as you type",
+      "Power features (36) card removed from the popup Home — everything lives in one place inside the panel",
+    ]},
+    { v: "1.10.0", t: "Portable settings, focus overlay & popup shortcut help", d: "", i: Rocket, items: [
       "Full settings backup — Options → Export / Import now covers shortcuts, general prefs, accessibility, cleaner filters, keywords, user tags, automation, custom rules and gallery positions in one JSON file",
-      "Accessibility focus-order overlay — press Alt + Shift + A on any Reddit page to number every tabbable element (Esc to close). 100% local, no data leaves the tab",
-      "Popup keyboard-shortcuts help — click the (?) icon in the popup header for a categorized cheatsheet covering popup tabs, tree toolbar and global keys",
-      "Reset-to-defaults for popup and panel state — clears the last tab, theme, quick-bar size and panel state without touching your keywords, tags, saved comments or history",
-      "Manifest, popup, Options, README, site footer and About modal synced to v1.10.3",
+      "Accessibility focus-order overlay — press Alt + Shift + A on any Reddit page to number every tabbable element (Esc to close)",
+      "Popup keyboard-shortcuts help — click the (?) icon in the popup header for a categorized cheatsheet",
+      "Reset-to-defaults for popup and panel state without touching your keywords, tags, saved comments or history",
     ]},
     { v: "1.9.7", t: "Full extension redesign & onboarding wizard", d: "New", i: Rocket, items: [
       "First-run onboarding wizard: pick your language, toggle each feature with a short note, and Skip or Use defaults",
