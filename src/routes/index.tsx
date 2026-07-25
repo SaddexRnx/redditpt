@@ -6,6 +6,7 @@ import {
   Clock, LinkIcon, BarChart3, History, Sun, Moon, Languages,
   Chrome, Globe, Smartphone, ShieldCheck, Github,
   Package, Puzzle, ToggleRight, FolderOpen, ArrowRight, Copy, Check, MessageCircle,
+  Rocket, Palette, Command, Accessibility, KeyRound, Sparkle,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
