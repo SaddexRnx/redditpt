@@ -290,27 +290,34 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 
 /* ---------------- Tree navigator toolbar + hover preview ---------------- */
 .rpt-tree-toolbar {
-  display: flex; gap: 6px; padding: 6px 0 8px;
-  align-items: center; flex-wrap: nowrap;
+  display: flex; gap: 8px; padding: 10px; margin-bottom: 10px;
+  align-items: center; flex-wrap: wrap;
+  background: var(--rpt-bg-1); border: 1px solid var(--rpt-border);
+  border-radius: var(--rpt-radius);
 }
 /* Keep the search/author/prev-next controls pinned while scrolling the tree list. */
 .rpt-tabpane[data-panel="tree"] .rpt-tree-toolbar {
-  position: sticky; top: 0; z-index: 8;
-  background: var(--rpt-bg-0);
-  padding: 10px 0 8px; margin-top: -14px;
-  box-shadow: 0 6px 8px -10px rgba(0,0,0,.6);
-  border-bottom: 1px solid var(--rpt-border);
+  position: sticky; top: -14px; z-index: 8;
+  background: var(--rpt-bg-1);
+  box-shadow: 0 8px 18px -14px rgba(0,0,0,.75);
 }
-.rpt-tree-toolbar .rpt-search-box { flex: 1 1 auto; margin: 0; }
+.rpt-tree-toolbar .rpt-search-box {
+  flex: 1 1 160px; margin: 0;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  border-radius: 8px; padding: 8px 10px; color: var(--rpt-text);
+  min-height: 34px;
+}
 .rpt-tree-toolbar select {
-  background: var(--rpt-bg-1); color: var(--rpt-text);
-  border: 1px solid var(--rpt-border); border-radius: 6px;
-  padding: 6px 8px; font: inherit; max-width: 45%;
+  background: var(--rpt-bg-2); color: var(--rpt-text);
+  border: 1px solid var(--rpt-border); border-radius: 8px;
+  padding: 8px 10px; font: inherit; min-height: 34px;
+  flex: 0 1 140px; max-width: 100%;
 }
 .rpt-tree-toolbar select:focus { border-color: var(--rpt-green); outline: none; }
 .rpt-tree-count {
-  font-size: 11px; color: var(--rpt-muted); padding: 0 4px;
-  white-space: nowrap;
+  font-size: 11px; color: var(--rpt-muted); padding: 4px 8px;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  border-radius: 999px; white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 /* Hover preview bubble anchored to a tree row */
 .rpt-tree-hoverpv {
