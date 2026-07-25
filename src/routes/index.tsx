@@ -414,6 +414,44 @@ function Index() {
           <InstallTabs t={t} card={card} cardHover={cardHover} subtle={subtle} border={border} isDark={isDark} />
         </section>
 
+        <section id="changelog" className={`border-t ${border} ${section2}`}>
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
+                <Rocket className="h-5 w-5" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold md:text-3xl">What's new</h2>
+                <p className={`mt-1 text-sm ${subtle}`}>Every release since v1.0 — newest first.</p>
+              </div>
+            </div>
+            <ol className="relative mt-10 space-y-6 border-l border-[#10b981]/25 pl-6">
+              {CHANGELOG.map((r) => (
+                <li key={r.v} className="relative">
+                  <span className="absolute -left-[33px] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#10b981] text-[10px] font-bold text-black shadow-[0_0_0_4px_rgba(16,185,129,0.15)]">
+                    <r.i className="h-3 w-3" />
+                  </span>
+                  <div className={`rounded-xl border p-5 transition ${card} ${cardHover}`}>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="rounded-md bg-[#10b981]/10 px-2 py-0.5 font-mono text-sm font-bold text-[#10b981]">v{r.v}</span>
+                      <h3 className="text-base font-semibold md:text-lg">{r.t}</h3>
+                      <span className={`ml-auto text-xs ${muted}`}>{r.d}</span>
+                    </div>
+                    <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {r.items.map((it) => (
+                        <li key={it} className={`flex items-start gap-2 text-sm ${subtle}`}>
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#3b82f6]" />
+                          <span>{it}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
         <section id="privacy" className={`border-t ${border} ${section2}`}>
           <div className="mx-auto max-w-4xl px-6 py-16">
             <h2 className="text-2xl font-bold md:text-3xl">{t("privacyTitle")}</h2>
