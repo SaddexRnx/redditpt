@@ -270,6 +270,14 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
   display: flex; gap: 6px; padding: 6px 0 8px;
   align-items: center; flex-wrap: nowrap;
 }
+/* Keep the search/author/prev-next controls pinned while scrolling the tree list. */
+.rpt-tabpane[data-panel="tree"] .rpt-tree-toolbar {
+  position: sticky; top: 0; z-index: 8;
+  background: var(--rpt-bg-0);
+  padding: 10px 0 8px; margin-top: -14px;
+  box-shadow: 0 6px 8px -10px rgba(0,0,0,.6);
+  border-bottom: 1px solid var(--rpt-border);
+}
 .rpt-tree-toolbar .rpt-search-box { flex: 1 1 auto; margin: 0; }
 .rpt-tree-toolbar select {
   background: var(--rpt-bg-1); color: var(--rpt-text);
