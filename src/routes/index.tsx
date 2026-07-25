@@ -66,6 +66,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Open kiwibrowser://extensions in Kiwi Browser on Android.",
     step_kiwi_dev: "Enable Developer mode and tap +(from .zip).",
     step_kiwi_pick: "Select the downloaded ZIP directly — Kiwi installs it as-is.",
+    choose_browser: "Choose your browser", install_for: "Install for",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   es: {
@@ -95,6 +96,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Abre kiwibrowser://extensions en Kiwi (Android).",
     step_kiwi_dev: "Activa modo desarrollador y toca +(from .zip).",
     step_kiwi_pick: "Selecciona el ZIP descargado.",
+    choose_browser: "Elige tu navegador", install_for: "Instalar para",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   fr: {
@@ -124,6 +126,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Ouvrez kiwibrowser://extensions.",
     step_kiwi_dev: "Activez le mode dev, touchez +(from .zip).",
     step_kiwi_pick: "Choisissez le ZIP.",
+    choose_browser: "Choisissez votre navigateur", install_for: "Installer pour",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   de: {
@@ -153,6 +156,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "kiwibrowser://extensions öffnen.",
     step_kiwi_dev: "Dev-Modus an, +(from .zip) tippen.",
     step_kiwi_pick: "ZIP auswählen.",
+    choose_browser: "Wähle deinen Browser", install_for: "Installieren für",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   pt: {
@@ -182,6 +186,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "Abra kiwibrowser://extensions.",
     step_kiwi_dev: "Modo dev, +(from .zip).",
     step_kiwi_pick: "Escolha o ZIP.",
+    choose_browser: "Escolha seu navegador", install_for: "Instalar para",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   ja: {
@@ -211,6 +216,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "kiwibrowser://extensions を開く。",
     step_kiwi_dev: "開発者モード ON、+(from .zip)。",
     step_kiwi_pick: "ZIP を選択。",
+    choose_browser: "ブラウザを選択", install_for: "インストール先",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
   zh: {
@@ -240,6 +246,7 @@ const T: Record<Lang, Record<string, string>> = {
     step_kiwi_open: "打开 kiwibrowser://extensions。",
     step_kiwi_dev: "开启开发者模式，点 +(from .zip)。",
     step_kiwi_pick: "选择下载的 ZIP。",
+    choose_browser: "选择你的浏览器", install_for: "安装到",
     tab_chrome: "Chrome / Edge / Brave", tab_ff: "Firefox", tab_kiwi: "Kiwi (Android)",
   },
 };
