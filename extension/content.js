@@ -1387,6 +1387,7 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
+    RPT.features.authorColors.apply();
     await RPT.features.rules.apply();
     RPT.features.chips.apply();
     await RPT.features.collections.attach();
@@ -1406,6 +1407,21 @@
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
     RPT.tour.maybeShow();
+    // Detect SPA navigation between Reddit threads and re-run everything.
+    (() => {
+      let last = location.href;
+      const onNav = () => {
+        if (location.href === last) return;
+        last = location.href;
+        RPT.state = { tree: null, comments: [], post: null };
+        RPT.features.liveNew.stop();
+        setTimeout(() => { runAll(); RPT.features.liveNew.start(); }, 600);
+      };
+      window.addEventListener("popstate", onNav);
+      const _ps = history.pushState, _rs = history.replaceState;
+      history.pushState = function () { const r = _ps.apply(this, arguments); onNav(); return r; };
+      history.replaceState = function () { const r = _rs.apply(this, arguments); onNav(); return r; };
+    })();
     // Re-apply rules whenever they change from Options
     try {
       chrome.storage.onChanged.addListener((changes, area) => {
