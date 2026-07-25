@@ -9,6 +9,16 @@ import {
   Rocket, Palette, Command, Accessibility, KeyRound, Sparkle,
 } from "lucide-react";
 
+/* Telegram paper-plane glyph — lucide has no Telegram icon, so we ship
+   the official mark as an inline SVG so it renders offline. */
+function TelegramIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M9.78 15.27 9.6 19.1c.36 0 .52-.16.72-.35l1.73-1.66 3.59 2.63c.66.36 1.13.17 1.31-.61l2.37-11.13c.24-1-.36-1.4-1-1.15L3.4 12.06c-.98.38-.97.93-.17 1.18l4.15 1.29 9.63-6.07c.45-.28.87-.13.52.19"/>
+    </svg>
+  );
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -461,9 +471,10 @@ function Index() {
             </h1>
             <p className={`mt-6 max-w-2xl text-lg ${subtle}`}>{t("heroP")}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
+              {/* Primary download button (same ZIP, always) */}
               <button
                 onClick={downloadZip}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/20 transition hover:bg-[#2fa84f]"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/25 transition hover:bg-[#2fa84f]"
               >
                 <Download className="h-5 w-5" /> {t("dl")}
               </button>
@@ -472,6 +483,23 @@ function Index() {
                 className={`inline-flex items-center gap-2 rounded-lg border ${border} px-6 py-3 font-medium transition ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}
               >
                 <Zap className="h-5 w-5" /> {t("how")}
+              </a>
+            </div>
+            {/* Per-browser quick links so Firefox / Kiwi users know it works
+                for them too — they jump straight to their install steps. */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className={`text-xs ${muted} mr-1`}>Install for:</span>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "chrome" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Chrome className="h-3.5 w-3.5 text-[#46d160]" /> Chrome · Edge · Brave
+              </a>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "ff" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Globe className="h-3.5 w-3.5 text-[#ff4500]" /> Firefox 128+
+              </a>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "kiwi" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Smartphone className="h-3.5 w-3.5 text-[#46d160]" /> Kiwi (Android)
               </a>
             </div>
             <p className={`mt-3 text-xs ${muted}`}>{t("worksIn")}</p>
@@ -586,7 +614,7 @@ function Index() {
               <Github className="h-4 w-4" /> github.com/Saddex
             </a>
             <a href="https://t.me/Saddex_x" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
-              <MessageCircle className="h-4 w-4" /> @Saddex_x
+              <TelegramIcon className="h-4 w-4" /> @Saddex_x
             </a>
           </div>
         </div>
