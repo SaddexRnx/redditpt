@@ -244,6 +244,58 @@ html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
   .rpt-btn-sub { font-size: 10.5px !important; }
 }
 
+/* ---------------- Mobile: quickbar, panel and hub ---------------- */
+@media (max-width: 640px) {
+  .rpt-quickbar {
+    right: 8px !important; bottom: 8px !important;
+    padding: 5px 6px !important; gap: 4px !important;
+    max-width: calc(100vw - 16px); flex-wrap: wrap;
+  }
+  .rpt-qb-btn { min-width: 34px; height: 34px; padding: 6px !important; }
+  .rpt-qb-sep { display: none; }
+  .rpt-panel { width: 100vw !important; border-left: none; }
+  .rpt-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .rpt-tabs button { flex-shrink: 0; }
+  .rpt-hub-grid { grid-template-columns: 1fr !important; }
+  .rpt-tree-item { padding: 8px 10px; font-size: 13px; }
+  .rpt-tree-toolbar { flex-wrap: wrap; }
+  .rpt-tree-toolbar select, .rpt-tree-toolbar input { min-width: 0; }
+}
+
+/* ---------------- Tree navigator toolbar + hover preview ---------------- */
+.rpt-tree-toolbar {
+  display: flex; gap: 6px; padding: 6px 0 8px;
+  align-items: center; flex-wrap: nowrap;
+}
+.rpt-tree-toolbar .rpt-search-box { flex: 1 1 auto; margin: 0; }
+.rpt-tree-toolbar select {
+  background: var(--rpt-bg-1); color: var(--rpt-text);
+  border: 1px solid var(--rpt-border); border-radius: 6px;
+  padding: 6px 8px; font: inherit; max-width: 45%;
+}
+.rpt-tree-toolbar select:focus { border-color: var(--rpt-green); outline: none; }
+.rpt-tree-count {
+  font-size: 11px; color: var(--rpt-muted); padding: 0 4px;
+  white-space: nowrap;
+}
+/* Hover preview bubble anchored to a tree row */
+.rpt-tree-hoverpv {
+  position: fixed; z-index: 2147483040;
+  background: var(--rpt-bg-1); color: var(--rpt-text);
+  border: 1px solid var(--rpt-border); border-radius: 8px;
+  padding: 8px 10px; font-size: 12px; line-height: 1.45;
+  max-width: 320px; box-shadow: var(--rpt-shadow);
+  pointer-events: none; white-space: pre-wrap;
+}
+.rpt-tree-hoverpv b { color: var(--rpt-green); display: block; margin-bottom: 4px; }
+/* Stronger highlight animation on click-jump */
+@keyframes rpt-jump-flash {
+  0%   { box-shadow: 0 0 0 3px var(--rpt-green), 0 0 20px 4px var(--rpt-green); }
+  60%  { box-shadow: 0 0 0 3px var(--rpt-green), 0 0 12px 2px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.rpt-jump-flash { animation: rpt-jump-flash 1.6s ease-out; border-radius: 6px; }
+
 .rpt-kw {
   width: 100%; box-sizing: border-box; background: var(--rpt-bg-1);
   color: var(--rpt-text); border: 1px solid var(--rpt-border);
