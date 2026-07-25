@@ -1013,6 +1013,8 @@
       const unique = Array.from(new Set(imgs));
       if (!unique.length) { alert("No images detected on this page."); return; }
       let idx = 0;
+      const path = location.pathname;
+      const savePos = RPT.utils.debounce((i) => RPT.galleryPos.set(path, i), 300);
       const o = document.createElement("div");
       o.className = "rpt-overlay rpt-gallery";
       o.setAttribute("role", "dialog");
@@ -1032,6 +1034,7 @@
         img.src = unique[idx];
         img.alt = `Gallery image ${idx + 1} of ${unique.length}`;
         count.textContent = `${idx + 1} / ${unique.length}`;
+        savePos(idx);
       };
       const prev = () => go(idx - 1);
       const next = () => go(idx + 1);
@@ -1050,16 +1053,22 @@
       // Click on the dark backdrop closes; click on the image/buttons does not.
       o.addEventListener("click", (e) => { if (e.target === o) close(); });
       const onKey = (e) => {
-        if (e.key === "ArrowLeft")  { e.preventDefault(); e.stopPropagation(); prev(); }
-        else if (e.key === "ArrowRight") { e.preventDefault(); e.stopPropagation(); next(); }
-        else if (e.key === "Home")  { e.preventDefault(); go(0); }
-        else if (e.key === "End")   { e.preventDefault(); go(unique.length - 1); }
-        else if (e.key === "Escape") { e.preventDefault(); close(); }
+        const s = RPT.utils.keyEventToStr(e);
+        const c = RPT.customKeys.cfg;
+        if (s === c.galleryPrev)      { e.preventDefault(); e.stopPropagation(); prev(); }
+        else if (s === c.galleryNext) { e.preventDefault(); e.stopPropagation(); next(); }
+        else if (e.key === "Home")    { e.preventDefault(); go(0); }
+        else if (e.key === "End")     { e.preventDefault(); go(unique.length - 1); }
+        else if (e.key === "Escape")  { e.preventDefault(); close(); }
       };
       document.addEventListener("keydown", onKey, true);
       document.body.appendChild(o);
-      // Move focus into the dialog so arrow keys / Escape are captured immediately.
-      setTimeout(() => o.focus(), 0);
+      // Focus trap + restore-on-close.
+      RPT.a11y.trapModal(o);
+      // Resume at the last-viewed image for this thread.
+      RPT.galleryPos.get(path).then((saved) => {
+        if (saved > 0 && saved < unique.length) go(saved);
+      });
     },
   };
 
