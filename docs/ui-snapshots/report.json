@@ -1,17 +1,7 @@
 {
-  "passed": 11,
-  "failed": 1,
+  "passed": 12,
+  "failed": 0,
   "results": [
-    {
-      "label": "popup",
-      "width": 320,
-      "scrollWidth": 380,
-      "clientWidth": 320,
-      "bodyScrollWidth": 380,
-      "overflowPx": 60,
-      "ok": false,
-      "screenshot": "docs/ui-snapshots/popup-320.png"
-    },
     {
       "label": "popup",
       "width": 380,
@@ -31,6 +21,16 @@
       "overflowPx": 0,
       "ok": true,
       "screenshot": "docs/ui-snapshots/popup-460.png"
+    },
+    {
+      "label": "popup",
+      "width": 560,
+      "scrollWidth": 560,
+      "clientWidth": 560,
+      "bodyScrollWidth": 380,
+      "overflowPx": 0,
+      "ok": true,
+      "screenshot": "docs/ui-snapshots/popup-560.png"
     },
     {
       "label": "options",
