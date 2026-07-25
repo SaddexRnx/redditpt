@@ -580,6 +580,137 @@
     },
   };
 
+  /* ---------------- Rules engine (keyword / author / flair / regex) ---------------- *
+   * Each rule: { id, enabled, type: "keyword"|"author"|"flair"|"regex",
+   *              pattern, action: "highlight"|"hide", color, label }              */
+  RPT.features.rules = {
+    KEY: "rpt_rules",
+    async list() { const { [this.KEY]: r = [] } = await RPT.storage.get(this.KEY); return r; },
+    async save(list) { await RPT.storage.set({ [this.KEY]: list }); this.apply(); },
+    _compile(rule) {
+      try {
+        if (rule.type === "regex") return new RegExp(rule.pattern, "i");
+        if (rule.type === "keyword") return new RegExp(rule.pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+      } catch { return null; }
+      return null;
+    },
+    _flair(el) {
+      return (el.querySelector?.("[flair-text], .flair, .linkflairlabel")?.textContent || "").toLowerCase();
+    },
+    _matches(rule, c) {
+      if (rule.type === "author") return c.author.toLowerCase() === rule.pattern.toLowerCase().replace(/^u\//, "");
+      if (rule.type === "flair")  return this._flair(c.el).includes(rule.pattern.toLowerCase());
+      const rx = this._compile(rule); if (!rx) return false;
+      return rx.test(c.body) || rx.test(c.author);
+    },
+    async apply() {
+      const rules = (await this.list()).filter((r) => r.enabled && r.pattern);
+      RPT.state.comments.forEach((c) => {
+        c.el.style.removeProperty("--rpt-rule-color");
+        c.el.classList.remove("rpt-rule-hit");
+        // Note: do NOT unhide here — cleaner + chips also manage rpt-hidden.
+      });
+      rules.forEach((rule) => {
+        RPT.state.comments.forEach((c) => {
+          if (!this._matches(rule, c)) return;
+          if (rule.action === "hide") c.el.classList.add("rpt-hidden");
+          else {
+            c.el.classList.add("rpt-rule-hit");
+            c.el.style.setProperty("box-shadow", `inset 3px 0 0 ${rule.color || "#f59e0b"}`);
+          }
+        });
+      });
+    },
+    preview(rule, comments) {
+      // Returns which of the given comment nodes would match (for the options UI).
+      return comments.filter((c) => this._matches(rule, c));
+    },
+  };
+
+  /* ---------------- Command palette (Ctrl / Cmd + K) ---------------- */
+  RPT.features.cmdk = {
+    _sel: 0, _filtered: [], _root: null,
+    commands() {
+      return [
+        { id: "panel",    label: "Open side panel",       kbd: "T",  run: () => RPT.ui.togglePanel() },
+        { id: "summary",  label: "Smart summary",         kbd: "S",  run: () => RPT.features.summary.open() },
+        { id: "gallery",  label: "Image gallery",         kbd: "G",  run: () => RPT.features.gallery.open() },
+        { id: "conv",     label: "Conversation mode",     kbd: "C",  run: () => RPT.features.conversation.open() },
+        { id: "layers",   label: "Toggle depth layers",   kbd: "L",  run: () => {
+          document.body.classList.toggle("rpt-layers-on");
+          document.body.classList.contains("rpt-layers-on") ? RPT.features.layers.apply() : RPT.features.layers.remove();
+        } },
+        { id: "collapse", label: "Collapse all comments", kbd: "⇧C", run: () => RPT.features.folding.collapseAll() },
+        { id: "expand",   label: "Expand all comments",   kbd: "⇧E", run: () => RPT.features.folding.expandAll() },
+        { id: "newest",   label: "Jump to newest comment", kbd: "N", run: () => RPT.features.shortcuts._jumpToNewest() },
+        { id: "live",     label: "Toggle live-new polling", run: async () => {
+          const a = await RPT.autorun.load(); a.liveNew = !a.liveNew; await RPT.autorun.save(a);
+          a.liveNew ? RPT.features.liveNew.start() : RPT.features.liveNew.stop();
+        } },
+        { id: "chip-op",   label: "Filter: OP only",    run: () => RPT.features.chips.toggle("op") },
+        { id: "chip-mod",  label: "Filter: Mod only",   run: () => RPT.features.chips.toggle("mod") },
+        { id: "chip-awd",  label: "Filter: Awarded",    run: () => RPT.features.chips.toggle("awarded") },
+        { id: "chip-none", label: "Filter: Reset",      run: () => { RPT.features.chips.active.clear(); RPT.features.chips.apply(); } },
+        { id: "md",       label: "Export as Markdown", run: () => RPT.features.exporter.md() },
+        { id: "json",     label: "Export as JSON",     run: () => RPT.features.exporter.json() },
+        { id: "html",     label: "Export as HTML",     run: () => RPT.features.exporter.html() },
+        { id: "kbd",      label: "Keyboard shortcuts", kbd: "?", run: () => RPT.features.shortcuts.cheatsheet() },
+        { id: "settings", label: "Open settings",       run: () => chrome.runtime.sendMessage({ type: "OPEN_OPTIONS" }) },
+        { id: "analytics",label: "Open analytics dashboard", run: () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }) },
+        { id: "theme",    label: "Toggle theme (dark/light)", run: () => window.RPT_THEME?.set(window.RPT_THEME.current === "dark" ? "light" : "dark") },
+      ];
+    },
+    open() {
+      if (this._root) { this.close(); return; }
+      const all = this.commands();
+      const back = document.createElement("div");
+      back.className = "rpt-cmdk-backdrop";
+      back.innerHTML = `
+        <div class="rpt-cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+          <input type="text" placeholder="Type a command…" aria-label="Command" autocomplete="off">
+          <ul role="listbox"></ul>
+          <div class="rpt-cmdk-foot"><span><kbd>↑↓</kbd> navigate</span><span><kbd>↵</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
+        </div>`;
+      this._root = back;
+      const input = back.querySelector("input");
+      const list  = back.querySelector("ul");
+      const render = (q = "") => {
+        const query = q.trim().toLowerCase();
+        this._filtered = !query ? all : all.filter((c) => c.label.toLowerCase().includes(query));
+        this._sel = 0;
+        list.innerHTML = this._filtered.length
+          ? this._filtered.map((c, i) => `<li role="option" data-i="${i}" class="${i === 0 ? "rpt-cmdk-sel" : ""}"><span>${RPT.utils.escapeHtml(c.label)}</span>${c.kbd ? `<span class="rpt-cmdk-kbd">${c.kbd}</span>` : ""}</li>`).join("")
+          : `<div class="rpt-cmdk-empty">No commands match “${RPT.utils.escapeHtml(query)}”.</div>`;
+      };
+      input.addEventListener("input", () => render(input.value));
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") { e.preventDefault(); this.close(); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); this._sel = Math.min(this._filtered.length - 1, this._sel + 1); this._highlight(); }
+        else if (e.key === "ArrowUp")   { e.preventDefault(); this._sel = Math.max(0, this._sel - 1); this._highlight(); }
+        else if (e.key === "Enter")     { e.preventDefault(); this._run(); }
+      });
+      list.addEventListener("click", (e) => {
+        const li = e.target.closest?.("li[data-i]"); if (!li) return;
+        this._sel = Number(li.dataset.i); this._run();
+      });
+      back.addEventListener("click", (e) => { if (e.target === back) this.close(); });
+      document.body.appendChild(back);
+      render();
+      setTimeout(() => input.focus(), 20);
+    },
+    _highlight() {
+      if (!this._root) return;
+      this._root.querySelectorAll("li").forEach((li) => li.classList.toggle("rpt-cmdk-sel", Number(li.dataset.i) === this._sel));
+      const el = this._root.querySelector(`li[data-i="${this._sel}"]`);
+      el?.scrollIntoView({ block: "nearest" });
+    },
+    _run() {
+      const cmd = this._filtered[this._sel]; this.close();
+      try { cmd?.run(); } catch (e) { console.warn(e); }
+    },
+    close() { this._root?.remove(); this._root = null; },
+  };
+
   /* ---------------- User color tags ---------------- */
   RPT.features.userTags = {
     KEY: "rpt_user_tags",
