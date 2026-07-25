@@ -925,7 +925,7 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-mm-sz{background:#1e293b;padding:1px 5px;border-radius:8px;font-size:10px;color:#94a3b8}
 .rpt-flash{outline:3px solid #ff4500 !important;outline-offset:2px;transition:outline .3s}
 .rpt-oldgold{outline:2px solid #f59e0b !important;outline-offset:-2px}
-.rpt-v2-mark{background:#fbbf24;color:#0f172a;padding:0 2px;border-radius:2px}
+.rpt-v2-mark{background:color-mix(in oklab, var(--rpt-green) 30%, transparent);color:var(--rpt-text);padding:0 3px;border-radius:3px}
 .rpt-bm-item{background:var(--rpt-bg-2,#0f172a);border:1px solid #1e293b;padding:10px;border-radius:8px;margin:6px 0}
 .rpt-bm-meta{display:grid;grid-template-columns:120px 1fr 1fr 40px;gap:6px;margin-top:6px}
 .rpt-bm-meta input{background:#020617;border:1px solid #1e293b;color:#e2e8f0;padding:4px 6px;border-radius:4px;font-size:12px}
