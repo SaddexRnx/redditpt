@@ -1733,7 +1733,9 @@
         if (changes.rpt_rules) RPT.features.rules.apply();
         if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
         if (changes.rpt_general) RPT.features.authorColors.apply();
-        if (changes.rpt_shortcuts) RPT.customKeys.load();
+        if (changes.rpt_shortcuts) {
+          RPT.customKeys.load().then(() => RPT.a11y.refreshKeyHelp());
+        }
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
