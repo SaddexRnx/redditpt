@@ -395,13 +395,21 @@ async function initShortcuts() {
   };
   document.getElementById("shortcuts-export").addEventListener("click", async () => {
     const cur = await load();
-    const bag = await get([KEYS.general, KEYS.a11y, "rpt_gallery_pos"]);
+    const bag = await get([
+      KEYS.general, KEYS.a11y, KEYS.filters, KEYS.keywords,
+      KEYS.tags, KEYS.autorun, KEYS.rules, "rpt_gallery_pos",
+    ]);
     const payload = {
-      schema: "rpt-settings/1",
+      schema: "rpt-settings/2",
       exportedAt: new Date().toISOString(),
       shortcuts: cur,
       general: bag[KEYS.general] || {},
       a11y: bag[KEYS.a11y] || {},
+      filters: bag[KEYS.filters] || {},
+      keywords: bag[KEYS.keywords] || [],
+      tags: bag[KEYS.tags] || {},
+      autorun: bag[KEYS.autorun] || {},
+      rules: bag[KEYS.rules] || [],
       galleryPos: bag.rpt_gallery_pos || {},
     };
     download("rpt-settings.json", "application/json", JSON.stringify(payload, null, 2));
@@ -477,6 +485,69 @@ async function initShortcuts() {
         }
       }
       if (n) { await set({ rpt_gallery_pos: clean }); applied.push("gallery positions"); }
+    }
+    // ---- filters ----
+    if (parsed.filters && typeof parsed.filters === "object" && !Array.isArray(parsed.filters)) {
+      const next = { ...F_DEF };
+      let n = 0;
+      for (const k of Object.keys(F_DEF)) {
+        if (k in parsed.filters) {
+          const v = parsed.filters[k];
+          if (typeof F_DEF[k] === "boolean" && typeof v === "boolean") { next[k] = v; n++; }
+          else if (typeof F_DEF[k] === "number" && Number.isFinite(Number(v))) { next[k] = Number(v); n++; }
+          else errors.push(`filters.${k} has wrong type.`);
+        }
+      }
+      if (n) { await set({ [KEYS.filters]: next }); applied.push("cleaner filters"); }
+    }
+    // ---- keywords (array of strings) ----
+    if (Array.isArray(parsed.keywords)) {
+      const clean = parsed.keywords.filter((s) => typeof s === "string" && s.length && s.length < 80).slice(0, 200);
+      if (clean.length) { await set({ [KEYS.keywords]: clean }); applied.push(`${clean.length} keywords`); }
+    }
+    // ---- tags ----
+    if (parsed.tags && typeof parsed.tags === "object" && !Array.isArray(parsed.tags)) {
+      const clean = {};
+      let n = 0;
+      for (const [user, t] of Object.entries(parsed.tags)) {
+        if (typeof user !== "string" || !user || user.length > 32) continue;
+        if (!t || typeof t !== "object") continue;
+        const label = typeof t.label === "string" ? t.label.slice(0, 40) : "";
+        const color = /^#[0-9a-f]{3,8}$/i.test(t.color || "") ? t.color : "#ff4500";
+        if (!label) continue;
+        clean[user] = { label, color }; n++;
+        if (n > 500) break;
+      }
+      if (n) { await set({ [KEYS.tags]: clean }); applied.push(`${n} user tags`); }
+    }
+    // ---- autorun ----
+    if (parsed.autorun && typeof parsed.autorun === "object" && !Array.isArray(parsed.autorun)) {
+      const next = { ...A_DEF };
+      let n = 0;
+      for (const k of Object.keys(A_DEF)) {
+        if (k in parsed.autorun && typeof parsed.autorun[k] === "boolean") { next[k] = parsed.autorun[k]; n++; }
+      }
+      if (n) { await set({ [KEYS.autorun]: next }); applied.push("automation"); }
+    }
+    // ---- rules (array of {enabled,type,pattern,action,color,label}) ----
+    if (Array.isArray(parsed.rules)) {
+      const allowedType = ["keyword","author","flair","regex"];
+      const allowedAction = ["highlight","hide"];
+      const clean = [];
+      for (const r of parsed.rules) {
+        if (!r || typeof r !== "object") continue;
+        if (!allowedType.includes(r.type)) continue;
+        if (!allowedAction.includes(r.action)) continue;
+        if (typeof r.pattern !== "string" || !r.pattern || r.pattern.length > 200) continue;
+        clean.push({
+          enabled: r.enabled !== false,
+          type: r.type, pattern: r.pattern, action: r.action,
+          color: /^#[0-9a-f]{3,8}$/i.test(r.color || "") ? r.color : "#f59e0b",
+          label: typeof r.label === "string" ? r.label.slice(0, 60) : "",
+        });
+        if (clean.length > 200) break;
+      }
+      if (clean.length) { await set({ [KEYS.rules]: clean }); applied.push(`${clean.length} rules`); renderRules(); }
     }
     if (!applied.length) {
       flash(errors[0] || tr("no_valid_settings"), true);
