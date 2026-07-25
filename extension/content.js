@@ -1118,6 +1118,9 @@
         ${btn("gallery", I.image, "Gallery", "G")}
         ${btn("fold", I.fold, "Collapse all", "⇧C")}
         <div class="rpt-qb-sep"></div>
+      <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="Parsing status" title="Thread parsing status">
+        <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+      </span>
       <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
         <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
       </span>
@@ -1149,6 +1152,9 @@
       document.body.appendChild(bar);
     // Refresh live-pill label after the DOM node exists
     RPT.features.liveNew._renderStatus();
+    // Reflect current status on the freshly mounted pill.
+    RPT.status.set(RPT.state.comments.length ? "ready" : "idle",
+      RPT.state.comments.length ? `Ready · ${RPT.state.comments.length} comments` : "Idle");
     },
     updateNewBadge(n) {
       const badge = document.querySelector(".rpt-qb-badge");
@@ -1169,7 +1175,15 @@
       return `
         <header class="rpt-panel-head">
           <div class="rpt-brand"><span class="rpt-brand-dot"></span>Reddit Power Toolkit</div>
-          <button class="rpt-panel-close" aria-label="Close">×</button>
+          <div class="rpt-panel-head-actions">
+            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" title="Thread parsing status">
+              <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+            </span>
+            <button class="rpt-panel-refresh" type="button" aria-label="Re-parse this thread" title="Refresh — re-parse comments, stats and colors">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+            </button>
+            <button class="rpt-panel-close" aria-label="Close panel">×</button>
+          </div>
         </header>
         <div class="rpt-chips">
           <span class="rpt-chip" data-chip="op">OP only</span>
@@ -1253,6 +1267,15 @@
         });
       };
       p.querySelector(".rpt-panel-close").onclick = () => p.remove();
+      const refreshBtn = p.querySelector(".rpt-panel-refresh");
+      if (refreshBtn) {
+        refreshBtn.onclick = async () => {
+          refreshBtn.classList.add("rpt-spin");
+          try { await RPT.resync(); } finally {
+            setTimeout(() => refreshBtn.classList.remove("rpt-spin"), 400);
+          }
+        };
+      }
       p.querySelectorAll(".rpt-chip").forEach((ch) => {
         ch.onclick = () => {
           const k = ch.dataset.chip;
