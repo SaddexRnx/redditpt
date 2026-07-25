@@ -998,7 +998,7 @@
         { id: "kbd",      label: tr("keyboard_shortcuts"), kbd: "?", run: () => RPT.features.shortcuts.cheatsheet() },
         { id: "settings", label: tr("open_settings"),       run: () => chrome.runtime.sendMessage({ type: "OPEN_OPTIONS" }) },
         { id: "analytics",label: tr("open_analytics_dashboard"), run: () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }) },
-        { id: "theme",    label: "Toggle theme (dark/light)", run: () => window.RPT_THEME?.set(window.RPT_THEME.current === "dark" ? "light" : "dark") },
+        { id: "theme",    label: tr("theme_toggle"), run: () => window.RPT_THEME?.set(window.RPT_THEME.current === "dark" ? "light" : "dark") },
       ];
     },
     open() {
@@ -1455,7 +1455,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
         <span class="rpt-qb-tip">${tr("command_palette")}<kbd>⌘K</kbd></span>
       </button>
-        ${btn("kbd", I.kbd, "Shortcuts", "?")}
+        ${btn("kbd", I.kbd, tr("keyboard_shortcuts"), "?")}
         ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, tr("about"))}
         <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="${tr("power_features")}" title="${tr("power_features")}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
