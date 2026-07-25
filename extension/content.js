@@ -12,8 +12,8 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.9.5",
-    BUILD_DATE: "2026-11-08",
+    VERSION: "1.9.6",
+    BUILD_DATE: "2026-07-25",
   });
   const tr = (key) => window.RPT_I18N?.t(key) || key;
   const tx = (value) => window.RPT_I18N?.text(value) || value;
