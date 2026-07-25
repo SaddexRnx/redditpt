@@ -236,11 +236,14 @@
     open() {
       const overlay = document.createElement("div");
       overlay.className = "rpt-overlay";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.setAttribute("aria-label", "Conversation mode");
       overlay.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
             <h2>${I.chat} Conversation Mode</h2>
-            <button class="rpt-close">${I.close}</button>
+            <button class="rpt-close" aria-label="Close">${I.close}</button>
           </div>
           <div class="rpt-convo-body"></div>
         </div>`;
@@ -325,6 +328,7 @@
       const s = this.compute();
       const o = document.createElement("div");
       o.className = "rpt-overlay";
+      o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Smart summary");
       const item = (c, meta) => `
         <div class="rpt-summary-item" data-id="${RPT.utils.escapeHtml(c.id)}">
           <div class="rpt-summary-meta"><strong>u/${RPT.utils.escapeHtml(c.author)}</strong> · ${meta}</div>
@@ -365,34 +369,83 @@
 
   /* ---------------- Live "new comments" indicator ---------------- *
    * Polls Reddit's own thread JSON (same origin, public endpoint) —
-   * no external server, still 100% local.                             */
+   * no external server, still 100% local. Adaptive polling: faster
+   * when the user is active, slower when idle or tab hidden.          */
   RPT.features.liveNew = {
-    _timer: null, _baseline: 0, _latest: 0,
+    _timer: null, _baseline: 0, _latest: 0, _lastActive: Date.now(),
+    _state: "paused", _interval: 45000, _errBackoff: 0,
+    _bindActivity() {
+      if (this._bound) return; this._bound = true;
+      const bump = () => { this._lastActive = Date.now(); };
+      window.addEventListener("pointermove", bump, { passive: true });
+      window.addEventListener("scroll", bump, { passive: true });
+      window.addEventListener("keydown", bump);
+      document.addEventListener("visibilitychange", () => this._reschedule());
+    },
+    _pickInterval() {
+      if (document.hidden) return 120000;
+      const idle = Date.now() - this._lastActive;
+      if (idle > 180000) return 120000;
+      if (idle < 30000)  return 20000;
+      return 45000;
+    },
+    _reschedule() {
+      if (!this._timer) return;
+      const next = Math.max(this._pickInterval(), this._errBackoff);
+      if (next !== this._interval) {
+        this._interval = next;
+        clearInterval(this._timer);
+        this._timer = setInterval(() => this._poll(), this._interval);
+        this._renderStatus();
+      }
+    },
+    async _poll() {
+      this._setState("check");
+      try {
+        const url = location.pathname.replace(/\/$/, "") + ".json?limit=500&raw_json=1";
+        const r = await fetch(url, { credentials: "omit" });
+        if (!r.ok) { this._errBackoff = Math.min((this._errBackoff || 45000) * 2, 300000); this._setState("idle"); this._reschedule(); return; }
+        this._errBackoff = 0;
+        const j = await r.json();
+        const listing = Array.isArray(j) && j[1]?.data?.children;
+        if (!listing) { this._setState("idle"); return; }
+        const count = this._countAll(listing);
+        this._latest = count;
+        const delta = Math.max(0, count - this._baseline);
+        RPT.ui.updateNewBadge(delta);
+        this._setState(delta > 0 ? "new" : "live", delta);
+        this._reschedule();
+      } catch { this._setState("idle"); }
+    },
     async start() {
       const auto = await RPT.autorun.load();
-      if (!auto.liveNew) return;
-      if (!RPT.utils.isRedditThread()) return;
+      if (!auto.liveNew || !RPT.utils.isRedditThread()) { this._setState("paused"); return; }
       this.stop();
+      this._bindActivity();
       this._baseline = RPT.state.comments.length ||
         document.querySelectorAll("shreddit-comment, .thing.comment").length;
-      const poll = async () => {
-        try {
-          const url = location.pathname.replace(/\/$/, "") + ".json?limit=500&raw_json=1";
-          const r = await fetch(url, { credentials: "omit" });
-          if (!r.ok) return;
-          const j = await r.json();
-          const listing = Array.isArray(j) && j[1]?.data?.children;
-          if (!listing) return;
-          const count = this._countAll(listing);
-          this._latest = count;
-          const delta = Math.max(0, count - this._baseline);
-          RPT.ui.updateNewBadge(delta);
-        } catch { /* silent */ }
-      };
-      poll();
-      this._timer = setInterval(poll, 45000);
+      this._interval = this._pickInterval();
+      this._poll();
+      this._timer = setInterval(() => this._poll(), this._interval);
+      this._setState("live");
     },
-    stop() { if (this._timer) clearInterval(this._timer); this._timer = null; RPT.ui.updateNewBadge(0); },
+    stop() {
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null; RPT.ui.updateNewBadge(0);
+      this._setState("paused");
+    },
+    _setState(s, delta) {
+      this._state = s;
+      this._renderStatus(delta);
+    },
+    _renderStatus(delta) {
+      const el = document.querySelector(".rpt-live-pill"); if (!el) return;
+      el.dataset.state = this._state;
+      const secs = Math.round(this._interval / 1000);
+      const label = { live: `Live · ${secs}s`, idle: "Idle", paused: "Paused",
+        check: "Checking…", new: `+${delta ?? 0} new` }[this._state] || "";
+      el.querySelector(".rpt-live-txt").textContent = label;
+    },
     _countAll(children) {
       let n = 0;
       for (const c of children) {
@@ -403,7 +456,7 @@
       }
       return n;
     },
-    reset() { this._baseline = this._latest || this._baseline; RPT.ui.updateNewBadge(0); },
+    reset() { this._baseline = this._latest || this._baseline; RPT.ui.updateNewBadge(0); this._setState("live"); },
   };
 
   /* ---------------- Filter chips (OP / Mod / Awarded) ---------------- */
@@ -444,6 +497,26 @@
     KEY: "rpt_collections",
     async list() { const { [this.KEY]: v = [] } = await RPT.storage.get(this.KEY); return v; },
     async save(all) { await RPT.storage.set({ [this.KEY]: all }); },
+    async importMerged(items) {
+      const all = await this.list();
+      const seen = new Set(all.map((x) => x.url + "|" + x.id));
+      let added = 0;
+      for (const it of items) {
+        if (!it || !it.body || !it.author) continue;
+        const key = (it.url || "") + "|" + (it.id || it.author + "-" + it.savedAt);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        all.unshift({
+          id: it.id || (it.author + "-" + (it.savedAt || Date.now())),
+          author: String(it.author), body: String(it.body),
+          score: Number(it.score) || 0, url: String(it.url || ""),
+          title: String(it.title || ""), savedAt: it.savedAt || new Date().toISOString(),
+        });
+        added++;
+      }
+      await this.save(all.slice(0, 500));
+      return added;
+    },
     async add(c) {
       const all = await this.list();
       if (all.some((x) => x.id === c.id)) return;
@@ -509,6 +582,137 @@
         t.replaceWith(span);
       });
     },
+  };
+
+  /* ---------------- Rules engine (keyword / author / flair / regex) ---------------- *
+   * Each rule: { id, enabled, type: "keyword"|"author"|"flair"|"regex",
+   *              pattern, action: "highlight"|"hide", color, label }              */
+  RPT.features.rules = {
+    KEY: "rpt_rules",
+    async list() { const { [this.KEY]: r = [] } = await RPT.storage.get(this.KEY); return r; },
+    async save(list) { await RPT.storage.set({ [this.KEY]: list }); this.apply(); },
+    _compile(rule) {
+      try {
+        if (rule.type === "regex") return new RegExp(rule.pattern, "i");
+        if (rule.type === "keyword") return new RegExp(rule.pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+      } catch { return null; }
+      return null;
+    },
+    _flair(el) {
+      return (el.querySelector?.("[flair-text], .flair, .linkflairlabel")?.textContent || "").toLowerCase();
+    },
+    _matches(rule, c) {
+      if (rule.type === "author") return c.author.toLowerCase() === rule.pattern.toLowerCase().replace(/^u\//, "");
+      if (rule.type === "flair")  return this._flair(c.el).includes(rule.pattern.toLowerCase());
+      const rx = this._compile(rule); if (!rx) return false;
+      return rx.test(c.body) || rx.test(c.author);
+    },
+    async apply() {
+      const rules = (await this.list()).filter((r) => r.enabled && r.pattern);
+      RPT.state.comments.forEach((c) => {
+        c.el.style.removeProperty("--rpt-rule-color");
+        c.el.classList.remove("rpt-rule-hit");
+        // Note: do NOT unhide here — cleaner + chips also manage rpt-hidden.
+      });
+      rules.forEach((rule) => {
+        RPT.state.comments.forEach((c) => {
+          if (!this._matches(rule, c)) return;
+          if (rule.action === "hide") c.el.classList.add("rpt-hidden");
+          else {
+            c.el.classList.add("rpt-rule-hit");
+            c.el.style.setProperty("box-shadow", `inset 3px 0 0 ${rule.color || "#f59e0b"}`);
+          }
+        });
+      });
+    },
+    preview(rule, comments) {
+      // Returns which of the given comment nodes would match (for the options UI).
+      return comments.filter((c) => this._matches(rule, c));
+    },
+  };
+
+  /* ---------------- Command palette (Ctrl / Cmd + K) ---------------- */
+  RPT.features.cmdk = {
+    _sel: 0, _filtered: [], _root: null,
+    commands() {
+      return [
+        { id: "panel",    label: "Open side panel",       kbd: "T",  run: () => RPT.ui.togglePanel() },
+        { id: "summary",  label: "Smart summary",         kbd: "S",  run: () => RPT.features.summary.open() },
+        { id: "gallery",  label: "Image gallery",         kbd: "G",  run: () => RPT.features.gallery.open() },
+        { id: "conv",     label: "Conversation mode",     kbd: "C",  run: () => RPT.features.conversation.open() },
+        { id: "layers",   label: "Toggle depth layers",   kbd: "L",  run: () => {
+          document.body.classList.toggle("rpt-layers-on");
+          document.body.classList.contains("rpt-layers-on") ? RPT.features.layers.apply() : RPT.features.layers.remove();
+        } },
+        { id: "collapse", label: "Collapse all comments", kbd: "⇧C", run: () => RPT.features.folding.collapseAll() },
+        { id: "expand",   label: "Expand all comments",   kbd: "⇧E", run: () => RPT.features.folding.expandAll() },
+        { id: "newest",   label: "Jump to newest comment", kbd: "N", run: () => RPT.features.shortcuts._jumpToNewest() },
+        { id: "live",     label: "Toggle live-new polling", run: async () => {
+          const a = await RPT.autorun.load(); a.liveNew = !a.liveNew; await RPT.autorun.save(a);
+          a.liveNew ? RPT.features.liveNew.start() : RPT.features.liveNew.stop();
+        } },
+        { id: "chip-op",   label: "Filter: OP only",    run: () => RPT.features.chips.toggle("op") },
+        { id: "chip-mod",  label: "Filter: Mod only",   run: () => RPT.features.chips.toggle("mod") },
+        { id: "chip-awd",  label: "Filter: Awarded",    run: () => RPT.features.chips.toggle("awarded") },
+        { id: "chip-none", label: "Filter: Reset",      run: () => { RPT.features.chips.active.clear(); RPT.features.chips.apply(); } },
+        { id: "md",       label: "Export as Markdown", run: () => RPT.features.exporter.md() },
+        { id: "json",     label: "Export as JSON",     run: () => RPT.features.exporter.json() },
+        { id: "html",     label: "Export as HTML",     run: () => RPT.features.exporter.html() },
+        { id: "kbd",      label: "Keyboard shortcuts", kbd: "?", run: () => RPT.features.shortcuts.cheatsheet() },
+        { id: "settings", label: "Open settings",       run: () => chrome.runtime.sendMessage({ type: "OPEN_OPTIONS" }) },
+        { id: "analytics",label: "Open analytics dashboard", run: () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }) },
+        { id: "theme",    label: "Toggle theme (dark/light)", run: () => window.RPT_THEME?.set(window.RPT_THEME.current === "dark" ? "light" : "dark") },
+      ];
+    },
+    open() {
+      if (this._root) { this.close(); return; }
+      const all = this.commands();
+      const back = document.createElement("div");
+      back.className = "rpt-cmdk-backdrop";
+      back.innerHTML = `
+        <div class="rpt-cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+          <input type="text" placeholder="Type a command…" aria-label="Command" autocomplete="off">
+          <ul role="listbox"></ul>
+          <div class="rpt-cmdk-foot"><span><kbd>↑↓</kbd> navigate</span><span><kbd>↵</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
+        </div>`;
+      this._root = back;
+      const input = back.querySelector("input");
+      const list  = back.querySelector("ul");
+      const render = (q = "") => {
+        const query = q.trim().toLowerCase();
+        this._filtered = !query ? all : all.filter((c) => c.label.toLowerCase().includes(query));
+        this._sel = 0;
+        list.innerHTML = this._filtered.length
+          ? this._filtered.map((c, i) => `<li role="option" data-i="${i}" class="${i === 0 ? "rpt-cmdk-sel" : ""}"><span>${RPT.utils.escapeHtml(c.label)}</span>${c.kbd ? `<span class="rpt-cmdk-kbd">${c.kbd}</span>` : ""}</li>`).join("")
+          : `<div class="rpt-cmdk-empty">No commands match “${RPT.utils.escapeHtml(query)}”.</div>`;
+      };
+      input.addEventListener("input", () => render(input.value));
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") { e.preventDefault(); this.close(); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); this._sel = Math.min(this._filtered.length - 1, this._sel + 1); this._highlight(); }
+        else if (e.key === "ArrowUp")   { e.preventDefault(); this._sel = Math.max(0, this._sel - 1); this._highlight(); }
+        else if (e.key === "Enter")     { e.preventDefault(); this._run(); }
+      });
+      list.addEventListener("click", (e) => {
+        const li = e.target.closest?.("li[data-i]"); if (!li) return;
+        this._sel = Number(li.dataset.i); this._run();
+      });
+      back.addEventListener("click", (e) => { if (e.target === back) this.close(); });
+      document.body.appendChild(back);
+      render();
+      setTimeout(() => input.focus(), 20);
+    },
+    _highlight() {
+      if (!this._root) return;
+      this._root.querySelectorAll("li").forEach((li) => li.classList.toggle("rpt-cmdk-sel", Number(li.dataset.i) === this._sel));
+      const el = this._root.querySelector(`li[data-i="${this._sel}"]`);
+      el?.scrollIntoView({ block: "nearest" });
+    },
+    _run() {
+      const cmd = this._filtered[this._sel]; this.close();
+      try { cmd?.run(); } catch (e) { console.warn(e); }
+    },
+    close() { this._root?.remove(); this._root = null; },
   };
 
   /* ---------------- User color tags ---------------- */
@@ -711,6 +915,8 @@
       document.addEventListener("keydown", (e) => {
         const tag = (e.target?.tagName || "").toLowerCase();
         if (tag === "input" || tag === "textarea" || e.target?.isContentEditable) return;
+        // Command palette: Ctrl/Cmd+K (works even in inputs)
+        if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); RPT.features.cmdk.open(); return; }
         if (e.metaKey || e.ctrlKey || e.altKey) return;
         const k = e.key;
         if (k === "?") { e.preventDefault(); this.cheatsheet(); return; }
@@ -795,11 +1001,18 @@
         ${btn("gallery", I.image, "Gallery", "G")}
         ${btn("fold", I.fold, "Collapse all", "⇧C")}
         <div class="rpt-qb-sep"></div>
+      <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
+        <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
+      </span>
         <button class="rpt-qb-btn" data-act="new" aria-label="New comments">
           ${I.bell}
           <span class="rpt-qb-badge" style="display:none">0</span>
           <span class="rpt-qb-tip">New comments<kbd>N</kbd></span>
         </button>
+      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
+        <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
+      </button>
         ${btn("kbd", I.kbd, "Shortcuts", "?")}
         ${btn("close", I.close, "Hide toolbar")}`;
       bar.addEventListener("click", (e) => {
@@ -812,10 +1025,13 @@
         else if (a === "gallery") RPT.features.gallery.open();
         else if (a === "fold")    RPT.features.folding.collapseAll();
         else if (a === "new")     RPT.features.shortcuts._jumpToNewest();
+      else if (a === "cmdk")    RPT.features.cmdk.open();
         else if (a === "kbd")     RPT.features.shortcuts.cheatsheet();
         else if (a === "close")   { bar.remove(); RPT.autorun.load().then((v) => RPT.autorun.save({ ...v, quickBar: false })); }
       });
       document.body.appendChild(bar);
+    // Refresh live-pill label after the DOM node exists
+    RPT.features.liveNew._renderStatus();
     },
     updateNewBadge(n) {
       const badge = document.querySelector(".rpt-qb-badge");
@@ -846,7 +1062,7 @@
           <span class="rpt-chip" data-chip="__clear">Reset</span>
         </div>
         <nav class="rpt-tabs">
-          <button data-tab="tree" class="active">${I.tree} Tree</button>
+          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} Tree</button>
           <button data-tab="tools">${I.panel} Tools</button>
           <button data-tab="collect">${I.star} Saved</button>
           <button data-tab="filters">${I.filter} Clean</button>
@@ -1092,6 +1308,8 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
+    await RPT.features.rules.apply();
+    RPT.features.chips.apply();
     await RPT.features.collections.attach();
     RPT.features.toolbar.attach();
     if (auto.ageWarning) RPT.features.ageWarning.check();
@@ -1103,11 +1321,20 @@
     // Ensure theme + i18n are ready for injected UI
     window.RPT_THEME?.load();
     window.RPT_I18N?.load();
+    window.RPT_A11Y?.load();
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
     RPT.tour.maybeShow();
+    // Re-apply rules whenever they change from Options
+    try {
+      chrome.storage.onChanged.addListener((changes, area) => {
+        if (area !== "local") return;
+        if (changes.rpt_rules) RPT.features.rules.apply();
+        if (changes.rpt_autorun) { RPT.features.liveNew.start(); }
+      });
+    } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
     (async () => {
       if (!RPT.utils.isRedditThread()) return;

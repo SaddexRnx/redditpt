@@ -412,3 +412,82 @@ html[data-rpt-theme="light"] .rpt-onboard { background: radial-gradient(circle a
 @keyframes rpt-fade { from { opacity: 0 } to { opacity: 1 } }
 @keyframes rpt-bounce { 0%,100% { transform: rotate(45deg) translate(0,0) } 50% { transform: rotate(45deg) translate(6px,6px) } }
 @keyframes rpt-pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.55) } 100% { box-shadow: 0 0 0 32px rgba(16,185,129,0) } }
+
+/* ---------------- Accessibility overrides ---------------- */
+html[data-rpt-palette="deuteranopia"], body[data-rpt-palette="deuteranopia"] { --rpt-green: #f5c518; --rpt-blue: #0072b2; --rpt-red: #d55e00; --rpt-amber: #e69f00; }
+html[data-rpt-palette="protanopia"],   body[data-rpt-palette="protanopia"]   { --rpt-green: #ffd447; --rpt-blue: #005ab5; --rpt-red: #cc79a7; --rpt-amber: #f0a202; }
+html[data-rpt-palette="tritanopia"],   body[data-rpt-palette="tritanopia"]   { --rpt-green: #009e73; --rpt-blue: #d81b60; --rpt-red: #cc3311; --rpt-amber: #ee7733; }
+html[data-rpt-palette="mono"],         body[data-rpt-palette="mono"]         { --rpt-green: #e6edf5; --rpt-blue: #b8c0cc; --rpt-red: #ffffff; --rpt-amber: #cfd6e1; }
+
+html[data-rpt-contrast="high"], body[data-rpt-contrast="high"] {
+  --rpt-bg-0: #000; --rpt-bg-1: #0a0a0a; --rpt-bg-2: #141414; --rpt-bg-3: #1f1f1f;
+  --rpt-border: #ffffff; --rpt-text: #ffffff; --rpt-muted: #e5e5e5;
+}
+html[data-rpt-contrast="high"][data-rpt-theme="light"], body[data-rpt-contrast="high"][data-rpt-theme="light"] {
+  --rpt-bg-0: #fff; --rpt-bg-1: #fff; --rpt-bg-2: #f0f0f0; --rpt-bg-3: #e5e5e5;
+  --rpt-border: #000; --rpt-text: #000; --rpt-muted: #1a1a1a;
+}
+html[data-rpt-contrast="high"] .rpt-panel, html[data-rpt-contrast="high"] .rpt-overlay-panel,
+html[data-rpt-contrast="high"] .rpt-qb, html[data-rpt-contrast="high"] .rpt-cmdk { border-width: 2px !important; }
+
+html[data-rpt-text="large"] .rpt-panel, html[data-rpt-text="large"] .rpt-overlay-panel,
+html[data-rpt-text="large"] .rpt-qb, html[data-rpt-text="large"] .rpt-cmdk { font-size: 15px; }
+html[data-rpt-text="large"] .rpt-tree-item, html[data-rpt-text="large"] .rpt-preview,
+html[data-rpt-text="large"] .rpt-tabpane label { font-size: 14px; }
+
+html[data-rpt-motion="reduced"] *, body[data-rpt-motion="reduced"] *,
+@media (prefers-reduced-motion: reduce) { .rpt-panel, .rpt-overlay, .rpt-tour, .rpt-onboard-pulse, .rpt-onboard-arrow { animation: none !important; transition: none !important; } }
+html[data-rpt-motion="reduced"] .rpt-onboard-pulse,
+html[data-rpt-motion="reduced"] .rpt-onboard-arrow { animation: none !important; }
+
+/* Global focus-visible using accent */
+.rpt-qb button:focus-visible, .rpt-panel button:focus-visible, .rpt-overlay button:focus-visible,
+.rpt-cmdk input:focus-visible, .rpt-cmdk li:focus-visible, .rpt-panel input:focus-visible,
+.rpt-panel select:focus-visible, .rpt-panel textarea:focus-visible {
+  outline: 2px solid var(--rpt-green); outline-offset: 2px;
+}
+
+/* ---------------- Live-new status pill ---------------- */
+.rpt-live-pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 6px;
+  border-radius: 999px; background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  font: 600 10px var(--rpt-font); color: var(--rpt-muted); margin: 0 4px;
+  white-space: nowrap; user-select: none;
+}
+.rpt-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rpt-muted); flex-shrink: 0; }
+.rpt-live-pill[data-state="live"] .rpt-live-dot { background: var(--rpt-green); box-shadow: 0 0 6px var(--rpt-green); animation: rpt-live-blink 1.6s ease-in-out infinite; }
+.rpt-live-pill[data-state="idle"] .rpt-live-dot { background: var(--rpt-amber); }
+.rpt-live-pill[data-state="paused"] .rpt-live-dot { background: var(--rpt-muted); }
+.rpt-live-pill[data-state="check"] .rpt-live-dot { background: var(--rpt-blue); animation: rpt-live-blink .8s ease-in-out infinite; }
+.rpt-live-pill[data-state="new"] { color: var(--rpt-text); border-color: var(--rpt-blue); }
+.rpt-live-pill[data-state="new"] .rpt-live-dot { background: var(--rpt-blue); }
+@keyframes rpt-live-blink { 50% { opacity: .35; } }
+html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
+
+/* ---------------- Command palette (Ctrl/Cmd+K) ---------------- */
+.rpt-cmdk-backdrop {
+  position: fixed; inset: 0; background: rgba(3,6,10,.65); z-index: 2147483200;
+  display: flex; align-items: flex-start; justify-content: center; padding-top: 12vh;
+  backdrop-filter: blur(4px); animation: rpt-fade .15s ease-out;
+}
+.rpt-cmdk {
+  width: min(560px, 92vw); background: var(--rpt-bg-1); color: var(--rpt-text);
+  border: 1px solid var(--rpt-border); border-radius: 14px; overflow: hidden;
+  box-shadow: var(--rpt-shadow); font: 13px var(--rpt-font); display: flex; flex-direction: column;
+}
+.rpt-cmdk input {
+  width: 100%; box-sizing: border-box; padding: 14px 16px; background: transparent;
+  color: var(--rpt-text); border: none; border-bottom: 1px solid var(--rpt-border);
+  outline: none; font: 15px var(--rpt-font);
+}
+.rpt-cmdk ul { list-style: none; margin: 0; padding: 6px; max-height: 50vh; overflow: auto; }
+.rpt-cmdk li {
+  display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px;
+  cursor: pointer; font-size: 13px; color: var(--rpt-text);
+}
+.rpt-cmdk li .rpt-cmdk-kbd { margin-left: auto; color: var(--rpt-muted); font-size: 11px; }
+.rpt-cmdk li.rpt-cmdk-sel { background: var(--rpt-bg-2); color: var(--rpt-green); }
+.rpt-cmdk li:hover { background: var(--rpt-bg-2); }
+.rpt-cmdk-empty { padding: 20px; text-align: center; color: var(--rpt-muted); font-size: 12px; }
+.rpt-cmdk-foot { padding: 8px 12px; border-top: 1px solid var(--rpt-border); color: var(--rpt-muted); font-size: 11px; display: flex; gap: 12px; }
+.rpt-cmdk-foot kbd { background: var(--rpt-bg-2); border: 1px solid var(--rpt-border); border-radius: 3px; padding: 0 5px; }

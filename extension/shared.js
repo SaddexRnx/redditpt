@@ -307,6 +307,34 @@
     },
   };
 
+  /* ---------------- Accessibility (palette / contrast / text / motion) ---------------- */
+  const A11Y_DEFAULTS = { palette: "default", contrast: "normal", text: "normal", motion: "auto" };
+  const RPT_A11Y = {
+    current: { ...A11Y_DEFAULTS },
+    async load() {
+      try {
+        const { rpt_a11y } = await new Promise((r) => chrome.storage.local.get("rpt_a11y", r));
+        this.current = { ...A11Y_DEFAULTS, ...(rpt_a11y || {}) };
+      } catch { this.current = { ...A11Y_DEFAULTS }; }
+      this.apply();
+      return this.current;
+    },
+    async set(patch) {
+      this.current = { ...this.current, ...patch };
+      await new Promise((r) => chrome.storage.local.set({ rpt_a11y: this.current }, r));
+      this.apply();
+    },
+    apply() {
+      const targets = [document.documentElement, document.body].filter(Boolean);
+      targets.forEach((t) => {
+        t.setAttribute("data-rpt-palette", this.current.palette);
+        t.setAttribute("data-rpt-contrast", this.current.contrast);
+        t.setAttribute("data-rpt-text", this.current.text);
+        t.setAttribute("data-rpt-motion", this.current.motion);
+      });
+    },
+  };
+
   const RPT_THEME = {
     current: "dark",
     async load() {
@@ -335,9 +363,11 @@
       if (area !== "local") return;
       if (changes.rpt_lang) { RPT_I18N.current = changes.rpt_lang.newValue || "en"; RPT_I18N.apply(document); }
       if (changes.rpt_theme) { RPT_THEME.current = changes.rpt_theme.newValue || "dark"; RPT_THEME.apply(); }
+      if (changes.rpt_a11y) { RPT_A11Y.current = { ...A11Y_DEFAULTS, ...(changes.rpt_a11y.newValue || {}) }; RPT_A11Y.apply(); }
     });
   } catch {}
 
   window.RPT_I18N = RPT_I18N;
   window.RPT_THEME = RPT_THEME;
+  window.RPT_A11Y = RPT_A11Y;
 })();

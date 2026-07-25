@@ -5,6 +5,7 @@ import {
   Sparkles, ListChecks, Activity, Highlighter, Tag, Bold, FileDown, Image,
   Clock, LinkIcon, BarChart3, History, Sun, Moon, Languages,
   Chrome, Globe, Smartphone, ShieldCheck, Github,
+  Package, Puzzle, ToggleRight, FolderOpen, ArrowRight, Copy, Check, MessageCircle,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -418,17 +419,40 @@ function InstallTabs({
   t: (k: string) => string; card: string; cardHover: string; subtle: string; border: string; isDark: boolean;
 }) {
   const [tab, setTab] = useState<"chrome" | "ff" | "kiwi">("chrome");
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = (v: string) => {
+    navigator.clipboard?.writeText(v).then(() => { setCopied(v); setTimeout(() => setCopied(null), 1500); });
+  };
   const activeCls = "bg-[#10b981] text-black border-[#10b981]";
   const tabs: { id: "chrome" | "ff" | "kiwi"; label: string; icon: ReactNode }[] = [
     { id: "chrome", label: t("tab_chrome"), icon: <Chrome className="h-4 w-4" /> },
     { id: "ff", label: t("tab_ff"), icon: <Globe className="h-4 w-4" /> },
     { id: "kiwi", label: t("tab_kiwi"), icon: <Smartphone className="h-4 w-4" /> },
   ];
-  const steps: Record<string, ReactNode[]> = {
-    chrome: [t("step_download"), <>{t("step_open_chrome")}</>, t("step_dev"), t("step_load"), t("step_thread")],
-    ff: [t("step_download"), t("step_ff_open"), t("step_ff_load"), <span className={subtle}>{t("step_ff_note")}</span>, t("step_thread")],
-    kiwi: [t("step_download"), t("step_kiwi_open"), t("step_kiwi_dev"), t("step_kiwi_pick"), t("step_thread")],
+  type Step = { icon: typeof Package; title: string; body: ReactNode; copy?: string };
+  const stepsFor: Record<"chrome" | "ff" | "kiwi", Step[]> = {
+    chrome: [
+      { icon: Package,      title: "Download",       body: t("step_download") },
+      { icon: Puzzle,       title: "Open extensions",body: t("step_open_chrome"), copy: "chrome://extensions" },
+      { icon: ToggleRight,  title: "Developer mode", body: t("step_dev") },
+      { icon: FolderOpen,   title: "Load unpacked",  body: t("step_load") },
+      { icon: MessageCircle,title: "Open Reddit",    body: t("step_thread") },
+    ],
+    ff: [
+      { icon: Package,      title: "Download",       body: t("step_download") },
+      { icon: Puzzle,       title: "about:debugging",body: t("step_ff_open"), copy: "about:debugging#/runtime/this-firefox" },
+      { icon: FolderOpen,   title: "Load temp add-on", body: <>{t("step_ff_load")}<br /><span className={`text-xs ${subtle}`}>{t("step_ff_note")}</span></> },
+      { icon: MessageCircle,title: "Open Reddit",    body: t("step_thread") },
+    ],
+    kiwi: [
+      { icon: Package,      title: "Download",       body: t("step_download") },
+      { icon: Puzzle,       title: "kiwibrowser://extensions", body: t("step_kiwi_open"), copy: "kiwibrowser://extensions" },
+      { icon: ToggleRight,  title: "Developer mode", body: t("step_kiwi_dev") },
+      { icon: FolderOpen,   title: "Install ZIP",    body: t("step_kiwi_pick") },
+      { icon: MessageCircle,title: "Open Reddit",    body: t("step_thread") },
+    ],
   };
+  const steps = stepsFor[tab];
   return (
     <>
       <div className="mt-6 flex flex-wrap gap-2">
@@ -442,14 +466,38 @@ function InstallTabs({
           </button>
         ))}
       </div>
-      <ol className={`mt-8 space-y-4 ${isDark ? "text-white/85" : "text-slate-800"}`}>
-        {steps[tab].map((step, i) => (
-          <li key={i} className={`flex gap-4 rounded-xl border p-4 ${card}`}>
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#3b82f6] text-sm font-bold text-white">{i + 1}</span>
-            <span className="pt-1">{step}</span>
-          </li>
-        ))}
-      </ol>
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {steps.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <div key={i} className={`group relative rounded-2xl border p-5 transition ${card} ${cardHover}`}>
+              <div className="mb-4 flex items-center justify-between">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#10b981] text-sm font-bold text-black">
+                  {i + 1}
+                </span>
+                <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+              </div>
+              <h3 className="font-semibold">{s.title}</h3>
+              <p className={`mt-1 text-sm ${subtle} leading-relaxed`}>{s.body}</p>
+              {s.copy && (
+                <button
+                  onClick={() => copy(s.copy!)}
+                  className={`mt-3 inline-flex items-center gap-2 rounded-lg border ${border} px-3 py-1.5 text-xs font-mono ${subtle} transition hover:text-[#10b981] hover:border-[#10b981]`}
+                  aria-label={`Copy ${s.copy}`}
+                >
+                  {copied === s.copy ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{s.copy}</span>
+                </button>
+              )}
+              {i < steps.length - 1 && (
+                <ArrowRight className={`absolute -right-3 top-1/2 hidden h-5 w-5 -translate-y-1/2 ${subtle} md:block`} aria-hidden />
+              )}
+            </div>
+          );
+        })}
+      </div>
       <p className={`mt-6 text-xs ${subtle}`}>
         <span className="font-semibold">Firefox:</span> works from v128+. The ZIP includes a Gecko-compatible manifest.
         · <span className="font-semibold">Kiwi Browser:</span> the only Chromium browser on Android that supports extension loading, ideal for mobile users.

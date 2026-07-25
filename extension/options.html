@@ -34,6 +34,81 @@
     <label><input type="checkbox" data-g="showOnboarding"> <span data-i18n="show_onboarding">Show onboarding overlay on first Reddit thread</span></label>
   </section>
 
+  <section id="a11y">
+    <h2>Accessibility</h2>
+    <p class="muted">Adapt colors, contrast, text size and motion. All changes apply live to open Reddit tabs.</p>
+    <div class="row-two">
+      <label class="stack">
+        <span>Color palette</span>
+        <select id="a11y-palette" aria-label="Color palette">
+          <option value="default">Default (green/blue)</option>
+          <option value="deuteranopia">Deuteranopia friendly</option>
+          <option value="protanopia">Protanopia friendly</option>
+          <option value="tritanopia">Tritanopia friendly</option>
+          <option value="mono">Monochrome</option>
+        </select>
+      </label>
+      <label class="stack">
+        <span>Contrast</span>
+        <select id="a11y-contrast" aria-label="Contrast">
+          <option value="normal">Normal</option>
+          <option value="high">High contrast</option>
+        </select>
+      </label>
+      <label class="stack">
+        <span>Text size</span>
+        <select id="a11y-text" aria-label="Text size">
+          <option value="normal">Normal</option>
+          <option value="large">Larger</option>
+        </select>
+      </label>
+      <label class="stack">
+        <span>Motion</span>
+        <select id="a11y-motion" aria-label="Motion">
+          <option value="auto">Follow system</option>
+          <option value="reduced">Reduced motion</option>
+        </select>
+      </label>
+    </div>
+  </section>
+
+  <section id="rules">
+    <h2>Custom rules</h2>
+    <p class="muted">Define your own keyword, author, flair or regex rules. Live preview shows matches from the last thread you parsed.</p>
+    <div class="tag-row" style="align-items:flex-end">
+      <label class="stack" style="flex:1;min-width:120px"><span>Type</span>
+        <select id="rule-type">
+          <option value="keyword">Keyword</option>
+          <option value="author">Author</option>
+          <option value="flair">Flair</option>
+          <option value="regex">Regex</option>
+        </select>
+      </label>
+      <label class="stack" style="flex:2;min-width:160px"><span>Pattern</span>
+        <input id="rule-pattern" type="text" placeholder="e.g. docker  |  u/spez  |  ^\\[Meta\\]">
+      </label>
+      <label class="stack" style="flex:1;min-width:100px"><span>Action</span>
+        <select id="rule-action"><option value="highlight">Highlight</option><option value="hide">Hide</option></select>
+      </label>
+      <input id="rule-color" type="color" value="#f59e0b" aria-label="Highlight color">
+      <button id="rule-add">Add rule</button>
+    </div>
+    <p id="rule-preview" class="muted" style="margin-top:10px">Live preview will appear here.</p>
+    <ul id="rule-list" style="list-style:none;padding:0;margin-top:10px"></ul>
+  </section>
+
+  <section id="collections">
+    <h2>Saved collections</h2>
+    <p class="muted">Export your saved comments to JSON or CSV, or import a file from another browser.</p>
+    <div class="tag-row">
+      <button id="coll-export-json">Export JSON</button>
+      <button id="coll-export-csv">Export CSV</button>
+      <button id="coll-import-btn">Import file…</button>
+      <input id="coll-import-file" type="file" accept=".json,.csv,application/json,text/csv" hidden>
+      <span id="coll-count" class="muted" style="margin:0"></span>
+    </div>
+  </section>
+
   <section>
     <h2 data-i18n="automation">Automation</h2>
     <p class="muted" data-i18n="auto_desc">Choose which features run automatically when a Reddit page loads.</p>
