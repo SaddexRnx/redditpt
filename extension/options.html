@@ -8,18 +8,30 @@
 <body>
   <header>
     <h1>Reddit Power Toolkit — Settings</h1>
-    <p>Everything stored here stays in your browser. No accounts, no servers.</p>
+    <p>Everything is stored in your browser. No accounts, no servers.</p>
   </header>
+
+  <section>
+    <h2>Automation</h2>
+    <p class="muted">Choose which features run automatically when a Reddit page loads.</p>
+    <label><input type="checkbox" data-a="cleaner"> Auto-apply Cleaner filters</label>
+    <label><input type="checkbox" data-a="highlighter"> Auto-apply keyword highlights</label>
+    <label><input type="checkbox" data-a="tags"> Auto-apply user tags</label>
+    <label><input type="checkbox" data-a="ageWarning"> Show old-thread warning</label>
+    <label><input type="checkbox" data-a="quickBar"> Show floating toolbar on Reddit</label>
+    <label><input type="checkbox" data-a="saveButtons"> Inline ★ save buttons on comments</label>
+    <label><input type="checkbox" data-a="liveNew"> Poll Reddit for new comments (45s interval)</label>
+  </section>
 
   <section>
     <h2>Thread Cleaner</h2>
     <label><input type="checkbox" data-f="hideDeleted"> Hide deleted / removed comments</label>
     <label><input type="checkbox" data-f="hideEmpty"> Hide empty comments</label>
-    <label><input type="checkbox" data-f="hideBots"> Hide AutoModerator & bots</label>
+    <label><input type="checkbox" data-f="hideBots"> Hide AutoModerator &amp; bots</label>
     <label><input type="checkbox" data-f="hideShort"> Hide very short comments</label>
-    <label>Min length for "short": <input type="number" data-f="minLength" min="1" max="500" style="width:80px"></label>
+    <label>Min length for "short": <input type="number" data-f="minLength" min="1" max="500" style="width:100px"></label>
     <label><input type="checkbox" data-f="hideLowScore"> Hide low-score comments</label>
-    <label>Min score threshold: <input type="number" data-f="minScore" style="width:80px"></label>
+    <label>Min score threshold: <input type="number" data-f="minScore" style="width:100px"></label>
   </section>
 
   <section>
@@ -33,18 +45,23 @@
     <h2>User tags</h2>
     <p class="muted">Assign private labels to Reddit usernames.</p>
     <div class="tag-row">
-      <input id="tag-user" placeholder="username">
-      <input id="tag-label" placeholder="label (e.g. Expert)">
-      <input id="tag-color" type="color" value="#6366f1">
+      <input id="tag-user" type="text" placeholder="username">
+      <input id="tag-label" type="text" placeholder="label (e.g. Expert)">
+      <input id="tag-color" type="color" value="#10b981">
       <button id="tag-save">Save</button>
     </div>
     <ul id="tag-list"></ul>
   </section>
 
   <section>
+    <h2>Keyboard shortcuts</h2>
+    <p class="muted">On any Reddit page, press <strong>?</strong> to see the full cheat sheet. Highlights: <strong>T</strong> panel · <strong>S</strong> summary · <strong>G</strong> gallery · <strong>C</strong> conversation · <strong>J/K</strong> nav · <strong>F</strong> fold · <strong>N</strong> newest.</p>
+  </section>
+
+  <section>
     <h2>Local data</h2>
     <button id="reset" class="danger">Clear all local data</button>
-    <p class="muted">Deletes folded state, filters, keywords, tags, history and analytics.</p>
+    <p class="muted">Deletes folded state, filters, keywords, tags, history, analytics and saved collections.</p>
   </section>
 
   <script src="options.js"></script>

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Reddit Power Toolkit",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A local-first toolkit that supercharges the Reddit reading & writing experience: comment tree, folding, conversation mode, cleaner, stats, exporter, gallery and more.",
   "permissions": ["storage", "activeTab", "tabs", "scripting"],
   "host_permissions": [

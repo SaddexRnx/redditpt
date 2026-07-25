@@ -1,37 +1,39 @@
 // Settings page — reads/writes chrome.storage.local. No network calls.
-
 const KEYS = {
-  filters: "rpt_filters",
-  keywords: "rpt_keywords",
-  tags: "rpt_user_tags",
-  folded: "rpt_folded",
-  history: "rpt_history",
-  analytics: "rpt_analytics",
+  filters: "rpt_filters", keywords: "rpt_keywords", tags: "rpt_user_tags",
+  autorun: "rpt_autorun",
 };
-const DEFAULTS = {
-  hideDeleted: false,
-  hideEmpty: false,
-  hideBots: false,
-  hideShort: false,
-  minLength: 15,
-  hideLowScore: false,
-  minScore: 1,
-};
+const F_DEFAULTS = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
+const A_DEFAULTS = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
 
 async function loadFilters() {
   const { [KEYS.filters]: f } = await get(KEYS.filters);
-  const cur = { ...DEFAULTS, ...(f || {}) };
+  const cur = { ...F_DEFAULTS, ...(f || {}) };
   document.querySelectorAll("[data-f]").forEach((el) => {
     const k = el.dataset.f;
-    if (el.type === "checkbox") el.checked = !!cur[k];
-    else el.value = cur[k];
+    if (el.type === "checkbox") el.checked = !!cur[k]; else el.value = cur[k];
     el.addEventListener("change", async () => {
       const { [KEYS.filters]: cf } = await get(KEYS.filters);
-      const merged = { ...DEFAULTS, ...(cf || {}) };
+      const merged = { ...F_DEFAULTS, ...(cf || {}) };
       merged[k] = el.type === "checkbox" ? el.checked : Number(el.value);
       await set({ [KEYS.filters]: merged });
+    });
+  });
+}
+
+async function loadAutorun() {
+  const { [KEYS.autorun]: a } = await get(KEYS.autorun);
+  const cur = { ...A_DEFAULTS, ...(a || {}) };
+  document.querySelectorAll("[data-a]").forEach((el) => {
+    const k = el.dataset.a;
+    el.checked = !!cur[k];
+    el.addEventListener("change", async () => {
+      const { [KEYS.autorun]: ca } = await get(KEYS.autorun);
+      const merged = { ...A_DEFAULTS, ...(ca || {}) };
+      merged[k] = el.checked;
+      await set({ [KEYS.autorun]: merged });
     });
   });
 }
@@ -40,11 +42,7 @@ async function loadKeywords() {
   const { [KEYS.keywords]: kws = [] } = await get(KEYS.keywords);
   document.getElementById("kw").value = kws.join(", ");
   document.getElementById("kw-save").onclick = async () => {
-    const list = document
-      .getElementById("kw")
-      .value.split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const list = document.getElementById("kw").value.split(",").map((s) => s.trim()).filter(Boolean);
     await set({ [KEYS.keywords]: list });
     alert("Keywords saved.");
   };
@@ -62,9 +60,7 @@ async function renderTags() {
       <button class="remove">Remove</button>`;
     li.querySelector(".remove").onclick = async () => {
       const { [KEYS.tags]: cur = {} } = await get(KEYS.tags);
-      delete cur[user];
-      await set({ [KEYS.tags]: cur });
-      renderTags();
+      delete cur[user]; await set({ [KEYS.tags]: cur }); renderTags();
     };
     ul.appendChild(li);
   });
@@ -92,6 +88,4 @@ document.getElementById("reset").onclick = async () => {
   location.reload();
 };
 
-loadFilters();
-loadKeywords();
-loadTags();
+loadAutorun(); loadFilters(); loadKeywords(); loadTags();
