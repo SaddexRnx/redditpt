@@ -506,11 +506,17 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.9.7", t: "French translation repair & activation clarity", d: "New", i: Languages, items: [
-      "French website cards now stay French — no Spanish fallback leakage in titles, descriptions or how-to text",
-      "Extension side-panel buttons now center text consistently and show clear active/off states for running features",
+    { v: "1.9.7", t: "Full extension redesign & onboarding wizard", d: "New", i: Rocket, items: [
+      "First-run onboarding wizard: pick your language, toggle each feature with a short note, and Skip or Use defaults",
+      "Comment Tree Navigator search/author bar is now sticky — prev/next stays pinned while scrolling long threads",
+      "Panel and popup redesign: consistent spacing, aligned button labels, uniform 14 px About icon (no more oversized SVG)",
+      "Repo migrated to github.com/Saddexrnx/redditpt — every link in extension, popup, options and README updated",
       "Manifest, popup, Options, README, site footer and About modal synced to v1.9.7",
-      "Remaining onboarding overlay gradients removed; extension accents use the flat Reddit-orange / green palette",
+    ]},
+    { v: "1.9.6", t: "French translation repair & activation clarity", d: "", i: Languages, items: [
+      "French website cards no longer fall back to Spanish",
+      "Side-panel buttons show a clear active/off state",
+      "Version sync across manifest, popup, Options, README and website",
     ]},
     { v: "1.9.5", t: "Full translation coverage & flat colors", d: "New", i: Languages, items: [
       "Removed every remaining gradient inside the extension — flat Reddit-orange tokens throughout the ⚡ Power features hub, primary CTAs and progress bars",
