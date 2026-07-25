@@ -13,7 +13,7 @@
       </div>
       <div class="brand-text">
         <h1 data-i18n="appName">Reddit Power Toolkit</h1>
-        <p class="tag" data-i18n="tagline">Local-first · v1.9.9</p>
+        <p class="tag" data-i18n="tagline">Local-first · v1.10.0</p>
       </div>
     </div>
     <div class="header-actions">
@@ -23,6 +23,9 @@
       <button class="icon-btn" id="theme-toggle" data-i18n-title="theme" title="Theme">
         <svg id="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg id="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button class="icon-btn" id="shortcuts-help-btn" title="Keyboard shortcuts help" aria-label="Keyboard shortcuts help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </button>
       <button class="icon-btn lang-chip" id="lang-chip" title="Language">EN</button>
       <button class="icon-btn" data-act="options" data-i18n-title="settings" title="Settings">
@@ -203,7 +206,7 @@
           </div>
           <div class="card-title">
             <strong data-i18n="about_changelog">About &amp; changelog</strong>
-            <span>v1.9.9 · 100% local · no accounts</span>
+          <span>v1.10.0 · 100% local · no accounts</span>
           </div>
         </div>
         <div class="tool-grid">
@@ -217,8 +220,55 @@
           </a>
         </div>
       </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h12"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="reset_popup_settings">Reset popup &amp; panel settings</strong>
+            <span data-i18n="reset_popup_sub">Restores default tab, theme, quick-bar size and panel state</span>
+          </div>
+        </div>
+        <button class="btn-primary" id="reset-popup-btn" data-i18n="reset_defaults">Reset to defaults</button>
+      </div>
     </section>
   </main>
+
+  <!-- Keyboard shortcuts help dialog -->
+  <div id="kbd-help-modal" class="kbd-modal" role="dialog" aria-modal="true" aria-labelledby="kbd-help-title" hidden>
+    <div class="kbd-modal-card">
+      <div class="kbd-modal-head">
+        <h2 id="kbd-help-title" data-i18n="kbd_help_title">Keyboard shortcuts</h2>
+        <button id="kbd-help-close" class="icon-btn" aria-label="Close">✕</button>
+      </div>
+      <div class="kbd-modal-body">
+        <h3 data-i18n="kbd_group_popup">Popup tabs</h3>
+        <ul class="kbd-list">
+          <li><span data-i18n="kbd_arrows_tabs">Move between Home / Tools / Export</span><kbd>◀</kbd><kbd>▶</kbd></li>
+          <li><span data-i18n="kbd_home_end">Jump to first / last tab</span><kbd>Home</kbd><kbd>End</kbd></li>
+          <li><span data-i18n="kbd_activate">Activate the focused button</span><kbd>Enter</kbd><kbd>Space</kbd></li>
+        </ul>
+        <h3 data-i18n="kbd_group_tree">Tree toolbar</h3>
+        <ul class="kbd-list">
+          <li><span data-i18n="kbd_search">Focus the search field</span><kbd>/</kbd></li>
+          <li><span data-i18n="kbd_next_match">Next match</span><kbd>▶</kbd></li>
+          <li><span data-i18n="kbd_prev_match">Previous match</span><kbd>◀</kbd></li>
+          <li><span data-i18n="kbd_collapse_all">Collapse all</span><kbd>Shift</kbd><kbd>C</kbd></li>
+          <li><span data-i18n="kbd_refresh">Refresh / re-parse</span><kbd>R</kbd></li>
+        </ul>
+        <h3 data-i18n="kbd_group_global">On any Reddit page</h3>
+        <ul class="kbd-list">
+          <li><span data-i18n="kbd_toggle_panel">Toggle panel</span><kbd>T</kbd></li>
+          <li><span data-i18n="kbd_cmdk">Command palette</span><kbd>Ctrl</kbd><kbd>K</kbd></li>
+          <li><span data-i18n="kbd_cheatsheet">Full cheatsheet</span><kbd>?</kbd></li>
+          <li><span data-i18n="kbd_a11y_overlay">Accessibility focus overlay</span><kbd>Alt</kbd><kbd>Shift</kbd><kbd>A</kbd></li>
+        </ul>
+        <p class="kbd-hint" data-i18n="kbd_hint_customize">Customize tree toolbar keys in Settings → Keyboard shortcuts.</p>
+      </div>
+    </div>
+  </div>
 
   <footer>
     <span data-i18n="footer_privacy">100% local · no accounts · no servers</span>
