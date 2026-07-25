@@ -2,31 +2,37 @@
 :root {
   --bg-0: #0b0f14; --bg-1: #141a22; --bg-2: #1b232e; --border: #2a3542;
   --text: #e6edf5; --muted: #8a95a5; --green: #10b981; --blue: #3b82f6; --red: #ef4444;
+  --btn-fg: #001912;
+}
+[data-rpt-theme="light"] {
+  --bg-0: #ffffff; --bg-1: #f7f9fc; --bg-2: #eef2f7; --border: #d9e0e8;
+  --text: #0b1220; --muted: #55637a; --btn-fg: #ffffff;
 }
 body {
   font: 14px -apple-system, "Inter", "Segoe UI", system-ui, sans-serif;
-  color: var(--text); background: var(--bg-0); margin: 0; padding: 40px 20px;
-  min-height: 100vh;
+  color: var(--text); background: var(--bg-0); margin: 0; padding: 40px 20px; min-height: 100vh;
 }
 header { max-width: 720px; margin: 0 auto 24px; }
-header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; }
+header h1 { margin: 0 0 4px; font-size: 22px; }
 header p { color: var(--muted); margin: 0; }
 section {
   max-width: 720px; margin: 0 auto 16px; background: var(--bg-1);
   border: 1px solid var(--border); border-radius: 12px; padding: 22px;
 }
-section h2 { margin: 0 0 14px; font-size: 14px; color: var(--green); text-transform: uppercase; letter-spacing: .08em; }
-label { display: flex; align-items: center; gap: 8px; margin: 10px 0; color: var(--text); font-size: 13px; }
+section h2 { margin: 0 0 14px; font-size: 13px; color: var(--green); text-transform: uppercase; letter-spacing: .08em; }
+label { display: flex; align-items: center; gap: 8px; margin: 10px 0; font-size: 13px; }
+label.stack { display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+label.stack span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
 label input[type="checkbox"] { accent-color: var(--green); }
 .muted { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
-textarea, input[type=text], input[type=number] {
-  width: 100%; padding: 9px 10px; background: var(--bg-2);
-  color: var(--text); border: 1px solid var(--border); border-radius: 8px;
-  font: inherit; outline: none;
+.row-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+textarea, input[type=text], input[type=number], select {
+  width: 100%; padding: 9px 10px; background: var(--bg-2); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; font: inherit; outline: none;
 }
-textarea:focus, input[type=text]:focus, input[type=number]:focus { border-color: var(--green); }
+textarea:focus, input:focus, select:focus { border-color: var(--green); }
 button {
-  background: var(--green); color: #001912; border: none; padding: 9px 16px;
+  background: var(--green); color: var(--btn-fg); border: none; padding: 9px 16px;
   border-radius: 8px; cursor: pointer; margin-top: 8px; font: 600 13px inherit;
 }
 button:hover { filter: brightness(1.08); }
@@ -35,11 +41,7 @@ button.danger { background: var(--red); color: #fff; }
 .tag-row input[type=text] { flex: 1; min-width: 100px; }
 .tag-row input[type=color] { width: 40px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-2); cursor: pointer; }
 #tag-list { list-style: none; padding: 0; margin-top: 12px; }
-#tag-list li {
-  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-  background: var(--bg-2); border: 1px solid var(--border);
-  border-radius: 8px; margin-bottom: 6px; font-size: 13px;
-}
+#tag-list li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; font-size: 13px; }
 .badge { padding: 2px 8px; border-radius: 999px; color: #fff; font-size: 11px; font-weight: 600; }
 .spacer { flex: 1; }
 .remove { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; font-size: 12px; margin: 0; }

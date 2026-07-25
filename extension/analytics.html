@@ -7,17 +7,16 @@
 </head>
 <body>
   <header>
-    <h1>Personal Analytics</h1>
-    <p>All numbers below are computed and stored locally in your browser.</p>
+    <h1 data-i18n="analytics_title">Personal Analytics</h1>
+    <p data-i18n="footer_privacy">All numbers below are computed and stored locally in your browser.</p>
   </header>
 
   <section>
-    <h2>Overview</h2>
     <div class="cards">
-      <div class="card"><div class="k">Posts viewed</div><div class="v" id="posts">0</div></div>
-      <div class="card"><div class="k">Comments read</div><div class="v" id="comments">0</div></div>
-      <div class="card"><div class="k">Reading time</div><div class="v" id="time">0m</div></div>
-      <div class="card"><div class="k">Unique subreddits</div><div class="v" id="subs">0</div></div>
+      <div class="card"><div class="k" data-i18n="threads_visited">Threads visited</div><div class="v" id="posts">0</div></div>
+      <div class="card"><div class="k" data-i18n="comments_read">Comments read</div><div class="v" id="comments">0</div></div>
+      <div class="card"><div class="k" data-i18n="reading_time">Reading time</div><div class="v" id="time">0m</div></div>
+      <div class="card"><div class="k" data-i18n="subs_seen">Subreddits</div><div class="v" id="subs">0</div></div>
     </div>
   </section>
 
@@ -27,15 +26,16 @@
   </section>
 
   <section>
-    <h2>Saved comments</h2>
+    <h2 data-i18n="saved_comments">Saved comments</h2>
     <ul id="saved"></ul>
   </section>
 
   <section>
-    <h2>Recent threads</h2>
+    <h2 data-i18n="recent_threads">Recent threads</h2>
     <ul id="history"></ul>
   </section>
 
+  <script src="shared.js"></script>
   <script src="analytics.js"></script>
 </body>
 </html>

@@ -7,63 +7,87 @@
 </head>
 <body>
   <header>
-    <h1>Reddit Power Toolkit — Settings</h1>
-    <p>Everything is stored in your browser. No accounts, no servers.</p>
+    <h1 data-i18n="settings_title">Reddit Power Toolkit — Settings</h1>
+    <p data-i18n="settings_sub">Everything is stored in your browser. No accounts, no servers.</p>
   </header>
 
   <section>
-    <h2>Automation</h2>
-    <p class="muted">Choose which features run automatically when a Reddit page loads.</p>
-    <label><input type="checkbox" data-a="cleaner"> Auto-apply Cleaner filters</label>
-    <label><input type="checkbox" data-a="highlighter"> Auto-apply keyword highlights</label>
-    <label><input type="checkbox" data-a="tags"> Auto-apply user tags</label>
-    <label><input type="checkbox" data-a="ageWarning"> Show old-thread warning</label>
-    <label><input type="checkbox" data-a="quickBar"> Show floating toolbar on Reddit</label>
-    <label><input type="checkbox" data-a="saveButtons"> Inline ★ save buttons on comments</label>
-    <label><input type="checkbox" data-a="liveNew"> Poll Reddit for new comments (45s interval)</label>
+    <h2 data-i18n="general">General</h2>
+    <div class="row-two">
+      <div>
+        <label class="stack">
+          <span data-i18n="language">Language</span>
+          <select id="lang-select"></select>
+        </label>
+      </div>
+      <div>
+        <label class="stack">
+          <span data-i18n="theme">Theme</span>
+          <select id="theme-select">
+            <option value="dark" data-i18n="dark">Dark</option>
+            <option value="light" data-i18n="light">Light</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <label><input type="checkbox" data-g="autoOpenPanel"> <span data-i18n="auto_open_panel">Auto-open side panel on first visit to a comment thread</span></label>
+    <label><input type="checkbox" data-g="showOnboarding"> <span data-i18n="show_onboarding">Show onboarding overlay on first Reddit thread</span></label>
   </section>
 
   <section>
-    <h2>Thread Cleaner</h2>
-    <label><input type="checkbox" data-f="hideDeleted"> Hide deleted / removed comments</label>
-    <label><input type="checkbox" data-f="hideEmpty"> Hide empty comments</label>
-    <label><input type="checkbox" data-f="hideBots"> Hide AutoModerator &amp; bots</label>
-    <label><input type="checkbox" data-f="hideShort"> Hide very short comments</label>
-    <label>Min length for "short": <input type="number" data-f="minLength" min="1" max="500" style="width:100px"></label>
-    <label><input type="checkbox" data-f="hideLowScore"> Hide low-score comments</label>
-    <label>Min score threshold: <input type="number" data-f="minScore" style="width:100px"></label>
+    <h2 data-i18n="automation">Automation</h2>
+    <p class="muted" data-i18n="auto_desc">Choose which features run automatically when a Reddit page loads.</p>
+    <label><input type="checkbox" data-a="cleaner"> <span data-i18n="auto_cleaner">Auto-apply Cleaner filters</span></label>
+    <label><input type="checkbox" data-a="highlighter"> <span data-i18n="auto_highlight">Auto-apply keyword highlights</span></label>
+    <label><input type="checkbox" data-a="tags"> <span data-i18n="auto_tags">Auto-apply user tags</span></label>
+    <label><input type="checkbox" data-a="ageWarning"> <span data-i18n="auto_age">Show old-thread warning</span></label>
+    <label><input type="checkbox" data-a="quickBar"> <span data-i18n="auto_bar">Show floating toolbar on Reddit</span></label>
+    <label><input type="checkbox" data-a="saveButtons"> <span data-i18n="auto_star">Inline ★ save buttons on comments</span></label>
+    <label><input type="checkbox" data-a="liveNew"> <span data-i18n="auto_live">Poll Reddit for new comments (45s interval)</span></label>
   </section>
 
   <section>
-    <h2>Highlighted keywords</h2>
-    <p class="muted">Comma-separated. Matches are highlighted across Reddit.</p>
+    <h2 data-i18n="cleaner">Thread Cleaner</h2>
+    <label><input type="checkbox" data-f="hideDeleted"> <span data-i18n="hide_deleted">Hide deleted / removed comments</span></label>
+    <label><input type="checkbox" data-f="hideEmpty"> <span data-i18n="hide_empty">Hide empty comments</span></label>
+    <label><input type="checkbox" data-f="hideBots"> <span data-i18n="hide_bots">Hide AutoModerator & bots</span></label>
+    <label><input type="checkbox" data-f="hideShort"> <span data-i18n="hide_short">Hide very short comments</span></label>
+    <label><span data-i18n="min_len">Min length:</span> <input type="number" data-f="minLength" min="1" max="500" style="width:100px"></label>
+    <label><input type="checkbox" data-f="hideLowScore"> <span data-i18n="hide_low">Hide low-score comments</span></label>
+    <label><span data-i18n="min_score">Min score threshold:</span> <input type="number" data-f="minScore" style="width:100px"></label>
+  </section>
+
+  <section>
+    <h2 data-i18n="keywords">Highlighted keywords</h2>
+    <p class="muted" data-i18n="kw_desc">Comma-separated. Matches are highlighted across Reddit.</p>
     <textarea id="kw" rows="3" placeholder="docker, kubernetes, rust"></textarea>
-    <button id="kw-save">Save keywords</button>
+    <button id="kw-save" data-i18n="save_keywords">Save keywords</button>
   </section>
 
   <section>
-    <h2>User tags</h2>
-    <p class="muted">Assign private labels to Reddit usernames.</p>
+    <h2 data-i18n="user_tags">User tags</h2>
+    <p class="muted" data-i18n="tags_desc">Assign private labels to Reddit usernames.</p>
     <div class="tag-row">
-      <input id="tag-user" type="text" placeholder="username">
-      <input id="tag-label" type="text" placeholder="label (e.g. Expert)">
+      <input id="tag-user" type="text" data-i18n-placeholder="username" placeholder="username">
+      <input id="tag-label" type="text" data-i18n-placeholder="label" placeholder="label">
       <input id="tag-color" type="color" value="#10b981">
-      <button id="tag-save">Save</button>
+      <button id="tag-save" data-i18n="save">Save</button>
     </div>
     <ul id="tag-list"></ul>
   </section>
 
   <section>
-    <h2>Keyboard shortcuts</h2>
-    <p class="muted">On any Reddit page, press <strong>?</strong> to see the full cheat sheet. Highlights: <strong>T</strong> panel · <strong>S</strong> summary · <strong>G</strong> gallery · <strong>C</strong> conversation · <strong>J/K</strong> nav · <strong>F</strong> fold · <strong>N</strong> newest.</p>
+    <h2 data-i18n="shortcuts">Keyboard shortcuts</h2>
+    <p class="muted" data-i18n="kbd_help">On any Reddit page, press ? to see the full cheat sheet.</p>
   </section>
 
   <section>
-    <h2>Local data</h2>
-    <button id="reset" class="danger">Clear all local data</button>
-    <p class="muted">Deletes folded state, filters, keywords, tags, history, analytics and saved collections.</p>
+    <h2 data-i18n="local_data">Local data</h2>
+    <button id="reset" class="danger" data-i18n="clear_data">Clear all local data</button>
+    <p class="muted" data-i18n="clear_desc">Deletes folded state, filters, keywords, tags, history, analytics and saved collections.</p>
   </section>
 
+  <script src="shared.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

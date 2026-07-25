@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Reddit Power Toolkit",
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "default_locale": "en",
   "description": "A local-first toolkit that supercharges the Reddit reading & writing experience: comment tree, folding, conversation mode, cleaner, stats, exporter, gallery and more.",
   "permissions": ["storage", "activeTab", "tabs", "scripting"],
   "host_permissions": [
@@ -23,6 +24,12 @@
   "background": {
     "service_worker": "background.js"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "reddit-power-toolkit@lovable.dev",
+      "strict_min_version": "128.0"
+    }
+  },
   "content_scripts": [
     {
       "matches": [
@@ -31,7 +38,7 @@
         "https://new.reddit.com/*",
         "https://sh.reddit.com/*"
       ],
-      "js": ["content.js"],
+      "js": ["shared.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_idle"
     }
