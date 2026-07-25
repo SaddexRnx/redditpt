@@ -9,6 +9,7 @@ const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, 
 const G_DEF = { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
+const tr = (k) => window.RPT_I18N?.t(k) || k;
 
 async function bindGroup(attr, storeKey, defaults) {
   const { [storeKey]: v } = await get(storeKey);
@@ -81,7 +82,7 @@ async function initLangTheme() {
 }
 
 document.getElementById("reset").onclick = async () => {
-  if (!confirm("Erase all Reddit Power Toolkit local data?")) return;
+  if (!confirm(tr("erase_all_data"))) return;
   await new Promise((r) => chrome.storage.local.clear(r));
   location.reload();
 };
@@ -139,12 +140,12 @@ async function renderRules() {
   const ul = document.getElementById("rule-list");
   ul.innerHTML = rules.map((r, i) => `
     <li style="display:flex;gap:8px;align-items:center;padding:8px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px">
-      <input type="checkbox" data-i="${i}" data-k="enabled" ${r.enabled ? "checked" : ""} aria-label="Enable rule">
+      <input type="checkbox" data-i="${i}" data-k="enabled" ${r.enabled ? "checked" : ""} aria-label="${tr("enable_rule")}">
       <span style="min-width:64px;color:var(--muted);text-transform:uppercase;font-size:11px">${r.type}</span>
       <code style="flex:1;color:var(--text)">${r.pattern.replace(/</g, "&lt;")}</code>
       <span style="padding:2px 8px;border-radius:999px;background:${r.action === "hide" ? "var(--red)" : (r.color || "#f59e0b")};color:#fff;font-size:11px">${r.action}</span>
-      <button class="remove" data-i="${i}" data-remove="1">Remove</button>
-    </li>`).join("") || `<li class="muted" style="list-style:none">No rules yet.</li>`;
+      <button class="remove" data-i="${i}" data-remove="1">${tr("remove")}</button>
+    </li>`).join("") || `<li class="muted" style="list-style:none">${tr("no_rules_yet")}</li>`;
   ul.querySelectorAll("[data-k]").forEach((cb) => cb.addEventListener("change", async () => {
     const { [KEYS.rules]: cur = [] } = await get(KEYS.rules);
     cur[Number(cb.dataset.i)][cb.dataset.k] = cb.checked;
@@ -163,12 +164,12 @@ function updatePreview() {
     action: document.getElementById("rule-action").value,
   };
   const p = document.getElementById("rule-preview");
-  if (!rule.pattern) { p.textContent = "Type a pattern to preview matches."; return; }
+  if (!rule.pattern) { p.textContent = tr("type_pattern_preview"); return; }
   if (rule.type === "regex" || rule.type === "keyword") {
     const rx = compileRule(rule);
-    if (!rx) { p.style.color = "var(--red)"; p.textContent = "Invalid regex."; return; }
+    if (!rx) { p.style.color = "var(--red)"; p.textContent = tr("invalid_regex"); return; }
   }
-  p.style.color = ""; p.textContent = `Rule ready: ${rule.type} → ${rule.action}. Save to apply on the next Reddit page.`;
+  p.style.color = ""; p.textContent = `${tr("rule_ready")}: ${tr(rule.type) || rule.type} → ${tr(rule.action) || rule.action}.`;
 }
 async function initRules() {
   ["rule-type", "rule-pattern", "rule-action"].forEach((id) =>
@@ -183,7 +184,7 @@ async function initRules() {
       action: document.getElementById("rule-action").value,
       color: document.getElementById("rule-color").value,
     };
-    if ((rule.type === "keyword" || rule.type === "regex") && !compileRule(rule)) { alert("Invalid pattern."); return; }
+    if ((rule.type === "keyword" || rule.type === "regex") && !compileRule(rule)) { alert(tr("invalid_pattern")); return; }
     const { [KEYS.rules]: cur = [] } = await get(KEYS.rules);
     cur.push(rule); await set({ [KEYS.rules]: cur });
     document.getElementById("rule-pattern").value = "";
@@ -202,7 +203,7 @@ function csvEscape(v) { return `"${String(v ?? "").replace(/"/g, '""').replace(/
 async function initCollections() {
   const refreshCount = async () => {
     const { [KEYS.collections]: c = [] } = await get(KEYS.collections);
-    document.getElementById("coll-count").textContent = `${c.length} saved`;
+    document.getElementById("coll-count").textContent = `${c.length} ${tr("saved_count")}`;
   };
   refreshCount();
   document.getElementById("coll-export-json").onclick = async () => {
@@ -241,7 +242,7 @@ async function initCollections() {
         const parsed = JSON.parse(text);
         items = Array.isArray(parsed) ? parsed : (parsed.items || []);
       }
-    } catch { alert("Could not parse the file."); file.value = ""; return; }
+    } catch { alert(tr("could_not_parse_file")); file.value = ""; return; }
     const { [KEYS.collections]: cur = [] } = await get(KEYS.collections);
     const seen = new Set(cur.map((x) => x.url + "|" + x.id));
     let added = 0;
@@ -258,7 +259,7 @@ async function initCollections() {
       added++;
     }
     await set({ [KEYS.collections]: cur.slice(0, 500) });
-    alert(`Imported ${added} new comment${added === 1 ? "" : "s"}.`);
+    alert(`${tr("imported")} ${added} ${tr(added === 1 ? "new_comment" : "new_comments_plural")}.`);
     file.value = ""; refreshCount();
   });
 }
@@ -335,7 +336,7 @@ async function initShortcuts() {
     const cur = await load();
     document.querySelectorAll(".rpt-shortcut-btn").forEach((b) => {
       b.textContent = cur[b.dataset.s] || "—";
-      b.setAttribute("aria-label", `${b.previousElementSibling?.textContent || b.dataset.s}: ${cur[b.dataset.s]}. Click to change.`);
+      b.setAttribute("aria-label", `${b.previousElementSibling?.textContent || b.dataset.s}: ${cur[b.dataset.s]}. ${tr("click_change")}`);
     });
     renderConflicts(cur);
     // Wire per-conflict "Reset this action" buttons.
@@ -353,7 +354,7 @@ async function initShortcuts() {
     b.addEventListener("click", () => {
       if (b.classList.contains("capturing")) return;
       const orig = b.textContent;
-      b.textContent = "Press a key…"; b.classList.add("capturing");
+      b.textContent = tr("press_key"); b.classList.add("capturing");
       const done = () => { b.classList.remove("capturing"); document.removeEventListener("keydown", onKey, true); };
       const onKey = async (e) => {
         e.preventDefault(); e.stopPropagation();
@@ -379,10 +380,10 @@ async function initShortcuts() {
     });
   });
   document.getElementById("shortcuts-reset").addEventListener("click", async () => {
-    if (!confirm("Reset all custom keyboard shortcuts to their standard bindings?")) return;
+    if (!confirm(tr("reset_shortcuts_confirm"))) return;
     await set({ [KEYS.shortcuts]: { ...SHORTCUT_DEF } });
     render();
-    flash("Shortcuts reset to defaults.");
+    flash(tr("shortcuts_reset_done"));
   });
   /* Export / import full settings backup — shortcuts + general + a11y +
    * per-thread gallery positions — so users can fully restore their setup. */
@@ -404,7 +405,7 @@ async function initShortcuts() {
       galleryPos: bag.rpt_gallery_pos || {},
     };
     download("rpt-settings.json", "application/json", JSON.stringify(payload, null, 2));
-    flash("Settings exported.");
+    flash(tr("settings_exported"));
   });
   const file = document.getElementById("shortcuts-import-file");
   document.getElementById("shortcuts-import-btn").addEventListener("click", () => file.click());
@@ -413,12 +414,12 @@ async function initShortcuts() {
     const errors = [];
     const applied = [];
     let text = "";
-    try { text = await f.text(); } catch { flash("Could not read the file.", true); file.value = ""; return; }
+    try { text = await f.text(); } catch { flash(tr("could_not_read_file"), true); file.value = ""; return; }
     let parsed;
     try { parsed = JSON.parse(text); }
-    catch { flash("Invalid JSON — the file is not valid JSON.", true); file.value = ""; return; }
+    catch { flash(tr("invalid_json_file"), true); file.value = ""; return; }
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      flash("Invalid file — expected a JSON object.", true); file.value = ""; return;
+      flash(tr("invalid_json_object"), true); file.value = ""; return;
     }
     // ---- shortcuts ----
     const src = parsed.shortcuts && typeof parsed.shortcuts === "object"
@@ -478,7 +479,7 @@ async function initShortcuts() {
       if (n) { await set({ rpt_gallery_pos: clean }); applied.push("gallery positions"); }
     }
     if (!applied.length) {
-      flash(errors[0] || "No valid settings found in file — nothing imported.", true);
+      flash(errors[0] || tr("no_valid_settings"), true);
     } else {
       const msg = `Imported: ${applied.join(", ")}.` + (errors.length ? ` (${errors.length} entr${errors.length === 1 ? "y" : "ies"} skipped — see console)` : "");
       if (errors.length) console.warn("[RPT] Import warnings:", errors);

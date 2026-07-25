@@ -32,46 +32,46 @@
     </div>
     <label><input type="checkbox" data-g="autoOpenPanel"> <span data-i18n="auto_open_panel">Auto-open side panel on first visit to a comment thread</span></label>
     <label><input type="checkbox" data-g="showOnboarding"> <span data-i18n="show_onboarding">Show onboarding overlay on first Reddit thread</span></label>
-    <label><input type="checkbox" data-g="showAuthorColors"> <span>Color-code comment authors (colored side-stripe + tinted username)</span></label>
+    <label><input type="checkbox" data-g="showAuthorColors"> <span data-i18n="show_author_colors">Color-code comment authors (colored side-stripe + tinted username)</span></label>
     <div id="author-color-legend" class="muted" style="margin-top:8px">
-      <div style="margin-bottom:6px;font-size:12px">Preview — same username always gets the same color:</div>
+      <div style="margin-bottom:6px;font-size:12px" data-i18n="author_color_preview">Preview — same username always gets the same color:</div>
       <div id="author-color-swatches" style="display:flex;flex-wrap:wrap;gap:6px"></div>
     </div>
   </section>
 
   <section id="a11y">
     <h2 data-i18n="accessibility">Accessibility</h2>
-    <p class="muted">Adapt colors, contrast, text size and motion. All changes apply live to open Reddit tabs.</p>
+    <p class="muted" data-i18n="a11y_desc">Adapt colors, contrast, text size and motion. All changes apply live to open Reddit tabs.</p>
     <div class="row-two">
       <label class="stack">
-        <span>Color palette</span>
+        <span data-i18n="color_palette">Color palette</span>
         <select id="a11y-palette" aria-label="Color palette">
-          <option value="default">Default (green/blue)</option>
-          <option value="deuteranopia">Deuteranopia friendly</option>
-          <option value="protanopia">Protanopia friendly</option>
-          <option value="tritanopia">Tritanopia friendly</option>
-          <option value="mono">Monochrome</option>
+          <option value="default" data-i18n="palette_default">Default (Reddit orange/green)</option>
+          <option value="deuteranopia" data-i18n="palette_deuteranopia">Deuteranopia friendly</option>
+          <option value="protanopia" data-i18n="palette_protanopia">Protanopia friendly</option>
+          <option value="tritanopia" data-i18n="palette_tritanopia">Tritanopia friendly</option>
+          <option value="mono" data-i18n="palette_mono">Monochrome</option>
         </select>
       </label>
       <label class="stack">
-        <span>Contrast</span>
+        <span data-i18n="contrast">Contrast</span>
         <select id="a11y-contrast" aria-label="Contrast">
-          <option value="normal">Normal</option>
-          <option value="high">High contrast</option>
+          <option value="normal" data-i18n="normal">Normal</option>
+          <option value="high" data-i18n="high_contrast">High contrast</option>
         </select>
       </label>
       <label class="stack">
-        <span>Text size</span>
+        <span data-i18n="text_size">Text size</span>
         <select id="a11y-text" aria-label="Text size">
-          <option value="normal">Normal</option>
-          <option value="large">Larger</option>
+          <option value="normal" data-i18n="normal">Normal</option>
+          <option value="large" data-i18n="larger">Larger</option>
         </select>
       </label>
       <label class="stack">
-        <span>Motion</span>
+        <span data-i18n="motion">Motion</span>
         <select id="a11y-motion" aria-label="Motion">
-          <option value="auto">Follow system</option>
-          <option value="reduced">Reduced motion</option>
+          <option value="auto" data-i18n="follow_system">Follow system</option>
+          <option value="reduced" data-i18n="reduced_motion">Reduced motion</option>
         </select>
       </label>
     </div>
@@ -79,36 +79,36 @@
 
   <section id="rules">
     <h2 data-i18n="custom_rules">Custom rules</h2>
-    <p class="muted">Define your own keyword, author, flair or regex rules. Live preview shows matches from the last thread you parsed.</p>
+    <p class="muted" data-i18n="rules_desc">Define your own keyword, author, flair or regex rules. Live preview shows matches from the last thread you parsed.</p>
     <div class="tag-row" style="align-items:flex-end">
-      <label class="stack" style="flex:1;min-width:120px"><span>Type</span>
+      <label class="stack" style="flex:1;min-width:120px"><span data-i18n="type">Type</span>
         <select id="rule-type">
-          <option value="keyword">Keyword</option>
-          <option value="author">Author</option>
-          <option value="flair">Flair</option>
-          <option value="regex">Regex</option>
+          <option value="keyword" data-i18n="keyword">Keyword</option>
+          <option value="author" data-i18n="author">Author</option>
+          <option value="flair" data-i18n="flair">Flair</option>
+          <option value="regex" data-i18n="regex">Regex</option>
         </select>
       </label>
-      <label class="stack" style="flex:2;min-width:160px"><span>Pattern</span>
+      <label class="stack" style="flex:2;min-width:160px"><span data-i18n="pattern">Pattern</span>
         <input id="rule-pattern" type="text" placeholder="e.g. docker  |  u/spez  |  ^\\[Meta\\]">
       </label>
-      <label class="stack" style="flex:1;min-width:100px"><span>Action</span>
-        <select id="rule-action"><option value="highlight">Highlight</option><option value="hide">Hide</option></select>
+      <label class="stack" style="flex:1;min-width:100px"><span data-i18n="action">Action</span>
+        <select id="rule-action"><option value="highlight" data-i18n="highlight">Highlight</option><option value="hide" data-i18n="hide">Hide</option></select>
       </label>
       <input id="rule-color" type="color" value="#f59e0b" aria-label="Highlight color">
-      <button id="rule-add">Add rule</button>
+      <button id="rule-add" data-i18n="add_rule">Add rule</button>
     </div>
-    <p id="rule-preview" class="muted" style="margin-top:10px">Live preview will appear here.</p>
+    <p id="rule-preview" class="muted" style="margin-top:10px" data-i18n="live_preview_empty">Live preview will appear here.</p>
     <ul id="rule-list" style="list-style:none;padding:0;margin-top:10px"></ul>
   </section>
 
   <section id="collections">
     <h2 data-i18n="saved_collections">Saved collections</h2>
-    <p class="muted">Export your saved comments to JSON or CSV, or import a file from another browser.</p>
+    <p class="muted" data-i18n="collections_desc">Export your saved comments to JSON or CSV, or import a file from another browser.</p>
     <div class="tag-row">
-      <button id="coll-export-json">Export JSON</button>
-      <button id="coll-export-csv">Export CSV</button>
-      <button id="coll-import-btn">Import file…</button>
+      <button id="coll-export-json" data-i18n="export_json">Export JSON</button>
+      <button id="coll-export-csv" data-i18n="export_csv">Export CSV</button>
+      <button id="coll-import-btn" data-i18n="import_file">Import file…</button>
       <input id="coll-import-file" type="file" accept=".json,.csv,application/json,text/csv" hidden>
       <span id="coll-count" class="muted" style="margin:0"></span>
     </div>
@@ -159,23 +159,23 @@
   <section>
     <h2 data-i18n="shortcuts">Keyboard shortcuts</h2>
     <p class="muted" data-i18n="kbd_help">On any Reddit page, press ? to see the full cheat sheet.</p>
-    <p class="muted">Customize these actions — click a field, then press the key or combination you want. Press Escape to cancel.</p>
+    <p class="muted" data-i18n="shortcuts_customize">Customize these actions — click a field, then press the key or combination you want. Press Escape to cancel.</p>
     <div id="shortcuts-cfg" class="tag-row" style="flex-direction:column;align-items:stretch;gap:8px;max-width:520px">
-      <div class="shortcut-row"><span>Gallery — previous image</span><button type="button" class="rpt-shortcut-btn" data-s="galleryPrev">—</button></div>
-      <div class="shortcut-row"><span>Gallery — next image</span><button type="button" class="rpt-shortcut-btn" data-s="galleryNext">—</button></div>
-      <div class="shortcut-row"><span>Collapse all comments</span><button type="button" class="rpt-shortcut-btn" data-s="collapseAll">—</button></div>
-      <div class="shortcut-row"><span>Refresh current thread</span><button type="button" class="rpt-shortcut-btn" data-s="refresh">—</button></div>
+      <div class="shortcut-row"><span data-i18n="gallery_prev">Gallery — previous image</span><button type="button" class="rpt-shortcut-btn" data-s="galleryPrev">—</button></div>
+      <div class="shortcut-row"><span data-i18n="gallery_next">Gallery — next image</span><button type="button" class="rpt-shortcut-btn" data-s="galleryNext">—</button></div>
+      <div class="shortcut-row"><span data-i18n="collapse_all_comments">Collapse all comments</span><button type="button" class="rpt-shortcut-btn" data-s="collapseAll">—</button></div>
+      <div class="shortcut-row"><span data-i18n="refresh_thread">Refresh current thread</span><button type="button" class="rpt-shortcut-btn" data-s="refresh">—</button></div>
       <div id="shortcuts-conflicts" role="alert" aria-live="polite" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(239,68,68,.12);border:1px solid var(--red);color:var(--red);font-size:13px"></div>
-      <button id="shortcuts-reset" type="button" style="align-self:flex-start;margin-top:6px">Reset to defaults</button>
-      <p class="muted" style="margin:0;font-size:12px">Reset clears your custom key bindings and restores the standard ones (◀ ▶ for gallery, Shift+C to collapse all, R to refresh).</p>
+      <button id="shortcuts-reset" type="button" style="align-self:flex-start;margin-top:6px" data-i18n="reset_defaults">Reset to defaults</button>
+      <p class="muted" style="margin:0;font-size:12px" data-i18n="shortcuts_reset_desc">Reset clears your custom key bindings and restores the standard ones (◀ ▶ for gallery, Shift+C to collapse all, R to refresh).</p>
     </div>
     <div class="tag-row" style="margin-top:12px;gap:8px;flex-wrap:wrap">
-      <button id="shortcuts-export" type="button">Export settings (JSON)</button>
-      <button id="shortcuts-import-btn" type="button">Import settings…</button>
+      <button id="shortcuts-export" type="button" data-i18n="export_settings_json">Export settings (JSON)</button>
+      <button id="shortcuts-import-btn" type="button" data-i18n="import_settings">Import settings…</button>
       <input id="shortcuts-import-file" type="file" accept=".json,application/json" hidden>
       <span id="shortcuts-status" class="muted" style="margin:0"></span>
     </div>
-    <p class="muted" style="margin:6px 0 0;font-size:12px">Backup includes: shortcuts, general preferences (auto-open, onboarding, author colors), accessibility settings, and per-thread gallery positions.</p>
+    <p class="muted" style="margin:6px 0 0;font-size:12px" data-i18n="backup_includes">Backup includes: shortcuts, general preferences (auto-open, onboarding, author colors), accessibility settings, and per-thread gallery positions.</p>
   </section>
 
   <section>
@@ -187,12 +187,12 @@
   <section id="about-section">
     <h2 data-i18n="about">About</h2>
     <p class="muted" style="margin-bottom:10px">
-      <strong>Reddit Power Toolkit</strong> · Version <strong id="about-version">1.9.4</strong> · Built <span id="about-date">2026-07-25</span>
+      <strong>Reddit Power Toolkit</strong> · <span data-i18n="about_version_built">Version</span> <strong id="about-version">1.9.5</strong> · <span data-i18n="built">Built</span> <span id="about-date">2026-11-08</span>
     </p>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
-      <a class="link-btn" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener">Changelog & releases ↗</a>
-      <a class="link-btn" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener">GitHub ↗</a>
-      <a class="link-btn" href="https://t.me/Saddex_x" target="_blank" rel="noopener">Telegram @Saddex_x ↗</a>
+      <a class="link-btn" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener"><span data-i18n="changelog_releases">Changelog & releases</span> ↗</a>
+      <a class="link-btn" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener"><span data-i18n="github_repository">GitHub repository</span> ↗</a>
+      <a class="link-btn" href="https://t.me/Saddex_x" target="_blank" rel="noopener"><span data-i18n="telegram_contact">Telegram @Saddex_x</span> ↗</a>
     </div>
   </section>
 

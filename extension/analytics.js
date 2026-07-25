@@ -1,5 +1,6 @@
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const setKey = (o) => new Promise((r) => chrome.storage.local.set(o, r));
+const tr = (k) => window.RPT_I18N?.t(k) || k;
 function dl(name, mime, content) {
   const blob = new Blob([content], { type: mime });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
@@ -66,7 +67,7 @@ function csvEsc(v) { return `"${String(v ?? "").replace(/"/g, '""').replace(/\r?
         const parsed = JSON.parse(text);
         items = Array.isArray(parsed) ? parsed : (parsed.items || []);
       }
-    } catch { alert("Could not parse the file."); file.value = ""; return; }
+    } catch { alert(tr("could_not_parse_file")); file.value = ""; return; }
     const seen = new Set(coll.map((x) => x.url + "|" + x.id));
     let added = 0;
     for (const it of items) {
@@ -81,6 +82,6 @@ function csvEsc(v) { return `"${String(v ?? "").replace(/"/g, '""').replace(/\r?
       added++;
     }
     await setKey({ rpt_collections: coll.slice(0, 500) });
-    alert(`Imported ${added} new comment${added === 1 ? "" : "s"}.`); location.reload();
+    alert(`${tr("imported")} ${added} ${tr(added === 1 ? "new_comment" : "new_comments_plural")}.`); location.reload();
   });
 })();

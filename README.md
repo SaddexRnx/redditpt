@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.9.0-10b981?style=flat-square" alt="Version 1.9.0">
-  <img src="https://img.shields.io/badge/manifest-v3-3b82f6?style=flat-square" alt="Manifest V3">
+  <img src="https://img.shields.io/badge/version-1.9.5-10b981?style=flat-square" alt="Version 1.9.5">
+  <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.9.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
+> **Current release: v1.9.5** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -302,7 +302,40 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases).
 
-### v1.9.0 — current
+### v1.9.5 — current
+
+- **Full UI translation pass** — extension popup, Options, Analytics, side panel, quick-bar, command palette, modals, cards, buttons, placeholders, tooltips, status pills and dynamic hub content now route through the shared i18n layer.
+- **Dynamic text localization** — newly inserted Reddit-page UI is translated automatically with a mutation observer and reverse lookup for feature cards.
+- **Flat extension colors** — remaining gradient styling was removed from extension UI.
+- **Packaged ZIP refreshed** — download bundle includes the latest translated extension scripts.
+
+### v1.9.4
+
+- Reworked extension UI spacing, mobile sizing and button visibility for Chrome, Firefox and Kiwi.
+- Standardized GitHub and Telegram links across the website and extension.
+- Added the correct GitHub profile: [https://github.com/Saddexrnx](https://github.com/Saddexrnx).
+
+### v1.9.3
+
+- Added shareable Comment Tree Navigator deep links focused on a comment or author.
+- Added next / previous match controls for keyword and author search results.
+- Added reduced-motion option for comment highlight animation.
+- Browser-specific download selector: Chrome, Firefox or Kiwi instructions first, then download.
+
+### v1.9.2
+
+- Redesigned extension UI for readable spacing, fonts and touch-friendly controls.
+- Replaced site accent blues with a green palette.
+- Added browser-specific install chips and Telegram paper-plane icon.
+
+### v1.9.1
+
+- Optimized the ⚡ hub, quick-bar and Comment Tree Navigator for small screens.
+- Added quick search and author filtering inside Comment Tree Navigator.
+- Added hover previews and click-to-jump highlighting for exact comments.
+- Added reproducible performance stress-test documentation.
+
+### v1.9.0
 
 - **Performance & status panel** — see which modules are running on the current page and how long each scan took. Great for spotting lag on large threads.
 - **Per-subreddit rules** — enable or disable any feature just inside a specific community; global settings stay untouched.
@@ -388,6 +421,9 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 - **v1.5** — Focus trapping, configurable shortcuts, gallery memory, ARIA live
 - **v1.6** — Keyboard help via `aria-describedby`, shortcut export/import
 - **v1.7** — Full settings backup, conflict detection, safer import, reset to defaults
+- **v1.8** — 36 advanced local-first power modules
+- **v1.9** — Performance panel, per-subreddit rules, backup/restore, lazy loading
+- **v1.9.1–1.9.5** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup
 
 ---
 
@@ -403,4 +439,5 @@ MIT
 
 ## Contact
 
+GitHub: [Saddexrnx](https://github.com/Saddexrnx)  
 Telegram: [@Saddex_x](https://t.me/Saddex_x)

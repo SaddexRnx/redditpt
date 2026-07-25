@@ -8,7 +8,7 @@
 <body>
   <header>
     <h1 data-i18n="analytics_title">Personal Analytics</h1>
-    <p data-i18n="footer_privacy">All numbers below are computed and stored locally in your browser.</p>
+    <p data-i18n="analytics_local_desc">All numbers below are computed and stored locally in your browser.</p>
   </header>
 
   <section>
@@ -21,16 +21,16 @@
   </section>
 
   <section>
-    <h2>Top subreddits</h2>
+    <h2 data-i18n="top_subreddits">Top subreddits</h2>
     <ol id="top-subs"></ol>
   </section>
 
   <section>
     <h2 data-i18n="saved_comments">Saved comments</h2>
     <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-      <button id="exp-json" style="background:var(--green);color:#001912;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export JSON</button>
-      <button id="exp-csv"  style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export CSV</button>
-      <button id="imp-btn"  style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Import file…</button>
+      <button id="exp-json" data-i18n="export_json" style="background:var(--green);color:#001912;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export JSON</button>
+      <button id="exp-csv" data-i18n="export_csv" style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export CSV</button>
+      <button id="imp-btn" data-i18n="import_file" style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Import file…</button>
       <input id="imp-file" type="file" accept=".json,.csv,application/json,text/csv" hidden>
     </div>
     <ul id="saved"></ul>
