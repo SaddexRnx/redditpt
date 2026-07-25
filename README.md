@@ -304,6 +304,14 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 
 ### v1.9.0 — current
 
+- **Performance & status panel** — see which modules are running on the current page and how long each scan took. Great for spotting lag on large threads.
+- **Per-subreddit rules** — enable or disable any feature just inside a specific community; global settings stay untouched.
+- **Backup & restore** — one-click JSON export/import for bookmarks, history, keyword tracking, notes and settings.
+- **Lazy-loaded modules** — every advanced tool only touches the DOM the first time you use it.
+- Website feature cards now collapse by default and expand on click for a cleaner overview.
+
+### v1.8.0
+
 - **Power features hub (36 new tools)** accessible from a ⚡ button on the quick-bar, from the popup, and from the command palette.
 - **Community**: comparison tool, subreddit analyzer dashboard, activity calendar, health monitor, timeline, trend tracker, subreddit groups, content exporter.
 - **Thread & comments**: mini-map, selective comment export, user analytics on hover, post analytics on hover, copy tools, follow keywords.
