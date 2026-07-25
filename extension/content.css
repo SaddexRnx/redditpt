@@ -565,3 +565,17 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
   overflow: hidden; clip: rect(0 0 0 0);
   white-space: nowrap; border: 0;
 }
+
+/* Explicit keyboard help footer for every modal.
+   Visible for sighted keyboard users; linked via aria-describedby for AT. */
+.rpt-kbd-help {
+  margin: 10px 16px 14px; padding: 8px 10px;
+  font-size: 11px; line-height: 1.5; color: var(--rpt-muted);
+  background: var(--rpt-bg-2); border: 1px dashed var(--rpt-border);
+  border-radius: 6px;
+}
+.rpt-gallery .rpt-kbd-help {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+  margin: 0; max-width: 90vw; text-align: center;
+  background: rgba(0,0,0,.6); color: #fff; border-color: rgba(255,255,255,.2);
+}
