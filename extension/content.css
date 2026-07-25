@@ -2,11 +2,13 @@
    Midnight Reddit theme. All classes prefixed rpt- to avoid collisions. */
 
 :root {
-  --rpt-bg-0: #0b0f14;
-  --rpt-bg-1: #141a22;
-  --rpt-bg-2: #1b232e;
-  --rpt-bg-3: #232c38;
-  --rpt-border: #2a3542;
+  /* Unified "TabBankruptcy" dark theme — mirrors popup.css tokens. */
+  --rpt-bg-0: #0d1117;
+  --rpt-bg-1: #161b22;
+  --rpt-bg-2: #1c2129;
+  --rpt-bg-3: #232b36;
+  --rpt-border: #262d38;
+  --rpt-border-strong: #333c4a;
   --rpt-text: #e6edf5;
   --rpt-muted: #8a95a5;
   --rpt-green: #ff4500;
@@ -15,6 +17,27 @@
   --rpt-amber: #f59e0b;
   --rpt-shadow: 0 20px 50px -12px rgba(0,0,0,.65);
   --rpt-font: -apple-system, "Inter", "Segoe UI", system-ui, sans-serif;
+  --rpt-radius: 12px;
+}
+
+/* Auto-adopt Reddit's own theme when the user hasn't picked one explicitly.
+   Reddit sets html[data-theme], html.theme-light / html.theme-dark, or a
+   [data-color-scheme] attribute depending on the site version. */
+html:not([data-rpt-theme])[data-theme="light"],
+html:not([data-rpt-theme]).theme-light,
+html:not([data-rpt-theme])[data-color-scheme="light"] {
+  --rpt-bg-0: #ffffff; --rpt-bg-1: #f6f8fa; --rpt-bg-2: #eef2f7; --rpt-bg-3: #e2e8f0;
+  --rpt-border: #d9e0e8; --rpt-border-strong: #c3cbd6;
+  --rpt-text: #0b1220; --rpt-muted: #55637a;
+  --rpt-shadow: 0 20px 50px -12px rgba(15,23,42,.18);
+}
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]):not([data-theme]):not(.theme-dark) {
+    --rpt-bg-0: #ffffff; --rpt-bg-1: #f6f8fa; --rpt-bg-2: #eef2f7; --rpt-bg-3: #e2e8f0;
+    --rpt-border: #d9e0e8; --rpt-border-strong: #c3cbd6;
+    --rpt-text: #0b1220; --rpt-muted: #55637a;
+    --rpt-shadow: 0 20px 50px -12px rgba(15,23,42,.18);
+  }
 }
 
 /* ---------------- Floating quick-bar (replaces old FAB) ---------------- */
