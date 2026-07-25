@@ -1760,21 +1760,28 @@
       if (!host) return;
       const auto = await RPT.autorun.load();
       const items = [
-        ["cleaner", "Auto-apply Cleaner filters"],
-        ["highlighter", "Auto-apply keyword highlights"],
-        ["tags", "Auto-apply user tags"],
-        ["ageWarning", "Show old-thread warning"],
-        ["saveButtons", "Inline ★ save buttons on comments"],
-        ["liveNew", "Live new-comment indicator"],
+        ["cleaner", tr("auto_cleaner")],
+        ["highlighter", tr("auto_highlight")],
+        ["tags", tr("auto_tags")],
+        ["ageWarning", tr("auto_age")],
+        ["saveButtons", tr("auto_star")],
+        ["liveNew", tr("live_new_indicator")],
       ];
       host.innerHTML = items.map(([k, label]) =>
-        `<label><input type="checkbox" data-auto="${k}" ${auto[k] ? "checked" : ""}> ${label}</label>`
+        `<label class="rpt-auto-row ${auto[k] ? "rpt-active" : ""}"><input type="checkbox" data-auto="${k}" ${auto[k] ? "checked" : ""}> <span>${label}</span><em>${auto[k] ? tr("on") : tr("off")}</em></label>`
       ).join("");
       host.querySelectorAll("[data-auto]").forEach((cb) => {
         cb.onchange = async () => {
           const cur = await RPT.autorun.load();
           cur[cb.dataset.auto] = cb.checked;
           await RPT.autorun.save(cur);
+          cb.closest(".rpt-auto-row")?.classList.toggle("rpt-active", cb.checked);
+          const state = cb.closest(".rpt-auto-row")?.querySelector("em");
+          if (state) state.textContent = cb.checked ? tr("on") : tr("off");
+          if (cb.dataset.auto === "liveNew") cb.checked ? RPT.features.liveNew.start() : RPT.features.liveNew.stop();
+          if (cb.dataset.auto === "cleaner") RPT.features.cleaner.apply();
+          if (cb.dataset.auto === "highlighter") RPT.features.highlighter.apply();
+          if (cb.dataset.auto === "saveButtons") RPT.features.collections.attach();
         };
       });
     },
