@@ -1712,9 +1712,10 @@
             document.body.classList.toggle("rpt-layers-on");
             if (document.body.classList.contains("rpt-layers-on")) RPT.features.layers.apply();
             else RPT.features.layers.remove();
+            this.updateActiveStates(p);
           }
-          if (a === "collapse") RPT.features.folding.collapseAll();
-          if (a === "expand") RPT.features.folding.expandAll();
+          if (a === "collapse") { RPT.features.folding.collapseAll(); b.classList.add("rpt-active"); p.querySelector('[data-act="expand"]')?.classList.remove("rpt-active"); }
+          if (a === "expand") { RPT.features.folding.expandAll(); b.classList.add("rpt-active"); p.querySelector('[data-act="collapse"]')?.classList.remove("rpt-active"); }
           if (a === "md") RPT.features.exporter.md();
           if (a === "json") RPT.features.exporter.json();
           if (a === "html") RPT.features.exporter.html();
@@ -1741,6 +1742,18 @@
         RPT.features.highlighter.apply();
       };
       this.renderAutorun(p);
+      this.updateActiveStates(p);
+    },
+    updateActiveStates(root = document) {
+      const layersOn = document.body.classList.contains("rpt-layers-on");
+      root.querySelectorAll('[data-act="layers"]').forEach((btn) => {
+        btn.classList.toggle("rpt-active", layersOn);
+        btn.setAttribute("aria-pressed", layersOn ? "true" : "false");
+        btn.title = layersOn ? tr("active_on") : tr("inactive_off");
+      });
+      root.querySelectorAll('[data-act="summary"], [data-act="conv"], [data-act="gallery"]').forEach((btn) => {
+        btn.setAttribute("aria-pressed", "false");
+      });
     },
     async renderAutorun(p) {
       const host = p.querySelector("#rpt-autorun-list");
