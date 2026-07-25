@@ -6,6 +6,7 @@ const KEYS = {
 const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
 const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
 const G_DEF = { autoOpenPanel: true, showOnboarding: true };
+const G_DEF_FULL = { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
 
@@ -250,6 +251,7 @@ async function initCollections() {
   window.RPT_I18N.apply(document);
   await initLangTheme();
   await bindGroup("g", KEYS.general, G_DEF);
+  renderAuthorLegend();
   await bindGroup("a", KEYS.autorun, A_DEF);
   await bindGroup("f", KEYS.filters, F_DEF);
   await loadKeywords();
