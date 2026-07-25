@@ -461,17 +461,25 @@ function Index() {
             <p className={`mt-2 ${subtle}`}>{t("featuresSub")}</p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {FEATURES.map((f) => (
-                <div key={f.t} className={`flex flex-col rounded-xl border p-5 transition ${card} ${cardHover}`}>
-                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
-                    <f.i className="h-5 w-5" />
+                <details
+                  key={f.t}
+                  className={`group rounded-xl border p-5 transition ${card} ${cardHover} [&_summary::-webkit-details-marker]:hidden`}
+                >
+                  <summary className="flex cursor-pointer list-none items-center gap-3">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
+                      <f.i className="h-5 w-5" />
+                    </span>
+                    <span className="flex-1 font-semibold">{f.t}</span>
+                    <span className={`text-xs ${muted} transition group-open:rotate-180`} aria-hidden>▾</span>
+                  </summary>
+                  <div className="mt-3">
+                    <p className={`text-sm ${subtle}`}>{f.d}</p>
+                    <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
+                      <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
+                      <p className="mt-1">{f.h}</p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold">{f.t}</h3>
-                  <p className={`mt-2 text-sm ${subtle}`}>{f.d}</p>
-                  <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
-                    <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
-                    <p className="mt-1">{f.h}</p>
-                  </div>
-                </div>
+                </details>
               ))}
             </div>
           </div>
