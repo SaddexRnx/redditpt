@@ -10,7 +10,7 @@
   --rpt-text: #e6edf5;
   --rpt-muted: #8a95a5;
   --rpt-green: #ff4500;
-  --rpt-blue: #3b82f6;
+  --rpt-blue: #46d160;
   --rpt-red: #ef4444;
   --rpt-amber: #f59e0b;
   --rpt-shadow: 0 20px 50px -12px rgba(0,0,0,.65);
@@ -580,10 +580,10 @@ html[data-rpt-theme="light"], body[data-rpt-theme="light"] {
 /* ---------------- Onboarding spotlight ---------------- */
 .rpt-onboard {
   position: fixed; inset: 0; z-index: 2147483600; pointer-events: auto;
-  background: radial-gradient(circle at bottom right, transparent 0, transparent 140px, rgba(0,0,0,.62) 220px);
+  background: rgba(0,0,0,.62);
   font: 14px var(--rpt-font); color: #fff; animation: rpt-fade .3s ease;
 }
-html[data-rpt-theme="light"] .rpt-onboard { background: radial-gradient(circle at bottom right, transparent 0, transparent 140px, rgba(15,23,42,.55) 220px); }
+html[data-rpt-theme="light"] .rpt-onboard { background: rgba(15,23,42,.55); }
 .rpt-onboard-card {
   position: absolute; bottom: 90px; right: 24px; max-width: 320px;
   background: var(--rpt-bg-1); color: var(--rpt-text); border: 1px solid var(--rpt-border);
@@ -907,6 +907,16 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-btnrow button:focus-visible, .rpt-chip:focus-visible,
 .rpt-hub-run:focus-visible, .rpt-panel-close:focus-visible {
   outline: 2px solid var(--rpt-green) !important; outline-offset: 2px !important;
+}
+
+/* Center visible labels inside panel action buttons while keeping icon+text grouped. */
+.rpt-btnrow button {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.rpt-btnrow button > div {
+  flex: 0 1 auto !important;
+  text-align: center !important;
 }
 
 /* Firefox tweaks: it renders form controls thicker; normalise. */

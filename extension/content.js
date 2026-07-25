@@ -12,8 +12,8 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.9.5",
-    BUILD_DATE: "2026-11-08",
+    VERSION: "1.9.6",
+    BUILD_DATE: "2026-07-25",
   });
   const tr = (key) => window.RPT_I18N?.t(key) || key;
   const tx = (value) => window.RPT_I18N?.text(value) || value;
@@ -1039,7 +1039,7 @@
       render();
       // Trap Tab within the palette; input keeps first focus.
       RPT.a11y.trapModal(back);
-      RPT.a11y.addKeyHelp(back, () => "Keyboard: Type to filter. Up and Down arrows navigate. Enter runs the selected command. Esc closes. Tab cycles focus inside the palette.");
+      RPT.a11y.addKeyHelp(back, () => tr("kbd_help_cmdk"));
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
@@ -1074,7 +1074,7 @@
         const badge = document.createElement("span");
         badge.className = "rpt-user-tag";
         badge.textContent = t.label;
-        badge.style.background = t.color || "#3b82f6";
+        badge.style.background = t.color || "#46d160";
         authorEl.after(badge);
       });
     },
@@ -1199,7 +1199,7 @@
       document.body.appendChild(o);
       // Focus trap + restore-on-close.
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: ${c.galleryPrev} previous, ${c.galleryNext} next. Home jumps to the first image, End to the last. Esc closes. Tab cycles between Previous, Next and Close.`);
+      RPT.a11y.addKeyHelp(o, () => tr("kbd_help_gallery"));
       // Resume at the last-viewed image for this thread.
       RPT.galleryPos.get(path).then((saved) => {
         if (saved > 0 && saved < unique.length) go(saved);
@@ -1231,33 +1231,33 @@
       m.className = "rpt-modal rpt-about";
       m.setAttribute("role", "dialog");
       m.setAttribute("aria-modal", "true");
-      m.setAttribute("aria-label", "About Reddit Power Toolkit");
+      m.setAttribute("aria-label", tr("about_title"));
       m.innerHTML = `
         <div class="rpt-modal-card" style="max-width:420px">
           <header class="rpt-modal-head">
-            <strong>About Reddit Power Toolkit</strong>
-            <button class="rpt-x" data-x aria-label="Close">×</button>
+            <strong>${tr("about_title")}</strong>
+            <button class="rpt-x" data-x aria-label="${tr("close")}">×</button>
           </header>
           <div class="rpt-modal-body" style="padding:16px">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
               <div style="width:44px;height:44px;border-radius:10px;background:var(--rpt-green);color:#001912;display:grid;place-items:center;font-weight:800">RPT</div>
               <div>
                 <div style="font-weight:700;font-size:14px">Reddit Power Toolkit</div>
-                <div style="color:var(--rpt-muted);font-size:12px">Version <strong>${RPT.VERSION}</strong> · Built ${RPT.BUILD_DATE}</div>
+                <div style="color:var(--rpt-muted);font-size:12px">${tr("about_version_built")} <strong>${RPT.VERSION}</strong> · ${tr("built")} ${RPT.BUILD_DATE}</div>
               </div>
             </div>
             <p style="color:var(--rpt-muted);font-size:12px;line-height:1.5;margin:0 0 14px">
-              A 100% local browser extension that upgrades Reddit reading and writing. No accounts, no servers, no tracking.
+              ${tr("about_desc")}
             </p>
             <div style="display:grid;gap:8px">
               <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit/releases" target="_blank" rel="noopener">
-                <span>Changelog & releases</span><span aria-hidden="true">↗</span>
+                <span>${tr("changelog_releases")}</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://github.com/Saddexrnx/reddit-power-toolkit" target="_blank" rel="noopener">
-                <span>GitHub repository</span><span aria-hidden="true">↗</span>
+                <span>${tr("github_repository")}</span><span aria-hidden="true">↗</span>
               </a>
               <a class="rpt-about-link" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
-                <span>Telegram — @Saddex_x</span><span aria-hidden="true">↗</span>
+                <span>${tr("telegram_contact")}</span><span aria-hidden="true">↗</span>
               </a>
             </div>
           </div>
@@ -1414,7 +1414,7 @@
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button. Current bindings — collapse all: ${c.collapseAll}, refresh: ${c.refresh}.`);
+      RPT.a11y.addKeyHelp(o, () => tr("kbd_help_cheatsheet"));
     },
   };
 
@@ -1546,30 +1546,30 @@
         <header class="rpt-panel-head">
           <div class="rpt-brand"><span class="rpt-brand-dot"></span>Reddit Power Toolkit</div>
           <div class="rpt-panel-head-actions">
-            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" title="Thread parsing status">
-              <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="${tr("parsing_status")}" title="${tr("thread_parsing_status")}">
+              <span class="rpt-status-dot"></span><span class="rpt-status-txt">${tr("idle")}</span>
             </span>
-            <button class="rpt-panel-refresh" type="button" aria-label="Re-parse this thread" title="Refresh — re-parse comments, stats and colors">
+            <button class="rpt-panel-refresh" type="button" aria-label="${tr("reparse_thread")}" title="${tr("refresh_reparse")}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
             </button>
-            <button class="rpt-panel-close" aria-label="Close panel">×</button>
+            <button class="rpt-panel-close" aria-label="${tr("close_panel")}">×</button>
           </div>
         </header>
         <div class="rpt-chips">
-          <span class="rpt-chip" data-chip="op">OP only</span>
-          <span class="rpt-chip rpt-chip-blue" data-chip="mod">Mod only</span>
-          <span class="rpt-chip" data-chip="awarded">Awarded</span>
+          <span class="rpt-chip" data-chip="op">${tr("filter_op_only")}</span>
+          <span class="rpt-chip rpt-chip-blue" data-chip="mod">${tr("filter_mod_only")}</span>
+          <span class="rpt-chip" data-chip="awarded">${tr("filter_awarded")}</span>
           <span style="flex:1"></span>
-          <span class="rpt-chip" data-chip="__clear">Reset</span>
+          <span class="rpt-chip" data-chip="__clear">${tr("filter_reset")}</span>
         </div>
         <nav class="rpt-tabs">
-          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} Tree</button>
-          <button data-tab="tools">${I.panel} Tools</button>
-          <button data-tab="collect">${I.star} Saved</button>
-          <button data-tab="filters">${I.filter} Clean</button>
-          <button data-tab="highlight">${I.tag} Keywords</button>
-          <button data-tab="stats">${I.stats} Stats</button>
-          <button data-tab="export">${I.export} Export</button>
+          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} ${tr("tree")}</button>
+          <button data-tab="tools">${I.panel} ${tr("tools")}</button>
+          <button data-tab="collect">${I.star} ${tr("collect")}</button>
+          <button data-tab="filters">${I.filter} ${tr("clean")}</button>
+          <button data-tab="highlight">${I.tag} ${tr("keywords_tab")}</button>
+          <button data-tab="stats">${I.stats} ${tr("stats")}</button>
+          <button data-tab="export">${I.export} ${tr("export")}</button>
         </nav>
         <section class="rpt-tab-body">
           <div data-panel="tree" class="rpt-tabpane active">
@@ -1584,7 +1584,7 @@
             <div class="rpt-tree-container"></div>
           </div>
           <div data-panel="tools" class="rpt-tabpane">
-            <div class="rpt-section-title">Views</div>
+            <div class="rpt-section-title">${tr("views")}</div>
             <div class="rpt-btnrow">
               <button data-act="summary">${I.summary}<div><strong>${tr("smart_summary_title")}</strong><span class="rpt-btn-sub">${tr("views_sub_summary")}</span></div></button>
               <button data-act="conv">${I.chat}<div><strong>${tr("conversation_mode")}</strong><span class="rpt-btn-sub">${tr("views_sub_conv")}</span></div></button>
@@ -1619,7 +1619,7 @@
           </div>
           <div data-panel="highlight" class="rpt-tabpane">
             <p class="rpt-muted">${tr("kw_panel_desc")}</p>
-            <textarea class="rpt-kw" rows="3" placeholder="docker, kubernetes, rust"></textarea>
+            <textarea class="rpt-kw" rows="3" placeholder="${tr("kw_placeholder")}"></textarea>
             <button class="rpt-kw-save">${tr("save_keywords")}</button>
           </div>
           <div data-panel="stats" class="rpt-tabpane rpt-stats"></div>
@@ -1712,9 +1712,10 @@
             document.body.classList.toggle("rpt-layers-on");
             if (document.body.classList.contains("rpt-layers-on")) RPT.features.layers.apply();
             else RPT.features.layers.remove();
+            this.updateActiveStates(p);
           }
-          if (a === "collapse") RPT.features.folding.collapseAll();
-          if (a === "expand") RPT.features.folding.expandAll();
+          if (a === "collapse") { RPT.features.folding.collapseAll(); b.classList.add("rpt-active"); p.querySelector('[data-act="expand"]')?.classList.remove("rpt-active"); }
+          if (a === "expand") { RPT.features.folding.expandAll(); b.classList.add("rpt-active"); p.querySelector('[data-act="collapse"]')?.classList.remove("rpt-active"); }
           if (a === "md") RPT.features.exporter.md();
           if (a === "json") RPT.features.exporter.json();
           if (a === "html") RPT.features.exporter.html();
@@ -1741,27 +1742,46 @@
         RPT.features.highlighter.apply();
       };
       this.renderAutorun(p);
+      this.updateActiveStates(p);
+    },
+    updateActiveStates(root = document) {
+      const layersOn = document.body.classList.contains("rpt-layers-on");
+      root.querySelectorAll('[data-act="layers"]').forEach((btn) => {
+        btn.classList.toggle("rpt-active", layersOn);
+        btn.setAttribute("aria-pressed", layersOn ? "true" : "false");
+        btn.title = layersOn ? tr("active_on") : tr("inactive_off");
+      });
+      root.querySelectorAll('[data-act="summary"], [data-act="conv"], [data-act="gallery"]').forEach((btn) => {
+        btn.setAttribute("aria-pressed", "false");
+      });
     },
     async renderAutorun(p) {
       const host = p.querySelector("#rpt-autorun-list");
       if (!host) return;
       const auto = await RPT.autorun.load();
       const items = [
-        ["cleaner", "Auto-apply Cleaner filters"],
-        ["highlighter", "Auto-apply keyword highlights"],
-        ["tags", "Auto-apply user tags"],
-        ["ageWarning", "Show old-thread warning"],
-        ["saveButtons", "Inline ★ save buttons on comments"],
-        ["liveNew", "Live new-comment indicator"],
+        ["cleaner", tr("auto_cleaner")],
+        ["highlighter", tr("auto_highlight")],
+        ["tags", tr("auto_tags")],
+        ["ageWarning", tr("auto_age")],
+        ["saveButtons", tr("auto_star")],
+        ["liveNew", tr("live_new_indicator")],
       ];
       host.innerHTML = items.map(([k, label]) =>
-        `<label><input type="checkbox" data-auto="${k}" ${auto[k] ? "checked" : ""}> ${label}</label>`
+        `<label class="rpt-auto-row ${auto[k] ? "rpt-active" : ""}"><input type="checkbox" data-auto="${k}" ${auto[k] ? "checked" : ""}> <span>${label}</span><em>${auto[k] ? tr("on") : tr("off")}</em></label>`
       ).join("");
       host.querySelectorAll("[data-auto]").forEach((cb) => {
         cb.onchange = async () => {
           const cur = await RPT.autorun.load();
           cur[cb.dataset.auto] = cb.checked;
           await RPT.autorun.save(cur);
+          cb.closest(".rpt-auto-row")?.classList.toggle("rpt-active", cb.checked);
+          const state = cb.closest(".rpt-auto-row")?.querySelector("em");
+          if (state) state.textContent = cb.checked ? tr("on") : tr("off");
+          if (cb.dataset.auto === "liveNew") cb.checked ? RPT.features.liveNew.start() : RPT.features.liveNew.stop();
+          if (cb.dataset.auto === "cleaner") RPT.features.cleaner.apply();
+          if (cb.dataset.auto === "highlighter") RPT.features.highlighter.apply();
+          if (cb.dataset.auto === "saveButtons") RPT.features.collections.attach();
         };
       });
     },
@@ -1769,12 +1789,12 @@
       const host = p.querySelector("#rpt-collect-list");
       const all = await RPT.features.collections.list();
       if (!all.length) {
-        host.innerHTML = `<p class="rpt-empty">No saved comments yet. Click the ★ button on any Reddit comment to save it here.</p>`;
+        host.innerHTML = `<p class="rpt-empty">${tr("no_saved_comments")}</p>`;
         return;
       }
       host.innerHTML = all.map((c) => `
         <div class="rpt-collect-item" data-id="${RPT.utils.escapeHtml(c.id)}">
-          <button class="rpt-collect-remove" title="Remove">×</button>
+          <button class="rpt-collect-remove" title="${tr("remove")}" aria-label="${tr("remove")}">×</button>
           <a href="${RPT.utils.escapeHtml(c.url)}" target="_blank" rel="noopener">u/${RPT.utils.escapeHtml(c.author)}</a>
           <p>${RPT.utils.escapeHtml(c.body.slice(0, 200))}${c.body.length > 200 ? "…" : ""}</p>
         </div>`).join("");
@@ -1791,7 +1811,7 @@
       const s = RPT.features.analytics.compute();
       const h = RPT.features.health.analyze();
       const el = p.querySelector('[data-panel="stats"]');
-      if (!s) { el.innerHTML = '<p class="rpt-empty">No comments on this page.</p>'; return; }
+      if (!s) { el.innerHTML = `<p class="rpt-empty">${tr("no_comments_page")}</p>`; return; }
       const jump = (author) => {
         const c = RPT.state.comments.find((x) => x.author === author);
         if (!c) return;
@@ -1812,14 +1832,14 @@
       const chipsHtml = (arr, fmt) => arr.map(([u, n]) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(u)}">${RPT.utils.escapeHtml(u)} <em>${fmt(n)}</em></span>`).join(" ") || "—";
       const branchesHtml = (arr) => arr.map((b) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(b.author)}">${RPT.utils.escapeHtml(b.author)} <em>${b.size}</em></span>`).join(" ") || "—";
       el.innerHTML = `
-        <div class="rpt-card rpt-clickable" data-jump="first" title="Jump to first comment"><div class="rpt-k">Comments loaded</div><div class="rpt-v">${s.total}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Avg length</div><div class="rpt-v">${s.avgLength} chars</div></div>
-        <div class="rpt-card rpt-clickable" data-jump="deepest" title="Jump to deepest comment"><div class="rpt-k">Deepest chain</div><div class="rpt-v">${s.deepest}</div></div>
-        <div class="rpt-card rpt-clickable" data-jump="longest" title="Jump to longest comment"><div class="rpt-k">Longest comment</div><div class="rpt-v">${RPT.utils.escapeHtml(s.longest.author)} — ${s.longest.length} chars</div></div>
-        <div class="rpt-card"><div class="rpt-k">Most replied</div><div class="rpt-v rpt-chips-v">${chipsHtml(s.mostReplied, (n) => `(${n})`)}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Top branches</div><div class="rpt-v rpt-chips-v">${branchesHtml(s.branches)}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="first" title="${tr("jump_first_comment")}"><div class="rpt-k">${tr("comments_loaded")}</div><div class="rpt-v">${s.total}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("avg_length")}</div><div class="rpt-v">${s.avgLength} ${tr("chars")}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="deepest" title="${tr("jump_deepest_comment")}"><div class="rpt-k">${tr("deepest_chain")}</div><div class="rpt-v">${s.deepest}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="longest" title="${tr("jump_longest_comment")}"><div class="rpt-k">${tr("longest_comment")}</div><div class="rpt-v">${RPT.utils.escapeHtml(s.longest.author)} — ${s.longest.length} ${tr("chars")}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("most_replied")}</div><div class="rpt-v rpt-chips-v">${chipsHtml(s.mostReplied, (n) => `(${n})`)}</div></div>
+        <div class="rpt-card"><div class="rpt-k">${tr("top_branches")}</div><div class="rpt-v rpt-chips-v">${branchesHtml(s.branches)}</div></div>
         <div class="rpt-card rpt-health">
-          <div class="rpt-k">Thread health</div>
+          <div class="rpt-k">${tr("thread_health")}</div>
           <div class="rpt-v">${h.score}/100</div>
           <div class="rpt-health-bar"><div class="rpt-health-fill" style="width:${h.score}%"></div></div>
           <ul>${h.notes.map((n) => `<li>${RPT.utils.escapeHtml(n)}</li>`).join("")}</ul>

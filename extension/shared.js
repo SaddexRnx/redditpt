@@ -7,7 +7,7 @@
 
   const DICTS = {
     en: {
-      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.6",
       status_active: "Active on this Reddit tab", status_notReddit: "Open a Reddit page to use the tools",
       status_notInjected: "Extension not injected on this tab", status_injectFail: "Couldn't inject on this page",
       reload_prompt: "This tab was open before the extension was installed. Reload it to activate the toolkit here.",
@@ -48,7 +48,7 @@
 
     },
     es: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Activo en esta pestaña de Reddit", status_notReddit: "Abre una página de Reddit para usarlo",
       status_notInjected: "La extensión no está inyectada en esta pestaña", status_injectFail: "No se pudo inyectar aquí",
       reload_prompt: "Esta pestaña estaba abierta antes de instalar la extensión. Recárgala para activarla aquí.",
@@ -88,7 +88,7 @@
 
     },
     fr: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Actif sur cet onglet Reddit", status_notReddit: "Ouvrez une page Reddit pour utiliser les outils",
       status_notInjected: "Extension non injectée sur cet onglet", status_injectFail: "Injection impossible ici",
       reload_prompt: "Cet onglet était ouvert avant l'installation. Rechargez-le pour l'activer.",
@@ -128,7 +128,7 @@
 
     },
     de: {
-      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.6",
       status_active: "Aktiv auf diesem Reddit-Tab", status_notReddit: "Öffne eine Reddit-Seite",
       status_notInjected: "Erweiterung nicht in diesen Tab injiziert", status_injectFail: "Injektion fehlgeschlagen",
       reload_prompt: "Dieser Tab war bereits offen. Neu laden zum Aktivieren.",
@@ -168,7 +168,7 @@
 
     },
     pt: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Ativo nesta aba do Reddit", status_notReddit: "Abra uma página do Reddit",
       status_notInjected: "Extensão não injetada nesta aba", status_injectFail: "Falha ao injetar",
       reload_prompt: "Esta aba estava aberta antes da instalação. Recarregue para ativar.",
@@ -208,7 +208,7 @@
 
     },
     ja: {
-      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.6",
       status_active: "このRedditタブで有効", status_notReddit: "Redditページを開いてください",
       status_notInjected: "このタブに拡張機能が注入されていません", status_injectFail: "注入に失敗",
       reload_prompt: "このタブはインストール前から開いていました。再読み込みで有効化されます。",
@@ -248,7 +248,7 @@
 
     },
     zh_CN: {
-      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.6",
       status_active: "在此Reddit标签页已激活", status_notReddit: "请打开一个Reddit页面",
       status_notInjected: "扩展未在此标签页注入", status_injectFail: "注入失败",
       reload_prompt: "此标签在扩展安装前已打开，请重新加载以激活。",
@@ -407,6 +407,29 @@
     kbd_help_conversation: "键盘：Esc 关闭此对话框。Tab 和 Shift+Tab 移动焦点。", kbd_help_summary: "键盘：Esc 关闭。Tab 移动焦点。Enter 或空格跳转到评论。", kbd_help_cmdk: "键盘：输入以筛选。方向键导航。Enter 执行。Esc 关闭。", kbd_help_gallery: "键盘：上一张/下一张，Home 第一张，End 最后一张。Esc 关闭。", kbd_help_cheatsheet: "键盘：Esc 关闭此帮助。Tab 移动焦点。", previous: "上一张", next: "下一张", first_image: "第一张图片", last_image: "最后一张图片", close_word: "关闭", gallery_help_prefix: "键盘", home_first: "Home 跳到第一张", end_last: "End 跳到最后一张", tab_gallery: "Tab 在上一张、下一张和关闭之间切换", version: "版本", about_version_line: "版本", telegram_label: "Telegram — @Saddex_x", no_account_server_tracking: "无账号、无服务器、无追踪。", type_to_filter: "输入以筛选", arrow_nav: "导航", enter_run: "执行", esc_close: "关闭", no_commands_match: "没有匹配的命令", command_palette_label: "命令面板", toggle_theme: "切换主题（深/浅）", collapse_all_short: "全部折叠", expand_all_short: "全部展开", filter_op_only: "过滤：仅 OP", filter_mod_only: "过滤：仅版主", filter_awarded: "过滤：获奖", filter_reset: "过滤：重置", compact_comfortable: "紧凑 / 舒适", turn_on: "开启扩展", turn_off: "关闭扩展", hide_toolbar: "隐藏工具栏", thread_parsing_status: "帖子解析状态", reparse_thread: "重新解析此帖子", refresh_reparse: "刷新 — 重新解析评论、统计和颜色", close_panel: "关闭面板", search_text_author: "搜索文本或作者…", views_sub_summary: "最高赞 · 讨论 · 争议", views_sub_conv: "聊天式帖子视图", views_sub_gallery: "全屏上一张 / 下一张", views_sub_layers: "彩色深度指示", clean: "清理", keywords_tab: "关键词", hide_empty_comments: "隐藏空评论", export_as_html: "导出为 HTML", live_new_indicator: "新评论实时指示", no_saved_comments_yet: "还没有保存的评论。点击任意评论的 ★ 保存。", copied_prefix: "已复制", wiped: "已清除", sorted: "已排序", no_posts: "无帖子", no_bookmarks: "无书签", only: "仅", hidden_duplicates: "重复项已隐藏", highlighted_mentions: "提及已高亮", marked_oldgold: "旧优质帖子已标记", import_invalid_json: "无效 JSON", not_rpt_backup: "不是 Reddit Power Toolkit 备份", enter_subreddit_name: "输入 subreddit 名称", save_rules: "保存规则", clear_for_sub: "清除此 sub", existing_overrides: "现有覆盖", rules_saved_for: "规则保存到", cleared: "已清除", disabled_in: "已在此处禁用", uptime_on_page: "此页面运行时间", community_lower: "社区", use_panel_lag: "用此面板排查卡顿：Duration 很大表示模块较重。", toggle_live_polling: '切换 Live-new 轮询', export_markdown: '导出为 Markdown', export_json: '导出为 JSON', keyboard_shortcuts: '键盘快捷键', type_command: '输入命令…', command: '命令', comments_header: '评论', no_images_detected: '此页面未检测到图片。', previous_image: '上一张图片（左箭头）', next_image: '下一张图片（右箭头）', close_gallery: '关闭画廊 (Esc)', gallery_image: '画廊图片', of: '/', turn_on_off: '开启/关闭扩展', toggle_toolbar_size: '切换工具栏大小', filter_by_author: '按作者筛选', folding: '折叠', automation: '自动化', help: '帮助', save_keywords: '保存关键词', parsing: '解析中…', thread_status: '帖子状态', theme_toggle: '切换主题（深/浅）', search_features: '搜索功能…', enable_disable: '启用/禁用', feature_disabled_turn_on: '功能已禁用 — 请先开启', feature_error: '功能错误', hub: '中心', on: '开', off: '关', module: '模块', status: '状态', last_run: '上次运行', duration: '耗时', legend_perf: '图例：● 成功运行，✕ 出错，○ 此标签页从未运行。', persub_rules_desc: '规则仅在所选社区内生效。取消勾选可只在那里禁用该功能；全局设置保持不变。', subreddit_name_placeholder: 'subreddit 名称（不含 r/）', backup_downloaded: '备份已下载', restored: '已恢复', keys: '键', backup_desc: '所有内容都存储在你的浏览器中。导出 JSON 快照可移动到其他设备，或在重新安装后恢复。', export_backup_json: '导出备份 (.json)', import_backup: '导入备份…', merge_current_data: '与当前数据合并', local_keys: '本地键', total: '总计', contents: '内容', import_failed: '导入失败', system_v19: '系统 (v1.9)', local_first_tools_desc: '本地优先工具。点击启动，或单独切换禁用。', perf_status_desc: '显示哪些模块正在运行、上次扫描时间和耗时。', per_subreddit_desc: '为每个社区单独开启或关闭功能。', backup_restore_desc: '导出或导入书签、历史、关键词跟踪、笔记和设置。'
   };
   Object.keys(RUNTIME_TEXT).forEach((lang) => Object.assign(EXTRA[lang] || (EXTRA[lang] = {}), RUNTIME_TEXT[lang]));
+
+  /* Extra strings used by dynamic cards, feature boxes and status controls.
+     These keys intentionally mirror the visible English text so the mutation
+     localizer can translate late-rendered HTML from v2 modules. */
+  const COMMON_TEXT = {
+    en: {
+      tagline: "Local-first · v1.9.6", chip_op_only: "OP only", chip_mod_only: "Mod only", chip_awarded: "Awarded", chip_reset: "Reset", kw_placeholder: "docker, kubernetes, rust", active_on: "Active — click to turn off", inactive_off: "Inactive — click to turn on",
+      "Subreddit": "Subreddit", "Posts": "Posts", "Avg comm.": "Avg comm.", "img/vid/link/txt": "img/vid/link/txt", "Most posts loaded:": "Most posts loaded:", "Highest avg score:": "Highest avg score:", "Most discussion:": "Most discussion:", "Most images:": "Most images:", "Most videos:": "Most videos:", "Most links:": "Most links:", "Most text-heavy:": "Most text-heavy:", "in branch": "in branch", "depth": "depth", "markdown": "markdown", "plain": "plain", "Export JSON": "Export JSON", "Type": "Type", "Engage": "Engage", "self": "self", "Hide": "Hide", "Darker = more posts.": "Darker = more posts.", "From": "From", "loaded posts": "loaded posts", "No possible reposts detected among loaded posts.": "No possible reposts detected among loaded posts.", "No sidebar detected.": "No sidebar detected.", "No groups yet.": "No groups yet.", "No subs yet": "No subs yet", "New name:": "New name:", "Delete group?": "Delete group?", "Dead posts": "Dead posts", "Deleted comments": "Deleted comments", "Spam hints": "Spam hints", "Min title length": "Min title length", "Hide short titles (<20 chars)": "Hide short titles (<20 chars)", "No timestamped posts detected.": "No timestamped posts detected.", "Old but active": "Old but active", "Highest engagement": "Highest engagement", "No links found.": "No links found.", "Title + URL": "Title + URL", "Markdown link": "Markdown link", "Thread structure": "Thread structure", "Threads read": "Threads read", "Subs visited": "Subs visited", "Exports made": "Exports made", "Bookmarks added": "Bookmarks added", "Random post on page": "Random post on page", "Random popular subreddit": "Random popular subreddit", "Random bookmark": "Random bookmark", "Note (optional):": "Note (optional):", "Added": "Added", "Set an active bundle first": "Set an active bundle first", "Only images": "Only images", "Only videos": "Only videos", "Only text": "Only text", "Only links": "Only links", "Show all": "Show all", "All": "All", "Dev mode off": "Dev mode off", "Dev mode on — hover elements": "Dev mode on — hover elements"
+    },
+    es: {
+      tagline: "Local · v1.9.6", chip_op_only: "Solo OP", chip_mod_only: "Solo mods", chip_awarded: "Premiados", chip_reset: "Restablecer", kw_placeholder: "docker, kubernetes, rust", active_on: "Activo — clic para apagar", inactive_off: "Inactivo — clic para activar",
+      "Subreddit": "Subreddit", "Posts": "Publicaciones", "Avg comm.": "Com. media", "img/vid/link/txt": "img/vid/enlace/txt", "Most posts loaded:": "Más posts cargados:", "Highest avg score:": "Mayor puntuación media:", "Most discussion:": "Más discusión:", "Most images:": "Más imágenes:", "Most videos:": "Más vídeos:", "Most links:": "Más enlaces:", "Most text-heavy:": "Más texto:", "in branch": "en rama", "depth": "profundidad", "markdown": "markdown", "plain": "texto", "Export JSON": "Exportar JSON", "Type": "Tipo", "Engage": "Interacción", "self": "propio", "Hide": "Ocultar", "Darker = more posts.": "Más oscuro = más publicaciones.", "From": "De", "loaded posts": "publicaciones cargadas", "No possible reposts detected among loaded posts.": "No se detectaron posibles reposts.", "No sidebar detected.": "No se detectó barra lateral.", "No groups yet.": "Aún no hay grupos.", "No subs yet": "Aún no hay subs", "New name:": "Nuevo nombre:", "Delete group?": "¿Eliminar grupo?", "Dead posts": "Posts muertos", "Deleted comments": "Comentarios eliminados", "Spam hints": "Señales de spam", "Min title length": "Longitud mínima del título", "Hide short titles (<20 chars)": "Ocultar títulos cortos (<20 caracteres)", "No timestamped posts detected.": "No se detectaron posts con fecha.", "Old but active": "Antiguos pero activos", "Highest engagement": "Mayor interacción", "No links found.": "No se encontraron enlaces.", "Title + URL": "Título + URL", "Markdown link": "Enlace Markdown", "Thread structure": "Estructura del hilo", "Threads read": "Hilos leídos", "Subs visited": "Subs visitados", "Exports made": "Exportaciones", "Bookmarks added": "Marcadores añadidos", "Random post on page": "Post aleatorio", "Random popular subreddit": "Subreddit popular aleatorio", "Random bookmark": "Marcador aleatorio", "Note (optional):": "Nota (opcional):", "Added": "Añadido", "Set an active bundle first": "Activa un paquete primero", "Only images": "Solo imágenes", "Only videos": "Solo vídeos", "Only text": "Solo texto", "Only links": "Solo enlaces", "Show all": "Mostrar todo", "All": "Todo", "Dev mode off": "Modo dev apagado", "Dev mode on — hover elements": "Modo dev activo — pasa por elementos"
+    },
+    fr: {
+      tagline: "Local · v1.9.6", chip_op_only: "OP seul", chip_mod_only: "Mods seuls", chip_awarded: "Récompensés", chip_reset: "Réinitialiser", kw_placeholder: "docker, kubernetes, rust", active_on: "Actif — cliquez pour désactiver", inactive_off: "Inactif — cliquez pour activer",
+      "Subreddit": "Subreddit", "Posts": "Publications", "Avg comm.": "Comm. moy.", "img/vid/link/txt": "img/vid/lien/txt", "Most posts loaded:": "Plus de posts chargés :", "Highest avg score:": "Meilleur score moyen :", "Most discussion:": "Plus de discussion :", "Most images:": "Plus d’images :", "Most videos:": "Plus de vidéos :", "Most links:": "Plus de liens :", "Most text-heavy:": "Plus de texte :", "in branch": "dans la branche", "depth": "profondeur", "markdown": "markdown", "plain": "texte", "Export JSON": "Exporter JSON", "Type": "Type", "Engage": "Engagement", "self": "interne", "Hide": "Masquer", "Darker = more posts.": "Plus sombre = plus de publications.", "From": "Depuis", "loaded posts": "publications chargées", "No possible reposts detected among loaded posts.": "Aucun repost possible détecté.", "No sidebar detected.": "Aucune barre latérale détectée.", "No groups yet.": "Aucun groupe pour l’instant.", "No subs yet": "Aucun sub pour l’instant", "New name:": "Nouveau nom :", "Delete group?": "Supprimer le groupe ?", "Dead posts": "Posts morts", "Deleted comments": "Commentaires supprimés", "Spam hints": "Indices de spam", "Min title length": "Longueur minimale du titre", "Hide short titles (<20 chars)": "Masquer titres courts (<20 caractères)", "No timestamped posts detected.": "Aucun post daté détecté.", "Old but active": "Anciens mais actifs", "Highest engagement": "Engagement maximal", "No links found.": "Aucun lien trouvé.", "Title + URL": "Titre + URL", "Markdown link": "Lien Markdown", "Thread structure": "Structure du fil", "Threads read": "Fils lus", "Subs visited": "Subs visités", "Exports made": "Exports créés", "Bookmarks added": "Favoris ajoutés", "Random post on page": "Post aléatoire", "Random popular subreddit": "Subreddit populaire aléatoire", "Random bookmark": "Favori aléatoire", "Note (optional):": "Note (facultative) :", "Added": "Ajouté", "Set an active bundle first": "Choisissez d’abord un dossier actif", "Only images": "Images seulement", "Only videos": "Vidéos seulement", "Only text": "Texte seulement", "Only links": "Liens seulement", "Show all": "Tout afficher", "All": "Tout", "Dev mode off": "Mode dev désactivé", "Dev mode on — hover elements": "Mode dev actif — survolez les éléments"
+    },
+    de: { tagline: "Lokal · v1.9.6", chip_op_only: "Nur OP", chip_mod_only: "Nur Mods", chip_awarded: "Ausgezeichnet", chip_reset: "Zurücksetzen", kw_placeholder: "docker, kubernetes, rust", active_on: "Aktiv — klicken zum Ausschalten", inactive_off: "Inaktiv — klicken zum Einschalten" },
+    pt: { tagline: "Local · v1.9.6", chip_op_only: "Só OP", chip_mod_only: "Só mods", chip_awarded: "Premiados", chip_reset: "Redefinir", kw_placeholder: "docker, kubernetes, rust", active_on: "Ativo — clique para desligar", inactive_off: "Inativo — clique para ligar" },
+    ja: { tagline: "ローカル · v1.9.6", chip_op_only: "OPのみ", chip_mod_only: "Modのみ", chip_awarded: "受賞", chip_reset: "リセット", kw_placeholder: "docker, kubernetes, rust", active_on: "有効 — クリックでオフ", inactive_off: "無効 — クリックでオン" },
+    zh_CN: { tagline: "本地 · v1.9.6", chip_op_only: "仅 OP", chip_mod_only: "仅版主", chip_awarded: "获奖", chip_reset: "重置", kw_placeholder: "docker, kubernetes, rust", active_on: "已启用 — 点击关闭", inactive_off: "未启用 — 点击开启" }
+  };
+  Object.keys(COMMON_TEXT).forEach((lang) => Object.assign(EXTRA[lang] || (EXTRA[lang] = {}), COMMON_TEXT[lang]));
   Object.keys(EXTRA).forEach((lang) => Object.assign(DICTS[lang] || (DICTS[lang] = {}), EXTRA[lang]));
 
   const RPT_I18N = {

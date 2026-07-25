@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.9.5-10b981?style=flat-square" alt="Version 1.9.5">
+  <img src="https://img.shields.io/badge/version-1.9.6-10b981?style=flat-square" alt="Version 1.9.6">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.9.5** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
+> **Current release: v1.9.6** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -302,7 +302,14 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases).
 
-### v1.9.5 — current
+### v1.9.6 — current
+
+- **French translation fix** — removed Spanish bleed-through on the website feature cards and forced missing non-English strings to fall back only to English, never another language.
+- **Extension activation clarity** — panel controls now show a clear active/off visual state so selected features are visibly running.
+- **Button readability pass** — centered labels, wider tap targets, and stronger text contrast for the side panel, quick views and power hub.
+- **Version sync** — manifest, popup, Options, README, website footer and About panel now show v1.9.6.
+
+### v1.9.5
 
 - **Full UI translation pass** — extension popup, Options, Analytics, side panel, quick-bar, command palette, modals, cards, buttons, placeholders, tooltips, status pills and dynamic hub content now route through the shared i18n layer.
 - **Dynamic text localization** — newly inserted Reddit-page UI is translated automatically with a mutation observer and reverse lookup for feature cards.
@@ -423,7 +430,7 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 - **v1.7** — Full settings backup, conflict detection, safer import, reset to defaults
 - **v1.8** — 36 advanced local-first power modules
 - **v1.9** — Performance panel, per-subreddit rules, backup/restore, lazy loading
-- **v1.9.1–1.9.5** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup
+- **v1.9.1–1.9.6** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup and French translation repair
 
 ---
 
