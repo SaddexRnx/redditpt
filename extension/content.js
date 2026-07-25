@@ -466,6 +466,7 @@
       overlay.querySelector(".rpt-close").onclick = () => overlay.remove();
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
+      RPT.a11y.trapModal(overlay);
     },
   };
 
