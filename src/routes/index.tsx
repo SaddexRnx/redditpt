@@ -491,39 +491,20 @@ function Index() {
               <span className="text-[#ff4500]">{t("hero2")}</span>
             </h1>
             <p className={`mt-6 max-w-2xl text-lg ${subtle}`}>{t("heroP")}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              {/* Primary download button (same ZIP, always) */}
-              <button
-                onClick={downloadZip}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/25 transition hover:bg-[#2fa84f]"
-              >
-                <Download className="h-5 w-5" /> {t("dl")}
-              </button>
-              <a
-                href="#install"
-                className={`inline-flex items-center gap-2 rounded-lg border ${border} px-6 py-3 font-medium transition ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}
-              >
-                <Zap className="h-5 w-5" /> {t("how")}
-              </a>
+            {/* No generic download — user picks their browser first so we
+                can send them straight to matching install steps. */}
+            <div className="mt-8">
+              <p className={`mb-3 text-sm font-medium ${subtle}`}>{t("choose_browser")}</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <BrowserPick icon={<Chrome className="h-6 w-6" />} label="Chrome · Edge · Brave"
+                             sub="Chromium desktop" tab="chrome" isDark={isDark} border={border} t={t} />
+                <BrowserPick icon={<Globe className="h-6 w-6" />} label="Firefox 128+"
+                             sub="Gecko desktop" tab="ff" isDark={isDark} border={border} t={t} />
+                <BrowserPick icon={<Smartphone className="h-6 w-6" />} label="Kiwi Browser"
+                             sub="Android · Chromium" tab="kiwi" isDark={isDark} border={border} t={t} />
+              </div>
+              <p className={`mt-4 text-xs ${muted}`}>{t("worksIn")}</p>
             </div>
-            {/* Per-browser quick links so Firefox / Kiwi users know it works
-                for them too — they jump straight to their install steps. */}
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className={`text-xs ${muted} mr-1`}>Install for:</span>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "chrome" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Chrome className="h-3.5 w-3.5 text-[#46d160]" /> Chrome · Edge · Brave
-              </a>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "ff" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Globe className="h-3.5 w-3.5 text-[#ff4500]" /> Firefox 128+
-              </a>
-              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "kiwi" }))}
-                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
-                <Smartphone className="h-3.5 w-3.5 text-[#46d160]" /> Kiwi (Android)
-              </a>
-            </div>
-            <p className={`mt-3 text-xs ${muted}`}>{t("worksIn")}</p>
           </div>
         </section>
 
