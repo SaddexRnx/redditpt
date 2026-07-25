@@ -2135,7 +2135,6 @@
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
-    RPT.tour.maybeShow();
     // Detect SPA navigation between Reddit threads and re-run everything.
     (() => {
       let last = location.href;
