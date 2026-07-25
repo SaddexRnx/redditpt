@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reddit Power Toolkit</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">
+        <img src="icons/icon.png" alt="RPT" width="22" height="22">
+      </div>
+      <div class="brand-text">
+        <h1 data-i18n="appName">Reddit Power Toolkit</h1>
+        <p class="tag" data-i18n="tagline">Local-first · v1.9.7</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" data-act="open-panel" data-i18n-title="open_panel" title="Open panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+      </button>
+      <button class="icon-btn" id="theme-toggle" data-i18n-title="theme" title="Theme">
+        <svg id="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button class="icon-btn lang-chip" id="lang-chip" title="Language">EN</button>
+      <button class="icon-btn" data-act="options" data-i18n-title="settings" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="home" role="tab" data-i18n="tab_home">Home</button>
+    <button class="tab" data-tab="tools" role="tab" data-i18n="tab_tools">Tools</button>
+    <button class="tab" data-tab="export" role="tab" data-i18n="tab_export">Export</button>
+  </nav>
+
+  <main>
+    <!-- HOME -->
+    <section class="tab-panel active" data-panel="home">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span data-i18n="activation">STATUS</span>
+          </div>
+          <div class="stat-value">
+            <span class="status-dot" id="dot"></span>
+            <span id="status">…</span>
+          </div>
+          <div class="stat-sub" id="status-sub" data-i18n="local_first">Local-first</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span data-i18n="power_features_label">POWER FEATURES</span>
+          </div>
+          <div class="stat-value stat-value-num">36</div>
+          <div class="stat-sub" data-i18n="modules_ready">Modules ready</div>
+        </div>
+      </div>
+
+      <button class="primary-card" data-act="open-panel">
+        <div class="primary-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+        </div>
+        <div class="primary-body">
+          <strong data-i18n="open_panel">Open side panel</strong>
+          <span data-i18n="open_panel_sub">Tree · filters · saved · stats</span>
+        </div>
+        <kbd>T</kbd>
+      </button>
+
+      <div id="activation-detail" class="alert" style="display:none">
+        <p id="activation-reason" data-i18n="why_notInjected"></p>
+        <button class="btn-primary" id="reload-btn" data-i18n="reload_btn">Reload this tab</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="enable_toolkit">Enable toolkit</strong>
+            <span data-i18n="enable_toolkit_sub">Turn off to restore hidden comments</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="master-enable" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="power_features">Power features (36)</strong>
+            <span data-i18n="power_features_sub">Compare · analyze · export · bookmark</span>
+          </div>
+        </div>
+        <button class="btn-primary" data-act="v2" data-i18n="open_hub">Open hub</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="language">Language</strong>
+            <span data-i18n="language_sub">Interface & panels</span>
+          </div>
+          <select id="lang-select" class="pill-select"></select>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section class="tab-panel" data-panel="tools">
+      <div class="section-title" data-i18n="quick_views">Quick views</div>
+      <div class="tool-grid">
+        <button class="tool-btn" data-act="summary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7l9 5 9-5-9-5z"/><path d="m3 17 9 5 9-5"/><path d="m3 12 9 5 9-5"/></svg>
+          <span data-i18n="smart_summary">Smart summary</span>
+        </button>
+        <button class="tool-btn" data-act="conv">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="conversation">Conversation</span>
+        </button>
+        <button class="tool-btn" data-act="gallery">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+          <span data-i18n="gallery">Gallery</span>
+        </button>
+        <button class="tool-btn" data-act="layers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/></svg>
+          <span data-i18n="depth_layers">Depth layers</span>
+        </button>
+      </div>
+
+      <div class="section-title" data-i18n="folding">Folding</div>
+      <div class="tool-grid">
+        <button class="tool-btn" data-act="collapse">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/></svg>
+          <span data-i18n="collapse_all">Collapse all</span>
+        </button>
+        <button class="tool-btn" data-act="expand">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/></svg>
+          <span data-i18n="expand_all">Expand all</span>
+        </button>
+      </div>
+
+      <div class="section-title" data-i18n="utilities">Utilities</div>
+      <div class="tool-grid">
+        <button class="tool-btn" data-act="cmdk">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
+          <span data-i18n="command_palette">Command palette</span>
+          <kbd>⌘K</kbd>
+        </button>
+        <button class="tool-btn" data-act="kbd">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M8 14h8"/></svg>
+          <span data-i18n="shortcuts">Shortcuts</span>
+        </button>
+        <button class="tool-btn" data-act="a11y">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="2"/><path d="M4 9h16M9 9v12M15 9v12M9 15h6"/></svg>
+          <span data-i18n="accessibility">Accessibility</span>
+        </button>
+        <button class="tool-btn" data-act="analytics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+          <span data-i18n="analytics">Analytics</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- EXPORT -->
+    <section class="tab-panel" data-panel="export">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="export_thread">Export this thread</strong>
+            <span data-i18n="export_thread_sub">Save the discussion to a file</span>
+          </div>
+        </div>
+        <div class="tool-grid three">
+          <button class="tool-btn" data-act="md"><span data-i18n="markdown">Markdown</span></button>
+          <button class="tool-btn" data-act="json"><span data-i18n="json">JSON</span></button>
+          <button class="tool-btn" data-act="html"><span data-i18n="html">HTML</span></button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <div class="card-title">
+            <strong data-i18n="about_changelog">About &amp; changelog</strong>
+            <span>v1.9.7 · 100% local · no accounts</span>
+          </div>
+        </div>
+        <div class="tool-grid">
+          <a class="tool-btn" href="https://github.com/Saddexrnx/redditpt" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4C17.3 4 18.3 4.3 18.3 4.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6C20.2 21.4 23.5 17.1 23.5 12 23.5 5.7 18.3.5 12 .5z"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a class="tool-btn" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.04 15.47 8.86 19c.3 0 .43-.13.59-.28l1.42-1.36 2.94 2.15c.54.3.93.14 1.07-.5l1.94-9.12c.19-.85-.31-1.19-.83-.99L4.36 12.34c-.83.33-.82.79-.14 1L7.3 14.3l6.72-4.24c.32-.2.61-.09.37.12"/></svg>
+            <span>Telegram</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span data-i18n="footer_privacy">100% local · no accounts · no servers</span>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
