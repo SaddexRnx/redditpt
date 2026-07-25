@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   sel.addEventListener("change", async () => {
     await window.RPT_I18N.set(sel.value);
     window.RPT_I18N.apply(document);
+    syncChip();
     refreshActivation();
   });
 
@@ -112,6 +113,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     await window.RPT_THEME.set(window.RPT_THEME.current === "dark" ? "light" : "dark");
     updateThemeIcon();
   });
+
+  // Tabs
+  document.querySelectorAll(".tab").forEach((t) => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach((x) => x.classList.remove("active"));
+      t.classList.add("active");
+      document.querySelector(`.tab-panel[data-panel="${t.dataset.tab}"]`)?.classList.add("active");
+    });
+  });
+
+  // Language chip mirrors dropdown
+  const langChip = $("#lang-chip");
+  const syncChip = () => { if (langChip) langChip.textContent = (window.RPT_I18N.current || "en").toUpperCase(); };
+  syncChip();
+  langChip?.addEventListener("click", () => $("#lang-select")?.focus());
 
   $("#reload-btn").addEventListener("click", async () => {
     const tab = await activeTab();
