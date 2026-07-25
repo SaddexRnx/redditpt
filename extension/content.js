@@ -1252,6 +1252,7 @@
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
+      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button.");
     },
   };
 
