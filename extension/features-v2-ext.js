@@ -17,6 +17,8 @@
   const S = V._storage;
   const modal = V._modal;
   const esc = (s) => RPT.utils.escapeHtml(String(s ?? ""));
+  const tr = (key) => window.RPT_I18N?.t(key) || key;
+  const tx = (value) => window.RPT_I18N?.text(value) || value;
 
   const currentSub = () => {
     const m = location.pathname.match(/\/r\/([^\/]+)/i);
@@ -97,28 +99,28 @@
           const okDot = !p ? "○" : p.ok ? "●" : "✕";
           return `<tr>
             <td>${okDot}</td>
-            <td><strong>${esc(m.name)}</strong><br><span class="rpt-muted">${esc(m.desc)}</span></td>
-            <td>${active ? "<span class='rpt-badge-on'>on</span>" : "<span class='rpt-badge-off'>off</span>"}</td>
+            <td><strong>${esc(tx(m.name))}</strong><br><span class="rpt-muted">${esc(tx(m.desc))}</span></td>
+            <td>${active ? `<span class='rpt-badge-on'>${tr("on")}</span>` : `<span class='rpt-badge-off'>${tr("off")}</span>`}</td>
             <td>${last}</td>
             <td>${ms}</td>
           </tr>`;
         }).join("");
       const uptime = Math.round((Date.now() - V._perf.mounted) / 1000);
       const body = `
-        <p class="rpt-muted">Uptime on this page: <strong>${uptime}s</strong>${sub ? ` · community: <strong>r/${esc(sub)}</strong>` : ""}</p>
+        <p class="rpt-muted">${tr("uptime_on_page")}: <strong>${uptime}s</strong>${sub ? ` · ${tr("community_lower")}: <strong>r/${esc(sub)}</strong>` : ""}</p>
         <div style="max-height:60vh;overflow:auto;border:1px solid var(--border);border-radius:8px">
           <table class="rpt-perf-table" style="width:100%;border-collapse:collapse;font-size:13px">
             <thead><tr>
-              <th></th><th style="text-align:left">Module</th><th>Status</th><th>Last run</th><th>Duration</th>
+              <th></th><th style="text-align:left">${tr("module")}</th><th>${tr("status")}</th><th>${tr("last_run")}</th><th>${tr("duration")}</th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </div>
         <p class="rpt-muted" style="margin-top:10px">
-          Legend: ● ran successfully, ✕ threw an error, ○ never ran in this tab.
-          Use this panel to spot lag: a big number in <em>Duration</em> means that module is heavy.
+          ${tr("legend_perf")}
+          ${tr("use_panel_lag")}
         </p>`;
-      modal("Performance & status", body, { wide: true });
+      modal(tx("Performance & status"), body, { wide: true });
     },
     run() { this.open(); },
   };
@@ -139,34 +141,33 @@
         .filter((m) => !["perSubreddit","perfStatus","backup"].includes(m.id))
         .map((m) => `<label class="rpt-persub-row">
           <input type="checkbox" data-id="${esc(m.id)}" ${rules[m.id] === false ? "" : "checked"}>
-          <span><strong>${esc(m.name)}</strong> — <span class="rpt-muted">${esc(m.desc)}</span></span>
+          <span><strong>${esc(tx(m.name))}</strong> — <span class="rpt-muted">${esc(tx(m.desc))}</span></span>
         </label>`).join("");
       const body = `
-        <p class="rpt-muted">Rules apply <strong>only inside</strong> the chosen community.
-          Uncheck a feature to disable it just there — global settings stay unchanged.</p>
+        <p class="rpt-muted">${tr("persub_rules_desc")}</p>
         <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="rpt-persub-name" placeholder="subreddit name (no r/)" value="${esc(target)}"
+          <input id="rpt-persub-name" placeholder="${tr("subreddit_name_placeholder")}" value="${esc(target)}"
             style="flex:1;padding:8px;background:var(--bg-2);border:1px solid var(--border);border-radius:6px;color:var(--fg)">
-          <button class="rpt-v2-primary" id="rpt-persub-save">Save rules</button>
-          <button class="rpt-v2-secondary" id="rpt-persub-clear">Clear for sub</button>
+          <button class="rpt-v2-primary" id="rpt-persub-save">${tr("save_rules")}</button>
+          <button class="rpt-v2-secondary" id="rpt-persub-clear">${tr("clear_for_sub")}</button>
         </div>
-        ${subs.length ? `<p class="rpt-muted">Existing overrides: ${subs.map((s)=>`<code>r/${esc(s)}</code>`).join(", ")}</p>` : ""}
+        ${subs.length ? `<p class="rpt-muted">${tr("existing_overrides")}: ${subs.map((s)=>`<code>r/${esc(s)}</code>`).join(", ")}</p>` : ""}
         <div style="max-height:50vh;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:10px">${rowsHTML}</div>`;
-      const m = modal("Per-subreddit rules", body, { wide: true });
+      const m = modal(tx("Per-subreddit rules"), body, { wide: true });
       m.querySelector("#rpt-persub-save").onclick = async () => {
         const name = m.querySelector("#rpt-persub-name").value.trim().toLowerCase().replace(/^r\//, "");
-        if (!name) return toast("Enter a subreddit name");
+        if (!name) return toast(tr("enter_subreddit_name"));
         const next = { ...(await V.getPerSub()) };
         const r = { ...(next[name] || {}) };
         m.querySelectorAll("[data-id]").forEach((cb) => { r[cb.dataset.id] = cb.checked; });
         next[name] = r;
         await V.setPerSub(next);
-        toast(`Rules saved for r/${name}`); m.remove();
+        toast(`${tr("rules_saved_for")} r/${name}`); m.remove();
       };
       m.querySelector("#rpt-persub-clear").onclick = async () => {
         const name = m.querySelector("#rpt-persub-name").value.trim().toLowerCase().replace(/^r\//, "");
         const next = { ...(await V.getPerSub()) }; delete next[name];
-        await V.setPerSub(next); toast(`Cleared r/${name}`); m.remove();
+        await V.setPerSub(next); toast(`${tr("cleared")} r/${name}`); m.remove();
       };
     },
     run() { this.open(); },
@@ -186,7 +187,7 @@
       a.href = URL.createObjectURL(blob);
       a.download = `rpt-backup-${new Date().toISOString().slice(0,10)}.json`;
       a.click(); URL.revokeObjectURL(a.href);
-      toast("Backup downloaded");
+      toast(tr("backup_downloaded"));
     },
     async importFile(file, opts = { merge: true }) {
       const text = await file.text();
@@ -198,36 +199,35 @@
       const current = opts.merge ? await new Promise((r) => chrome.storage.local.get(null, r)) : {};
       const next = { ...current, ...json.data };
       await new Promise((r) => chrome.storage.local.set(next, r));
-      toast(`Restored ${Object.keys(json.data).length} keys`);
+      toast(`${tr("restored")} ${Object.keys(json.data).length} ${tr("keys")}`);
     },
     async open() {
       const all = await new Promise((r) => chrome.storage.local.get(null, r));
       const keys = Object.keys(all).filter((k) => k.startsWith("rpt")).sort();
       const size = new Blob([JSON.stringify(all)]).size;
       const body = `
-        <p class="rpt-muted">Everything is stored inside your browser. Export a JSON snapshot to move it
-          to another device, or restore it after reinstalling.</p>
+        <p class="rpt-muted">${tr("backup_desc")}</p>
         <div class="rpt-btnrow">
-          <button class="rpt-v2-primary" id="rpt-bk-export">Export backup (.json)</button>
+          <button class="rpt-v2-primary" id="rpt-bk-export">${tr("export_backup_json")}</button>
           <label class="rpt-v2-secondary" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-            Import backup…
+            ${tr("import_backup")}
             <input type="file" id="rpt-bk-import" accept="application/json" style="display:none">
           </label>
           <label style="display:inline-flex;align-items:center;gap:6px;font-size:12px">
-            <input type="checkbox" id="rpt-bk-merge" checked> merge with current data
+            <input type="checkbox" id="rpt-bk-merge" checked> ${tr("merge_current_data")}
           </label>
         </div>
-        <p class="rpt-muted" style="margin-top:14px">${keys.length} local keys · ${(size/1024).toFixed(1)} KB total</p>
-        <details style="margin-top:6px"><summary>Contents</summary>
+        <p class="rpt-muted" style="margin-top:14px">${keys.length} ${tr("local_keys")} · ${(size/1024).toFixed(1)} KB ${tr("total")}</p>
+        <details style="margin-top:6px"><summary>${tr("contents")}</summary>
           <ul style="max-height:30vh;overflow:auto;font-size:12px">${keys.map((k)=>`<li><code>${esc(k)}</code></li>`).join("")}</ul>
         </details>`;
-      const m = modal("Backup & restore", body, { wide: false });
+      const m = modal(tx("Backup & restore"), body, { wide: false });
       m.querySelector("#rpt-bk-export").onclick = () => this.exportAll();
       m.querySelector("#rpt-bk-import").onchange = async (e) => {
         const f = e.target.files?.[0]; if (!f) return;
         const merge = m.querySelector("#rpt-bk-merge").checked;
         try { await this.importFile(f, { merge }); m.remove(); }
-        catch (err) { toast("Import failed: " + err.message); }
+        catch (err) { toast(`${tr("import_failed")}: ${err.message}`); }
       };
     },
     run() { this.open(); },
@@ -248,11 +248,11 @@
         ["Filtering & feed", ["flairTools","qualityFilter","feedDedup","ageSort","mediaToggle","oldGold","sidebarCleaner"]],
         ["Discovery & knowledge", ["bookmarks","savedManager","research","topicTracker","random","history","achievements","wikiNav","resourceCollector"]],
         ["Utilities", ["searchEnhancer","linksManager","explainLink","exportLibrary","repostDetector","devMode"]],
-        ["System (v1.9)", ["perfStatus","perSubreddit","backup"]],
+        [tr("system_v19"), ["perfStatus","perSubreddit","backup"]],
       ];
       const body = `
-        <p class="rpt-muted">Local-first tools. Click to launch, or toggle to disable individually.</p>
-        <input id="rpt-hub-q" placeholder="Search features…" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--fg)">
+        <p class="rpt-muted">${tr("local_first_tools_desc")}</p>
+        <input id="rpt-hub-q" placeholder="${tr("search_features")}" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;color:var(--fg)">
         ${CATS.map(([cat, ids]) => `
           <h3 class="rpt-hub-cat">${esc(cat)}</h3>
           <div class="rpt-hub-grid">
@@ -261,22 +261,22 @@
               const on = enabled[id] !== false;
               return `<div class="rpt-hub-card ${on ? "" : "rpt-hub-off"}" data-id="${id}">
                 <button class="rpt-hub-run" data-run="${id}">
-                  <strong>${esc(mod.name)}</strong>
-                  <span>${esc(mod.desc)}</span>
+                  <strong>${esc(tx(mod.name))}</strong>
+                  <span>${esc(tx(mod.desc))}</span>
                 </button>
-                <label class="rpt-hub-toggle" title="Enable/disable">
+                <label class="rpt-hub-toggle" title="${tr("enable_disable")}">
                   <input type="checkbox" data-tog="${id}" ${on ? "checked" : ""}>
                 </label>
               </div>`;
             }).join("")}
           </div>`).join("")}`;
-      const m = modal("⚡ Power features", body, { wide: true });
+      const m = modal(tr("power_features"), body, { wide: true });
       m.querySelectorAll("[data-run]").forEach((b) => b.onclick = async () => {
         const id = b.dataset.run;
         const en = await V.getEnabled();
-        if (en[id] === false) return toast("Feature is disabled — turn it on first");
+        if (en[id] === false) return toast(tr("feature_disabled_turn_on"));
         try { m.remove(); await V.modules[id].run?.(); }
-        catch (e) { console.error(e); toast("Feature error: " + e.message); }
+        catch (e) { console.error(e); toast(`${tr("feature_error")}: ${e.message}`); }
       });
       m.querySelectorAll("[data-tog]").forEach((cb) => cb.onclick = async (e) => {
         e.stopPropagation();
@@ -300,9 +300,9 @@
       const prev = cmdk.commands;
       cmdk.commands = function () {
         return prev.call(this).concat(
-          { id: "sys-perf", label: "⚡ Performance & status", run: () => V.modules.perfStatus.run() },
-          { id: "sys-persub", label: "⚡ Per-subreddit rules", run: () => V.modules.perSubreddit.run() },
-          { id: "sys-backup", label: "⚡ Backup & restore",  run: () => V.modules.backup.run() },
+          { id: "sys-perf", label: `⚡ ${tx("Performance & status")}`, run: () => V.modules.perfStatus.run() },
+          { id: "sys-persub", label: `⚡ ${tx("Per-subreddit rules")}`, run: () => V.modules.perSubreddit.run() },
+          { id: "sys-backup", label: `⚡ ${tx("Backup & restore")}`,  run: () => V.modules.backup.run() },
         );
       };
     }
