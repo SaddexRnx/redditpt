@@ -27,6 +27,12 @@
 
   <section>
     <h2 data-i18n="saved_comments">Saved comments</h2>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <button id="exp-json" style="background:var(--green);color:#001912;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export JSON</button>
+      <button id="exp-csv"  style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Export CSV</button>
+      <button id="imp-btn"  style="background:var(--bg-2);color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:8px;cursor:pointer;font:600 13px inherit">Import file…</button>
+      <input id="imp-file" type="file" accept=".json,.csv,application/json,text/csv" hidden>
+    </div>
     <ul id="saved"></ul>
   </section>
 

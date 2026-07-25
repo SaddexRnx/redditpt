@@ -27,6 +27,8 @@ const actions = {
   json:        () => runInPage(() => window.RPT?.features.exporter.json()),
   html:        () => runInPage(() => window.RPT?.features.exporter.html()),
   kbd:         () => runInPage(() => window.RPT?.features.shortcuts.cheatsheet()),
+  cmdk:        () => runInPage(() => window.RPT?.features.cmdk.open()),
+  a11y:        () => chrome.runtime.openOptionsPage(),
   analytics:   () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }),
   options:     () => chrome.runtime.openOptionsPage(),
 };
@@ -110,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.querySelectorAll("[data-act]").forEach((b) => {
     b.addEventListener("click", () => {
       const fn = actions[b.dataset.act];
-      if (fn) { fn(); if (!["analytics", "options"].includes(b.dataset.act)) window.close(); }
+      if (fn) { fn(); if (!["analytics", "options", "a11y"].includes(b.dataset.act)) window.close(); }
     });
   });
 
