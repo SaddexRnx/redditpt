@@ -1432,45 +1432,58 @@
           <span class="rpt-qb-tip">${label}${sc ? `<kbd>${sc}</kbd>` : ""}</span>
         </button>`;
       bar.innerHTML = `
-        <div class="rpt-qb-brand">RPT</div>
-        <div class="rpt-qb-sep"></div>
-        ${btn("panel", I.panel, tr("panel"), "T")}
-        ${btn("summary", I.summary, tr("smart_summary_title"), "S")}
-        ${btn("conv", I.chat, tr("conversation_mode"), "C")}
-        ${btn("gallery", I.image, tr("image_gallery"), "G")}
-        ${btn("fold", I.fold, tr("collapse_all_short"), "⇧C")}
-        <div class="rpt-qb-sep"></div>
-      <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="${tr("parsing_status")}" title="${tr("thread_parsing_status")}">
-        <span class="rpt-status-dot"></span><span class="rpt-status-txt">${tr("idle")}</span>
-      </span>
-      <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="${tr("live_polling_status")}">
-        <span class="rpt-live-dot"></span><span class="rpt-live-txt">${tr("paused")}</span>
-      </span>
-        <button class="rpt-qb-btn" data-act="new" aria-label="${tr("new_comments")}" title="${tr("jump_newest")} (N)">
-          ${I.bell}
-          <span class="rpt-qb-badge" style="display:none">0</span>
-          <span class="rpt-qb-tip">${tr("new_comments")}<kbd>N</kbd></span>
-        </button>
-      <button class="rpt-qb-btn" data-act="cmdk" aria-label="${tr("command_palette")}" title="${tr("command_palette")} (⌘K)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
-        <span class="rpt-qb-tip">${tr("command_palette")}<kbd>⌘K</kbd></span>
-      </button>
-        ${btn("kbd", I.kbd, tr("keyboard_shortcuts"), "?")}
-        ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, tr("about"))}
-        <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="${tr("power_features")}" title="${tr("power_features")}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <span class="rpt-qb-tip">${tr("power_features")}</span>
-        </button>
-        <div class="rpt-qb-sep"></div>
-        <button class="rpt-qb-btn" data-act="size" aria-label="${tr("toggle_toolbar_size")}" title="${tr("toggle_toolbar_size")}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          <span class="rpt-qb-tip">${tr("compact_comfortable")}</span>
-        </button>
-        <button class="rpt-qb-btn rpt-qb-power" data-act="power" aria-label="${tr("turn_off")}" title="${tr("turn_on_off")}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-          <span class="rpt-qb-tip">${tr("turn_off")}</span>
-        </button>
-        ${btn("close", I.close, tr("hide_toolbar"))}`;
+        <div class="rpt-qb-brand" title="Reddit Power Toolkit">RPT</div>
+        <div class="rpt-qb-group" role="group" aria-label="${tr("panel")}">
+          ${btn("panel", I.panel, tr("panel"), "T")}
+          ${btn("summary", I.summary, tr("smart_summary_title"), "S")}
+          ${btn("conv", I.chat, tr("conversation_mode"), "C")}
+          ${btn("gallery", I.image, tr("image_gallery"), "G")}
+          ${btn("fold", I.fold, tr("collapse_all_short"), "⇧C")}
+        </div>
+        <div class="rpt-qb-group" role="group" aria-label="${tr("live_polling_status")}">
+          <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="${tr("parsing_status")}" title="${tr("thread_parsing_status")}">
+            <span class="rpt-status-dot"></span><span class="rpt-status-txt">${tr("idle")}</span>
+          </span>
+          <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="${tr("live_polling_status")}">
+            <span class="rpt-live-dot"></span><span class="rpt-live-txt">${tr("paused")}</span>
+          </span>
+          <button class="rpt-qb-btn" data-act="new" aria-label="${tr("new_comments")}" title="${tr("jump_newest")} (N)">
+            ${I.bell}
+            <span class="rpt-qb-badge" style="display:none">0</span>
+            <span class="rpt-qb-tip">${tr("new_comments")}<kbd>N</kbd></span>
+          </button>
+        </div>
+        <div class="rpt-qb-group" role="group" aria-label="${tr("power_features")}">
+          <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="${tr("power_features")}" title="${tr("power_features")}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span class="rpt-qb-tip">${tr("power_features")}</span>
+          </button>
+          <button class="rpt-qb-btn rpt-qb-sub" data-act="subanalyzer" aria-label="${tr("subreddit_analyzer") || "Subreddit analyzer"}" title="${tr("subreddit_analyzer") || "Subreddit analyzer"}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l3-4 4 3 5-7"/></svg>
+            <span class="rpt-qb-tip">${tr("subreddit_analyzer") || "Subreddit analyzer"}</span>
+          </button>
+          <button class="rpt-qb-btn rpt-qb-sub" data-act="subhealth" aria-label="${tr("subreddit_health") || "Subreddit health"}" title="${tr("subreddit_health") || "Subreddit health"}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span class="rpt-qb-tip">${tr("subreddit_health") || "Subreddit health"}</span>
+          </button>
+          <button class="rpt-qb-btn" data-act="cmdk" aria-label="${tr("command_palette")}" title="${tr("command_palette")} (⌘K)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
+            <span class="rpt-qb-tip">${tr("command_palette")}<kbd>⌘K</kbd></span>
+          </button>
+          ${btn("kbd", I.kbd, tr("keyboard_shortcuts"), "?")}
+          ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, tr("about"))}
+        </div>
+        <div class="rpt-qb-group" role="group" aria-label="${tr("turn_on_off")}">
+          <button class="rpt-qb-btn" data-act="size" aria-label="${tr("toggle_toolbar_size")}" title="${tr("toggle_toolbar_size")}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            <span class="rpt-qb-tip">${tr("compact_comfortable")}</span>
+          </button>
+          <button class="rpt-qb-btn rpt-qb-power" data-act="power" aria-label="${tr("turn_off")}" title="${tr("turn_on_off")}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+            <span class="rpt-qb-tip">${tr("turn_off")}</span>
+          </button>
+          ${btn("close", I.close, tr("hide_toolbar"))}
+        </div>`;
       bar.addEventListener("click", (e) => {
         const b = e.target.closest?.("[data-act]");
         if (!b) return;
@@ -1485,6 +1498,8 @@
         else if (a === "kbd")     RPT.features.shortcuts.cheatsheet();
         else if (a === "about")   RPT.features.about.open();
         else if (a === "v2")      window.RPT?.v2?.openHub?.();
+        else if (a === "subanalyzer") window.RPT?.v2?.modules?.subAnalyzer?.run?.();
+        else if (a === "subhealth")   window.RPT?.v2?.modules?.subHealth?.run?.();
         else if (a === "size")    RPT.ui.toggleSize();
         else if (a === "power")   RPT.ui.togglePower();
         else if (a === "close")   { bar.remove(); RPT.autorun.load().then((v) => RPT.autorun.save({ ...v, quickBar: false })); }
