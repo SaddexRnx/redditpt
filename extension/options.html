@@ -165,14 +165,17 @@
       <div class="shortcut-row"><span>Gallery — next image</span><button type="button" class="rpt-shortcut-btn" data-s="galleryNext">—</button></div>
       <div class="shortcut-row"><span>Collapse all comments</span><button type="button" class="rpt-shortcut-btn" data-s="collapseAll">—</button></div>
       <div class="shortcut-row"><span>Refresh current thread</span><button type="button" class="rpt-shortcut-btn" data-s="refresh">—</button></div>
+      <div id="shortcuts-conflicts" role="alert" aria-live="polite" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(239,68,68,.12);border:1px solid var(--red);color:var(--red);font-size:13px"></div>
       <button id="shortcuts-reset" type="button" style="align-self:flex-start;margin-top:6px">Reset to defaults</button>
+      <p class="muted" style="margin:0;font-size:12px">Reset clears your custom key bindings and restores the standard ones (◀ ▶ for gallery, Shift+C to collapse all, R to refresh).</p>
     </div>
-    <div class="tag-row" style="margin-top:12px;gap:8px">
-      <button id="shortcuts-export" type="button">Export shortcuts (JSON)</button>
-      <button id="shortcuts-import-btn" type="button">Import shortcuts…</button>
+    <div class="tag-row" style="margin-top:12px;gap:8px;flex-wrap:wrap">
+      <button id="shortcuts-export" type="button">Export settings (JSON)</button>
+      <button id="shortcuts-import-btn" type="button">Import settings…</button>
       <input id="shortcuts-import-file" type="file" accept=".json,application/json" hidden>
       <span id="shortcuts-status" class="muted" style="margin:0"></span>
     </div>
+    <p class="muted" style="margin:6px 0 0;font-size:12px">Backup includes: shortcuts, general preferences (auto-open, onboarding, author colors), accessibility settings, and per-thread gallery positions.</p>
   </section>
 
   <section>
