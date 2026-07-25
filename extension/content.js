@@ -1718,6 +1718,24 @@
     window.RPT_A11Y?.load();
     RPT.a11y.ensureLive();
     RPT.customKeys.load();
+    // Master ON/OFF from the popup — everything short-circuits when off.
+    RPT.setEnabled = (on) => {
+      RPT.enabled = !!on;
+      document.documentElement.dataset.rptOff = on ? "" : "1";
+      if (!on) {
+        // Unhide every comment RPT had filtered out.
+        document.querySelectorAll(".rpt-hidden").forEach((el) => el.classList.remove("rpt-hidden"));
+        document.querySelectorAll(".rpt-panel, .rpt-tour, .rpt-modal").forEach((el) => el.remove());
+      } else {
+        runAll();
+      }
+    };
+    try {
+      chrome.storage.local.get("rpt_enabled", (v) => {
+        RPT.enabled = v?.rpt_enabled !== false;
+        document.documentElement.dataset.rptOff = RPT.enabled ? "" : "1";
+      });
+    } catch {}
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
