@@ -9,6 +9,16 @@ import {
   Rocket, Palette, Command, Accessibility, KeyRound, Sparkle,
 } from "lucide-react";
 
+/* Telegram paper-plane glyph — lucide has no Telegram icon, so we ship
+   the official mark as an inline SVG so it renders offline. */
+function TelegramIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M9.78 15.27 9.6 19.1c.36 0 .52-.16.72-.35l1.73-1.66 3.59 2.63c.66.36 1.13.17 1.31-.61l2.37-11.13c.24-1-.36-1.4-1-1.15L3.4 12.06c-.98.38-.97.93-.17 1.18l4.15 1.29 9.63-6.07c.45-.28.87-.13.52.19"/>
+    </svg>
+  );
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -424,7 +434,7 @@ function Index() {
             aria-label="Telegram @Saddex_x"
             className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
           >
-            <MessageCircle className="h-4 w-4" />
+            <TelegramIcon className="h-4 w-4" />
           </a>
           <div className={`flex items-center gap-1.5 rounded-lg border ${border} px-2 py-1 text-xs ${subtle}`}>
             <Languages className="h-3.5 w-3.5" />
@@ -461,9 +471,10 @@ function Index() {
             </h1>
             <p className={`mt-6 max-w-2xl text-lg ${subtle}`}>{t("heroP")}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
+              {/* Primary download button (same ZIP, always) */}
               <button
                 onClick={downloadZip}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#3b82f6] px-6 py-3 font-semibold text-white shadow-lg shadow-[#3b82f6]/20 transition hover:bg-[#2563eb]"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#46d160] px-6 py-3 font-semibold text-white shadow-lg shadow-[#46d160]/25 transition hover:bg-[#2fa84f]"
               >
                 <Download className="h-5 w-5" /> {t("dl")}
               </button>
@@ -472,6 +483,23 @@ function Index() {
                 className={`inline-flex items-center gap-2 rounded-lg border ${border} px-6 py-3 font-medium transition ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}
               >
                 <Zap className="h-5 w-5" /> {t("how")}
+              </a>
+            </div>
+            {/* Per-browser quick links so Firefox / Kiwi users know it works
+                for them too — they jump straight to their install steps. */}
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <span className={`text-xs ${muted} mr-1`}>Install for:</span>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "chrome" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Chrome className="h-3.5 w-3.5 text-[#46d160]" /> Chrome · Edge · Brave
+              </a>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "ff" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Globe className="h-3.5 w-3.5 text-[#ff4500]" /> Firefox 128+
+              </a>
+              <a href="#install" onClick={() => document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: "kiwi" }))}
+                 className={`inline-flex items-center gap-1.5 rounded-full border ${border} px-3 py-1.5 text-xs font-medium ${isDark ? "bg-white/5 hover:bg-white/10" : "bg-white hover:bg-slate-100"}`}>
+                <Smartphone className="h-3.5 w-3.5 text-[#46d160]" /> Kiwi (Android)
               </a>
             </div>
             <p className={`mt-3 text-xs ${muted}`}>{t("worksIn")}</p>
@@ -498,7 +526,7 @@ function Index() {
                   <div className="mt-3">
                     <p className={`text-sm ${subtle}`}>{f.d}</p>
                     <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
-                      <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
+                      <span className="font-semibold uppercase tracking-wider text-[#46d160]">How to use</span>
                       <p className="mt-1">{f.h}</p>
                     </div>
                   </div>
@@ -540,7 +568,7 @@ function Index() {
                     <ul className="mt-3 grid gap-2 sm:grid-cols-2">
                       {r.items.map((it) => (
                         <li key={it} className={`flex items-start gap-2 text-sm ${subtle}`}>
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#3b82f6]" />
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#46d160]" />
                           <span>{it}</span>
                         </li>
                       ))}
@@ -565,7 +593,7 @@ function Index() {
                 const I = Icon as typeof Shield; const ttl = title as string; const dsc = desc as string;
                 return (
                   <div key={ttl} className={`rounded-xl border p-5 ${card}`}>
-                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
+                    <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]">
                       <I className="h-5 w-5" />
                     </div>
                     <h3 className="font-semibold">{ttl}</h3>
@@ -586,7 +614,7 @@ function Index() {
               <Github className="h-4 w-4" /> github.com/Saddex
             </a>
             <a href="https://t.me/Saddex_x" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
-              <MessageCircle className="h-4 w-4" /> @Saddex_x
+              <TelegramIcon className="h-4 w-4" /> @Saddex_x
             </a>
           </div>
         </div>
@@ -602,6 +630,15 @@ function InstallTabs({
 }) {
   const [tab, setTab] = useState<"chrome" | "ff" | "kiwi">("chrome");
   const [copied, setCopied] = useState<string | null>(null);
+  /* Hero quick-links dispatch rpt-install-tab; open the matching tab. */
+  useEffect(() => {
+    const h = (e: Event) => {
+      const id = (e as CustomEvent).detail as "chrome" | "ff" | "kiwi";
+      if (id === "chrome" || id === "ff" || id === "kiwi") setTab(id);
+    };
+    document.addEventListener("rpt-install-tab", h);
+    return () => document.removeEventListener("rpt-install-tab", h);
+  }, []);
   const copy = (v: string) => {
     navigator.clipboard?.writeText(v).then(() => { setCopied(v); setTimeout(() => setCopied(null), 1500); });
   };
@@ -657,7 +694,7 @@ function InstallTabs({
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff4500] text-sm font-bold text-black">
                   {i + 1}
                 </span>
-                <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]`}>
+                <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]`}>
                   <Icon className="h-5 w-5" />
                 </div>
               </div>

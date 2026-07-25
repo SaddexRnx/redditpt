@@ -779,3 +779,122 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-persub-row:last-child { border-bottom: none; }
 .rpt-persub-row input { margin-top: 3px; }
 .rpt-v2-secondary { background: var(--rpt-bg-2, rgba(255,255,255,.06)); color: inherit; border: 1px solid var(--rpt-border, rgba(255,255,255,.1)); padding: 8px 12px; border-radius: 6px; font-size: 13px; }
+
+/* =====================================================================
+   v1.9.1 UI redesign — hard resets against Reddit's aggressive CSS.
+   These !important guards defeat old.reddit + shreddit shadow rules
+   that were flattening our buttons and making labels invisible.
+   Also normalises typography, touch targets and spacing so the UI
+   is legible on Chrome, Firefox and Kiwi (Android). */
+
+/* Root design tokens refresh: slightly larger base + tighter shadows. */
+:root {
+  --rpt-radius: 12px;
+  --rpt-radius-sm: 8px;
+  --rpt-h-tap: 40px;              /* thumb-safe minimum */
+  --rpt-shadow-lg: 0 24px 60px -18px rgba(0,0,0,.65), 0 2px 6px rgba(0,0,0,.35);
+  --rpt-shadow-sm: 0 2px 10px rgba(0,0,0,.35);
+}
+
+/* Kill Reddit inheritance inside every RPT surface. */
+.rpt-qb, .rpt-panel, .rpt-modal, .rpt-toast, .rpt-tour {
+  font-family: var(--rpt-font) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  color: var(--rpt-text) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  box-sizing: border-box !important;
+}
+.rpt-qb *, .rpt-panel *, .rpt-modal *, .rpt-toast * { box-sizing: border-box !important; }
+
+/* Panel: wider, cleaner header, better tab bar. */
+.rpt-panel { width: 440px !important; box-shadow: var(--rpt-shadow-lg) !important; }
+.rpt-panel-head { padding: 16px 18px !important; }
+.rpt-brand { font-size: 14px !important; gap: 10px !important; }
+.rpt-brand-dot { width: 10px !important; height: 10px !important; }
+.rpt-panel-close { font-size: 26px !important; line-height: 1 !important; width: 32px; height: 32px; border-radius: 8px !important; }
+.rpt-panel-close:hover { background: var(--rpt-bg-2) !important; }
+
+/* Tabs: taller, easier taps, no cramped icons. */
+.rpt-tabs { padding: 10px 12px !important; gap: 4px !important; }
+.rpt-tabs button {
+  padding: 8px 12px !important; font-size: 12.5px !important;
+  min-height: 34px; border-radius: 8px !important; font-weight: 600 !important;
+}
+.rpt-tabs svg { width: 14px !important; height: 14px !important; }
+
+/* Filter chips: readable size and consistent height. */
+.rpt-chips { padding: 12px 16px !important; gap: 8px !important; }
+.rpt-chip { padding: 6px 12px !important; font-size: 11.5px !important; height: 28px; }
+
+/* Tab body — comfortable, roomy. */
+.rpt-tab-body { padding: 16px 18px !important; }
+.rpt-tabpane label { font-size: 13px !important; margin: 10px 0 !important; }
+.rpt-section-title { font-size: 10.5px !important; margin: 16px 0 10px !important; }
+
+/* Buttons: bigger, bolder, defeat Reddit's global button reset. */
+.rpt-btnrow { gap: 8px !important; }
+.rpt-btnrow button, .rpt-kw-save, .rpt-primary {
+  padding: 12px 14px !important; min-height: var(--rpt-h-tap) !important;
+  border-radius: var(--rpt-radius) !important; gap: 12px !important;
+  font-size: 13px !important; box-shadow: var(--rpt-shadow-sm) !important;
+}
+.rpt-btnrow button strong { font-size: 13px !important; }
+.rpt-btn-sub { font-size: 11.5px !important; margin-top: 3px !important; }
+.rpt-btnrow button svg, .rpt-primary svg { width: 18px !important; height: 18px !important; }
+.rpt-kw-save, .rpt-primary { justify-content: center !important; text-align: center !important; font-weight: 700 !important; }
+
+/* Quick-bar: taller pill, chunkier taps, clearer power button. */
+.rpt-qb { padding: 5px !important; gap: 3px !important; box-shadow: var(--rpt-shadow-lg) !important; }
+.rpt-qb-btn { width: 36px !important; height: 36px !important; }
+.rpt-qb-btn svg { width: 17px !important; height: 17px !important; }
+.rpt-qb-brand { font-size: 11.5px !important; padding: 0 12px !important; }
+
+/* Tree navigator polish */
+.rpt-tree-item { padding: 7px 10px !important; font-size: 12.5px !important; gap: 8px !important; border-radius: 8px !important; }
+.rpt-author { font-size: 12.5px !important; }
+.rpt-preview { font-size: 12px !important; }
+.rpt-search-box, .rpt-tree-toolbar select {
+  height: 36px !important; padding: 8px 10px !important; border-radius: 8px !important; font-size: 13px !important;
+}
+
+/* ⚡ Hub — align with theme, remove hard-coded darks. */
+.rpt-hub-card { border-radius: var(--rpt-radius) !important; background: var(--rpt-bg-1) !important; border-color: var(--rpt-border) !important; }
+.rpt-hub-run { padding: 14px 44px 14px 14px !important; }
+.rpt-hub-run strong { color: var(--rpt-text) !important; font-size: 13px !important; margin-bottom: 5px !important; }
+.rpt-hub-run span  { color: var(--rpt-muted) !important; font-size: 11.5px !important; }
+.rpt-hub-cat      { color: var(--rpt-green) !important; margin: 18px 0 8px !important; }
+#rpt-hub-q        { height: 40px; padding: 10px 12px !important; border-radius: 10px !important; }
+
+/* v2 primary CTA — clean single-color instead of orange→blue gradient. */
+.rpt-v2-primary {
+  background: var(--rpt-green) !important; color: #1a0800 !important;
+  padding: 10px 16px !important; border-radius: 10px !important;
+  font-size: 13px !important; font-weight: 700 !important; box-shadow: var(--rpt-shadow-sm);
+}
+.rpt-v2-primary:hover { filter: brightness(1.08); }
+.rpt-v2-bar i { background: var(--rpt-green) !important; }
+.rpt-v2-cmp-grid strong, .rpt-uc-grid strong { color: var(--rpt-green) !important; }
+
+/* Focus-visible ring for keyboard users — meets AA contrast. */
+.rpt-qb-btn:focus-visible, .rpt-tabs button:focus-visible,
+.rpt-btnrow button:focus-visible, .rpt-chip:focus-visible,
+.rpt-hub-run:focus-visible, .rpt-panel-close:focus-visible {
+  outline: 2px solid var(--rpt-green) !important; outline-offset: 2px !important;
+}
+
+/* Firefox tweaks: it renders form controls thicker; normalise. */
+@-moz-document url-prefix() {
+  .rpt-btnrow button, .rpt-tabs button, .rpt-chip, .rpt-qb-btn { line-height: 1.2 !important; }
+  .rpt-tabpane input[type="checkbox"] { transform: scale(1.05); }
+}
+
+/* Kiwi / small phones: overlap safeguards. */
+@media (max-width: 640px) {
+  .rpt-panel { width: 100vw !important; }
+  .rpt-panel-head { padding: 12px 14px !important; }
+  .rpt-tab-body { padding: 12px 14px !important; }
+  .rpt-btnrow button { min-height: 44px !important; }
+  .rpt-qb-btn { width: 40px !important; height: 40px !important; }
+}
