@@ -503,7 +503,7 @@
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
       RPT.a11y.trapModal(overlay);
-      RPT.a11y.addKeyHelp(overlay, "Keyboard: Esc closes this dialog. Tab and Shift+Tab move focus between the close button and the conversation.");
+      RPT.a11y.addKeyHelp(overlay, () => "Keyboard: Esc closes this dialog. Tab and Shift+Tab move focus between the close button and the conversation.");
     },
   };
 
@@ -605,7 +605,7 @@
       });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes. Tab and Shift+Tab move focus between items. Enter or Space jumps to the selected comment.");
+      RPT.a11y.addKeyHelp(o, () => "Keyboard: Esc closes. Tab and Shift+Tab move focus between items. Enter or Space jumps to the selected comment.");
     },
   };
 
@@ -944,7 +944,7 @@
       render();
       // Trap Tab within the palette; input keeps first focus.
       RPT.a11y.trapModal(back);
-      RPT.a11y.addKeyHelp(back, "Keyboard: Type to filter. Up and Down arrows navigate. Enter runs the selected command. Esc closes. Tab cycles focus inside the palette.");
+      RPT.a11y.addKeyHelp(back, () => "Keyboard: Type to filter. Up and Down arrows navigate. Enter runs the selected command. Esc closes. Tab cycles focus inside the palette.");
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
@@ -1104,7 +1104,7 @@
       document.body.appendChild(o);
       // Focus trap + restore-on-close.
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, "Keyboard: Left and Right arrows browse images. Home jumps to the first image, End to the last. Esc closes. Tab cycles between Previous, Next and Close.");
+      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: ${c.galleryPrev} previous, ${c.galleryNext} next. Home jumps to the first image, End to the last. Esc closes. Tab cycles between Previous, Next and Close.`);
       // Resume at the last-viewed image for this thread.
       RPT.galleryPos.get(path).then((saved) => {
         if (saved > 0 && saved < unique.length) go(saved);
@@ -1272,7 +1272,7 @@
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button.");
+      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button. Current bindings — collapse all: ${c.collapseAll}, refresh: ${c.refresh}.`);
     },
   };
 
