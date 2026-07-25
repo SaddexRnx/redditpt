@@ -1611,11 +1611,16 @@
   RPT.status = {
     set(state, msg) {
       // state: "parsing" | "ready" | "idle"
+      const label = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
       document.querySelectorAll(".rpt-status-pill").forEach((el) => {
         el.dataset.state = state;
         const t = el.querySelector(".rpt-status-txt");
-        if (t) t.textContent = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
+        if (t) t.textContent = label;
       });
+      // Reliable screen-reader announcement — the pill itself may not be
+      // visible when the panel is closed, so route through a dedicated
+      // visually-hidden aria-live region.
+      try { RPT.a11y?.announce(`Thread status: ${label}`); } catch {}
     },
   };
   const _runAllImpl = async () => {
