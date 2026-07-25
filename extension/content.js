@@ -1658,6 +1658,12 @@
         el.dataset.state = state;
         const t = el.querySelector(".rpt-status-txt");
         if (t) t.textContent = label;
+        // Auto-hide the pill shortly after "ready" so it doesn't sit there
+        // pulsing/flashing forever. Only visible while actively parsing.
+        clearTimeout(el._rptHide);
+        if (state === "ready" || state === "idle") {
+          el._rptHide = setTimeout(() => { el.dataset.state = "hidden"; }, 1400);
+        }
       });
       // Reliable screen-reader announcement — the pill itself may not be
       // visible when the panel is closed, so route through a dedicated
@@ -1666,6 +1672,8 @@
     },
   };
   const _runAllImpl = async () => {
+    if (!RPT.enabled) return;
+    RPT._parsing = true;
     RPT.status.set("parsing", "Parsing thread…");
     const auto = await RPT.autorun.load();
     RPT.features.commentTree.parse();
@@ -1684,6 +1692,9 @@
     RPT.features.history.record();
     RPT.features.history.trackAnalytics();
     RPT.status.set("ready", `Ready · ${RPT.state.comments.length} comments`);
+    // Give the DOM a tick to settle so the MutationObserver we set below
+    // doesn't fire on our own edits and cause a parsing/ready flicker.
+    setTimeout(() => { RPT._parsing = false; }, 300);
   };
   const runAll = RPT.utils.debounce(_runAllImpl, 400);
   // Force immediate re-parse — used by the panel Refresh button.
