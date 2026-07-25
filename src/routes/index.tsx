@@ -9,11 +9,11 @@ export const Route = createFileRoute("/")({
         content:
           "A free, open-source Chrome extension that supercharges Reddit with comment tree navigation, folding, conversation mode, filters, exporter and more. 100% local.",
       },
-      { property: "og:title", content: "Reddit Power Toolkit" },
+      { property: "og:title", content: "Reddit Power Toolkit — Local-first Chrome extension" },
       {
         property: "og:description",
         content:
-          "Comment tree, folding, conversation mode, cleaner, stats, exporter and more — all running locally in your browser.",
+          "A free, open-source Chrome extension that supercharges Reddit with comment tree navigation, folding, conversation mode, filters, exporter and more. 100% local.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
