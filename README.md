@@ -219,6 +219,58 @@ Kiwi occasionally needs a full app restart after enabling a new extension. Force
 
 ## Development
 
+*(kept above)*
+
+---
+
+## Verifying parsing in Firefox and Kiwi
+
+The extension uses the exact same content script on every browser, but the way to confirm it's actually parsing differs.
+
+**Firefox**
+1. Load the temporary add-on (see install steps).
+2. Open a Reddit comment thread and click the RPT icon → **Open side panel**.
+3. Watch the status pill in the panel header — it must go `Parsing thread…` → `Ready · N comments`.
+4. Open **`about:debugging` → This Firefox → Reddit Power Toolkit → Inspect** to open the extension's devtools. In the console run `window.RPT?.state.comments.length` on the Reddit tab — a positive number confirms parsing works.
+5. If the pill never appears, ensure the site is `https://www.reddit.com/*` (host permissions do not currently cover `old.reddit.com` in strict Firefox permission mode — grant it from `about:addons → RPT → Permissions`).
+
+**Kiwi (Android)**
+1. After installing from the zip, force-stop Kiwi from Android app settings and reopen it (required — content scripts don't inject into pages open before install).
+2. Open a Reddit thread. The floating **RPT** button should appear bottom-right within 1-2 seconds.
+3. Long-press the RPT button → the popup shows **Activation status: Active**. If it shows **Not injected**, tap **Reload this tab**.
+4. To inspect: connect the phone to a desktop Chrome via USB, visit `chrome://inspect/#devices`, click **Inspect** on the Reddit tab, then run `window.__RPT_LOADED__` and `window.RPT.state.comments.length` in the console.
+
+---
+
+## Cross-browser compatibility checklist
+
+Run through this list on each browser before shipping a release. Every row must pass on Chrome, Firefox, and Kiwi.
+
+| # | Check | How to verify | Chrome | Firefox | Kiwi |
+|---|-------|---------------|:------:|:-------:|:----:|
+| 1 | Extension installs cleanly | Follow install steps for that browser | ☐ | ☐ | ☐ |
+| 2 | Popup opens and shows activation status | Click toolbar icon on a Reddit thread | ☐ | ☐ | ☐ |
+| 3 | Master toggle switches state | Toggle in popup, panel disappears/reappears without reload | ☐ | ☐ | ☐ |
+| 4 | Floating RPT quick-bar appears on `/comments/` pages | Open any comment thread | ☐ | ☐ | ☐ |
+| 5 | Status pill reaches `Ready · N comments` | Watch pill after page load | ☐ | ☐ | ☐ |
+| 6 | Side panel opens with `T` and via popup button | Press `T` on a Reddit thread | ☐ | ☐ | ☐ |
+| 7 | Comment tree renders and jumps to comments | Click any node in the Tree tab | ☐ | ☐ | ☐ |
+| 8 | Collapse all + persistence works | Press `C`, reload page, chains stay folded | ☐ | ☐ | ☐ |
+| 9 | Author colors render | Enable in Options → Panel legend shows colored dots | ☐ | ☐ | ☐ |
+| 10 | Gallery keyboard nav (`←`/`→`) works | Press `G`, arrow-key through images | ☐ | ☐ | ☐ |
+| 11 | Command palette opens with `Ctrl+K` | Trigger on any Reddit page | ☐ | ☐ | ☐ |
+| 12 | Smart summary produces top/discussed/controversial | Open from panel or `Ctrl+K` | ☐ | ☐ | ☐ |
+| 13 | Live-new polling toggles and shows status | Enable Live-new, wait for a poll cycle | ☐ | ☐ | ☐ |
+| 14 | Cleaner hides deleted/low-score comments | Configure in Options, reload thread | ☐ | ☐ | ☐ |
+| 15 | Save-to-collection ★ works | Star a comment, check Analytics page | ☐ | ☐ | ☐ |
+| 16 | Export as JSON/Markdown/HTML downloads a file | Trigger from popup or panel | ☐ | ☐ | ☐ |
+| 17 | Settings export/import round-trip | Export JSON, wipe, re-import | ☐ | ☐ | ☐ |
+| 18 | Language switch translates popup + panel | Change from `Language` dropdown | ☐ | ☐ | ☐ |
+| 19 | Light / Dark / High-contrast themes render correctly | Toggle in popup + Options | ☐ | ☐ | ☐ |
+| 20 | Storage persists across browser restart | Save a keyword, restart browser | ☐ | ☐ | ☐ |
+
+> Kiwi note: rows 10-11 depend on a physical keyboard. On a touch-only device, use the equivalent on-screen buttons in the quick-bar and panel.
+
 Extension: edit files under `extension/` and reload from `chrome://extensions`.
 
 Landing site:
