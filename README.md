@@ -163,6 +163,17 @@ What the extension **never** does:
 
 ## FAQ & Troubleshooting
 
+**What does the "Ready · X comments" pill mean and why does it disappear?**
+The status pill lives in the panel header and the quick-bar. It shows `Parsing thread…` (blue, pulsing dot) whenever the extension is re-reading the comment tree — this happens on load, after SPA navigation, and whenever Reddit lazy-loads more comments. When parsing finishes it turns green with `Ready · N comments` for ~1.4 seconds and then fades out. If you never see it settle on green, Reddit is still streaming comments in (scroll to the bottom), or a browser extension like Vimium is mutating the DOM every second — try disabling other extensions on `reddit.com`.
+
+**The master "Enable toolkit" toggle in the popup — what does turning it off do?**
+Turning the master switch off in the popup:
+- Removes the floating quick-bar, side panel, modals, and tour overlay from every Reddit tab.
+- Un-hides every comment the Cleaner had filtered out (`.rpt-hidden` is neutralised via CSS).
+- Stops all polling, mutation watching, and DOM parsing.
+- Persists across tabs and sessions (`chrome.storage.local` key: `rpt_enabled`).
+Turning it back on triggers a full re-parse of the currently open Reddit tab without a page reload. Your keywords, tags, collections and history are never deleted — the toggle is purely a runtime switch.
+
 **The extension icon does nothing on Reddit.**
 Reddit was probably already open before the extension installed or updated. Open the popup — if it shows a "Reload tab" prompt, click it. Alternatively, refresh the Reddit tab manually. This is expected Chrome behaviour and applies to every MV3 extension.
 
