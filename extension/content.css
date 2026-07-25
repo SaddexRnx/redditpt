@@ -923,6 +923,47 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-hub-run strong{display:block;color:#e2e8f0;font-size:13px;margin-bottom:4px}
 .rpt-hub-run span{display:block;color:#94a3b8;font-size:11px;line-height:1.4}
 .rpt-hub-toggle{position:absolute;top:10px;right:10px}
+/* Power tab inside the side panel — mirrors the popup TabBankruptcy theme. */
+.rpt-tabpane[data-panel="power"]{padding:4px 0}
+.rpt-power-search{
+  width:100%;padding:9px 10px;margin:8px 0 12px;
+  background:var(--rpt-bg-2,#0f172a);border:1px solid var(--rpt-border,#1e293b);
+  border-radius:8px;color:var(--rpt-text,#e2e8f0);font-size:12px;
+}
+.rpt-power-search:focus{outline:none;border-color:var(--rpt-green,#46d160)}
+.rpt-power-group{margin-bottom:10px}
+.rpt-power-grid{display:grid;grid-template-columns:1fr;gap:8px}
+.rpt-power-card{
+  position:relative;background:var(--rpt-bg-2,#0f172a);
+  border:1px solid var(--rpt-border,#1e293b);border-radius:10px;
+  padding:10px 54px 10px 12px;transition:border-color .15s, transform .15s;
+}
+.rpt-power-card:hover{border-color:var(--rpt-green,#46d160)}
+.rpt-power-card.rpt-power-off{opacity:.5}
+.rpt-power-run{
+  width:100%;background:transparent;border:0;color:inherit;text-align:left;
+  padding:0;cursor:pointer;display:block;
+}
+.rpt-power-run strong{
+  display:block;color:var(--rpt-text,#e2e8f0);font-size:12.5px;
+  margin-bottom:3px;font-weight:600;
+}
+.rpt-power-run span{
+  display:block;color:var(--rpt-muted,#94a3b8);font-size:11px;line-height:1.4;
+}
+.rpt-power-toggle{position:absolute;top:12px;right:10px;display:inline-block;width:34px;height:20px}
+.rpt-power-toggle input{opacity:0;width:0;height:0;position:absolute}
+.rpt-power-toggle .rpt-slider{
+  position:absolute;inset:0;background:#334155;border-radius:20px;
+  transition:.15s;cursor:pointer;
+}
+.rpt-power-toggle .rpt-slider::before{
+  content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;
+  background:#fff;border-radius:50%;transition:.15s;
+}
+.rpt-power-toggle input:checked + .rpt-slider{background:var(--rpt-green,#46d160)}
+.rpt-power-toggle input:checked + .rpt-slider::before{transform:translateX(14px)}
+.rpt-power-toggle input:focus-visible + .rpt-slider{outline:2px solid var(--rpt-green,#46d160);outline-offset:2px}
 .rpt-qb-v2{color:#fbbf24}
 .rpt-qb-v2:hover{color:#f59e0b}
 .rpt-devmode *{outline:1px dashed rgba(255,69,0,.2)}

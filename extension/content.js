@@ -1569,6 +1569,7 @@
           <button data-tab="filters">${I.filter} ${tr("clean")}</button>
           <button data-tab="highlight">${I.tag} ${tr("keywords_tab")}</button>
           <button data-tab="stats">${I.stats} ${tr("stats")}</button>
+          <button data-tab="power">${I.summary} ${tr("power")}</button>
           <button data-tab="export">${I.export} ${tr("export")}</button>
         </nav>
         <section class="rpt-tab-body">
@@ -1623,6 +1624,7 @@
             <button class="rpt-kw-save">${tr("save_keywords")}</button>
           </div>
           <div data-panel="stats" class="rpt-tabpane rpt-stats"></div>
+          <div data-panel="power" class="rpt-tabpane rpt-power"></div>
           <div data-panel="export" class="rpt-tabpane">
             <p class="rpt-muted">${tr("export_thread_desc")}</p>
             <div class="rpt-btnrow">
@@ -1700,6 +1702,7 @@
           if (b.dataset.tab === "stats") this.renderStats(p);
           if (b.dataset.tab === "collect") this.renderCollections(p);
           if (b.dataset.tab === "tools") this.renderAutorun(p);
+          if (b.dataset.tab === "power") this.renderPower(p);
         };
       });
       p.querySelectorAll("[data-act]").forEach((b) => {
@@ -1803,6 +1806,81 @@
           e.stopPropagation();
           await RPT.features.collections.remove(btn.parentElement.dataset.id);
           this.renderCollections(p);
+        };
+      });
+    },
+    /* Renders all 36 Power Feature modules directly inside the side panel,
+     * grouped by category, with a run button and enable/disable toggle each.
+     * State is stored via V.HUB_KEY, shared with the (still-available) modal hub. */
+    async renderPower(p) {
+      const host = p.querySelector('[data-panel="power"]');
+      if (!host) return;
+      const V = window.RPT?.v2;
+      if (!V || !V.modules) {
+        host.innerHTML = `<p class="rpt-empty">${tr("loading") || "Loading…"}</p>`;
+        setTimeout(() => this.renderPower(p), 300);
+        return;
+      }
+      const esc = RPT.utils.escapeHtml;
+      const CATS = [
+        [tr("community"),           ["communityCompare","subAnalyzer","calendar","subHealth","timeline","trendTracker","subGroups","contentExporter"]],
+        [tr("thread_comments"),     ["miniMap","commentExport","userAnalytics","postAnalytics","copyTools","followKeywords"]],
+        [tr("filtering_feed"),      ["flairTools","qualityFilter","feedDedup","ageSort","mediaToggle","oldGold","sidebarCleaner"]],
+        [tr("discovery_knowledge"), ["bookmarks","savedManager","research","topicTracker","random","history","achievements","wikiNav","resourceCollector"]],
+        [tr("utilities"),           ["searchEnhancer","linksManager","explainLink","exportLibrary","repostDetector","devMode"]],
+        [tr("system_category"),     ["perfStatus","perSubreddit","backup"]],
+      ];
+      const enabled = await V.getEnabled();
+      const search = `<input class="rpt-power-search" placeholder="${tr("search_features")}" aria-label="${tr("search_features")}">`;
+      const groups = CATS.map(([cat, ids]) => `
+        <div class="rpt-power-group">
+          <div class="rpt-section-title">${esc(cat)}</div>
+          <div class="rpt-power-grid">
+            ${ids.map((id) => {
+              const mod = V.modules[id]; if (!mod) return "";
+              const on = enabled[id] !== false;
+              return `<div class="rpt-power-card ${on ? "" : "rpt-power-off"}" data-id="${id}">
+                <button class="rpt-power-run" data-run="${id}" title="${tr("run") || tr("open") || "Run"}">
+                  <strong>${esc(window.RPT_I18N?.text(mod.name) || mod.name)}</strong>
+                  <span>${esc(window.RPT_I18N?.text(mod.desc) || mod.desc)}</span>
+                </button>
+                <label class="rpt-power-toggle switch" title="${tr("enable_disable")}">
+                  <input type="checkbox" data-tog="${id}" ${on ? "checked" : ""}>
+                  <span class="rpt-slider"></span>
+                </label>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>`).join("");
+      host.innerHTML = `
+        <p class="rpt-muted">${tr("power_hub_desc")}</p>
+        ${search}
+        ${groups}`;
+      const q = host.querySelector(".rpt-power-search");
+      q.oninput = () => {
+        const v = q.value.toLowerCase();
+        host.querySelectorAll(".rpt-power-card").forEach((c) => {
+          c.style.display = c.textContent.toLowerCase().includes(v) ? "" : "none";
+        });
+        host.querySelectorAll(".rpt-power-group").forEach((g) => {
+          const any = Array.from(g.querySelectorAll(".rpt-power-card")).some((c) => c.style.display !== "none");
+          g.style.display = any ? "" : "none";
+        });
+      };
+      host.querySelectorAll("[data-run]").forEach((b) => {
+        b.onclick = async () => {
+          const id = b.dataset.run;
+          const en = await V.getEnabled();
+          if (en[id] === false) { V._toast?.(tr("feature_disabled_turn_on") || tr("feature_disabled")); return; }
+          try { await V.modules[id].run?.(); }
+          catch (e) { console.error(e); V._toast?.(`${tr("feature_error")}: ${e.message}`); }
+        };
+      });
+      host.querySelectorAll("[data-tog]").forEach((cb) => {
+        cb.onchange = async (e) => {
+          e.stopPropagation();
+          await V._storage.patch(V.HUB_KEY, {}, (c) => { c[cb.dataset.tog] = cb.checked; return c; });
+          cb.closest(".rpt-power-card").classList.toggle("rpt-power-off", !cb.checked);
         };
       });
     },
