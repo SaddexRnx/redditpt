@@ -2,6 +2,13 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Hide the "Made with Lovable" badge on the published site */
+#lovable-badge,
+[id^="lovable-badge"],
+a[href*="lovable.dev"][target="_blank"] {
+  display: none !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /*
