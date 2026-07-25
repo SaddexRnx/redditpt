@@ -88,6 +88,16 @@ main { padding: 14px 16px; }
 }
 .row button.ghost:hover { color: var(--text); border-color: var(--green); }
 .row button.ghost svg { width: 14px; height: 14px; }
+/* Anchor variants of .ghost (e.g. the About & changelog link) need the same
+ * icon sizing since the button-scoped selector above doesn't match anchors. */
+.row a.ghost, main a.ghost {
+  flex: 1; background: transparent; color: var(--muted);
+  border: 1px dashed var(--border); padding: 9px; border-radius: 10px;
+  cursor: pointer; display: flex; gap: 6px; align-items: center;
+  font: 12px inherit; text-decoration: none;
+}
+.row a.ghost:hover, main a.ghost:hover { color: var(--text); border-color: var(--green); }
+.row a.ghost svg, main a.ghost svg { width: 14px !important; height: 14px !important; flex-shrink: 0; }
 .lang-row { margin-top: 12px; padding: 10px; background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px; align-items: center; }
 .lang-label { font-size: 12px; color: var(--muted); flex: 1; }
 #lang-select {
