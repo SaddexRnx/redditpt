@@ -909,6 +909,16 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
   outline: 2px solid var(--rpt-green) !important; outline-offset: 2px !important;
 }
 
+/* Center visible labels inside panel action buttons while keeping icon+text grouped. */
+.rpt-btnrow button {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.rpt-btnrow button > div {
+  flex: 0 1 auto !important;
+  text-align: center !important;
+}
+
 /* Firefox tweaks: it renders form controls thicker; normalise. */
 @-moz-document url-prefix() {
   .rpt-btnrow button, .rpt-tabs button, .rpt-chip, .rpt-qb-btn { line-height: 1.2 !important; }
