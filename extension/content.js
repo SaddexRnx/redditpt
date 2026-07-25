@@ -2004,6 +2004,35 @@
       }, 900);
     })();
     runAll();
+    /* ---------- Deep-link handler ----------
+       Shareable URLs:
+         …/comments/…#rpt-c=<comment-id>
+         …/comments/…#rpt-author=<username>
+       On load (and on hashchange) we open the panel on the Tree tab and
+       flash-highlight the first matching comment. Waits briefly for the
+       tree parse to finish on slow threads. */
+    RPT.handleDeepLink = function () {
+      const h = location.hash || "";
+      const m = h.match(/rpt-(c|comment|author)=([^&]+)/i);
+      if (!m || !RPT.utils.isRedditThread()) return;
+      const kind = m[1].toLowerCase();
+      const value = decodeURIComponent(m[2]);
+      const tryFocus = (attempt = 0) => {
+        RPT.features.commentTree.parse();
+        const node = kind === "author"
+          ? RPT.features.commentTree.findByAuthor(value)
+          : RPT.features.commentTree.findById(value);
+        if (node) {
+          RPT.ui.ensurePanel();
+          setTimeout(() => RPT.features.commentTree.focusNode(node), 200);
+        } else if (attempt < 20) {
+          setTimeout(() => tryFocus(attempt + 1), 400);
+        }
+      };
+      setTimeout(tryFocus, 800);
+    };
+    RPT.handleDeepLink();
+    window.addEventListener("hashchange", () => RPT.handleDeepLink());
     // Only re-parse on real Reddit comment DOM changes. Ignore mutations
     // caused by RPT itself (marked with the rpt- prefix or inside our UI)
     // and skip while a parse is in flight — this fixes the constant
