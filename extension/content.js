@@ -1916,10 +1916,22 @@
       const finish = async (openPanel) => {
         await RPT.storage.set({ [this.KEY]: true });
         wrap.remove();
-        if (openPanel) RPT.ui.togglePanel();
+        if (openPanel) {
+          // Apply the just-saved language + per-feature choices to the
+          // current thread immediately, then open the side panel so the
+          // user sees the result of their onboarding selections.
+          try { window.RPT_I18N?.apply?.(document); } catch {}
+          try { await RPT.resync?.(); } catch {}
+          RPT.ui.togglePanel();
+        }
       };
-      wrap.querySelector(".rpt-wizard-lang").addEventListener("change", (e) => {
-        try { window.RPT_I18N?.set?.(e.target.value); } catch {}
+      wrap.querySelector(".rpt-wizard-lang").addEventListener("change", async (e) => {
+        // Persist immediately so the choice survives even if the user hits
+        // Skip, and re-render wizard copy in the newly picked language.
+        try {
+          await window.RPT_I18N?.set?.(e.target.value);
+          window.RPT_I18N?.apply?.(wrap);
+        } catch {}
       });
       wrap.addEventListener("click", async (e) => {
         const b = e.target.closest?.("button"); if (!b) return;
