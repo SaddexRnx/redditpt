@@ -78,7 +78,7 @@ main { padding: 14px 16px; }
   background: var(--bg-1); color: var(--text); border: 1px solid var(--border);
   border-radius: 10px; cursor: pointer; font: 12px inherit;
 }
-.grid button:hover { border-color: var(--blue); color: var(--blue); }
+.grid button:hover { border-color: var(--green); color: var(--green); }
 .grid button svg { width: 15px; height: 15px; flex-shrink: 0; }
 .row { display: flex; gap: 8px; margin-top: 10px; }
 .row button.ghost {

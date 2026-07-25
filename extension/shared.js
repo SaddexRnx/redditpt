@@ -7,7 +7,7 @@
 
   const DICTS = {
     en: {
-      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local-first · v1.9.6",
       status_active: "Active on this Reddit tab", status_notReddit: "Open a Reddit page to use the tools",
       status_notInjected: "Extension not injected on this tab", status_injectFail: "Couldn't inject on this page",
       reload_prompt: "This tab was open before the extension was installed. Reload it to activate the toolkit here.",
@@ -48,7 +48,7 @@
 
     },
     es: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Activo en esta pestaña de Reddit", status_notReddit: "Abre una página de Reddit para usarlo",
       status_notInjected: "La extensión no está inyectada en esta pestaña", status_injectFail: "No se pudo inyectar aquí",
       reload_prompt: "Esta pestaña estaba abierta antes de instalar la extensión. Recárgala para activarla aquí.",
@@ -88,7 +88,7 @@
 
     },
     fr: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Actif sur cet onglet Reddit", status_notReddit: "Ouvrez une page Reddit pour utiliser les outils",
       status_notInjected: "Extension non injectée sur cet onglet", status_injectFail: "Injection impossible ici",
       reload_prompt: "Cet onglet était ouvert avant l'installation. Rechargez-le pour l'activer.",
@@ -128,7 +128,7 @@
 
     },
     de: {
-      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Lokal · v1.9.6",
       status_active: "Aktiv auf diesem Reddit-Tab", status_notReddit: "Öffne eine Reddit-Seite",
       status_notInjected: "Erweiterung nicht in diesen Tab injiziert", status_injectFail: "Injektion fehlgeschlagen",
       reload_prompt: "Dieser Tab war bereits offen. Neu laden zum Aktivieren.",
@@ -168,7 +168,7 @@
 
     },
     pt: {
-      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "Local · v1.9.6",
       status_active: "Ativo nesta aba do Reddit", status_notReddit: "Abra uma página do Reddit",
       status_notInjected: "Extensão não injetada nesta aba", status_injectFail: "Falha ao injetar",
       reload_prompt: "Esta aba estava aberta antes da instalação. Recarregue para ativar.",
@@ -208,7 +208,7 @@
 
     },
     ja: {
-      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "ローカル · v1.9.6",
       status_active: "このRedditタブで有効", status_notReddit: "Redditページを開いてください",
       status_notInjected: "このタブに拡張機能が注入されていません", status_injectFail: "注入に失敗",
       reload_prompt: "このタブはインストール前から開いていました。再読み込みで有効化されます。",
@@ -248,7 +248,7 @@
 
     },
     zh_CN: {
-      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.5",
+      appName: "Reddit Power Toolkit", tagline: "本地 · v1.9.6",
       status_active: "在此Reddit标签页已激活", status_notReddit: "请打开一个Reddit页面",
       status_notInjected: "扩展未在此标签页注入", status_injectFail: "注入失败",
       reload_prompt: "此标签在扩展安装前已打开，请重新加载以激活。",
