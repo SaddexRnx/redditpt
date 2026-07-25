@@ -5,8 +5,7 @@ const KEYS = {
 };
 const F_DEF = { hideDeleted: false, hideEmpty: false, hideBots: false, hideShort: false, minLength: 15, hideLowScore: false, minScore: 1 };
 const A_DEF = { cleaner: true, highlighter: true, tags: true, ageWarning: true, quickBar: true, saveButtons: true, liveNew: true };
-const G_DEF = { autoOpenPanel: true, showOnboarding: true };
-const G_DEF_FULL = { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true };
+const G_DEF = { autoOpenPanel: true, showOnboarding: true, showAuthorColors: true };
 const get = (k) => new Promise((r) => chrome.storage.local.get(k, r));
 const set = (o) => new Promise((r) => chrome.storage.local.set(o, r));
 
