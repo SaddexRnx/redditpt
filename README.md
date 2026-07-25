@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.9.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases) for full history.
+> **Current release: v1.9.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -300,7 +300,7 @@ bun run dev
 
 ## Changelog
 
-Full release history lives on the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases).
+Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/reddit-power-toolkit/releases).
 
 ### v1.9.0 — current
 
