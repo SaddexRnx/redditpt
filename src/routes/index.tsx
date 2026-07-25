@@ -434,7 +434,7 @@ function Index() {
             aria-label="Telegram @Saddex_x"
             className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
           >
-            <MessageCircle className="h-4 w-4" />
+            <TelegramIcon className="h-4 w-4" />
           </a>
           <div className={`flex items-center gap-1.5 rounded-lg border ${border} px-2 py-1 text-xs ${subtle}`}>
             <Languages className="h-3.5 w-3.5" />
@@ -630,6 +630,15 @@ function InstallTabs({
 }) {
   const [tab, setTab] = useState<"chrome" | "ff" | "kiwi">("chrome");
   const [copied, setCopied] = useState<string | null>(null);
+  /* Hero quick-links dispatch rpt-install-tab; open the matching tab. */
+  useEffect(() => {
+    const h = (e: Event) => {
+      const id = (e as CustomEvent).detail as "chrome" | "ff" | "kiwi";
+      if (id === "chrome" || id === "ff" || id === "kiwi") setTab(id);
+    };
+    document.addEventListener("rpt-install-tab", h);
+    return () => document.removeEventListener("rpt-install-tab", h);
+  }, []);
   const copy = (v: string) => {
     navigator.clipboard?.writeText(v).then(() => { setCopied(v); setTimeout(() => setCopied(null), 1500); });
   };
