@@ -270,22 +270,54 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const FEATURES = [
-    { i: GitBranch, t: "Comment Tree Navigator", d: "Sidebar tree of every comment; click to jump instantly." },
-    { i: ChevronsUpDown, t: "Comment Folding", d: "Collapse and remember expand/collapse state per thread." },
-    { i: MessageSquare, t: "Conversation Mode", d: "Reformat threads as a chat-style conversation." },
-    { i: Layers, t: "Depth Layers", d: "Coloured borders visualise nesting depth at a glance." },
-    { i: Sparkles, t: "Smart Summary", d: "Top voted · most discussed · controversial — computed locally." },
-    { i: ListChecks, t: "Thread Cleaner", d: "Hide deleted, empty, bot or low-score comments." },
-    { i: Activity, t: "Thread Health", d: "Toxicity, quality, engagement — scored on-device." },
-    { i: Highlighter, t: "Keyword Highlighter", d: "Your custom keywords, highlighted everywhere on Reddit." },
-    { i: Tag, t: "Private User Tags", d: "Label users with your own colours and notes." },
-    { i: Bold, t: "Formatting Toolbar", d: "Bold, italic, code, quote, spoiler, link — one-click." },
-    { i: FileDown, t: "Thread Exporter", d: "Export any thread as Markdown, HTML or JSON." },
-    { i: Image, t: "Image Gallery Mode", d: "Fullscreen gallery with prev / next for image posts." },
-    { i: Clock, t: "Thread Age Warning", d: "Friendly banner on threads older than a year." },
-    { i: LinkIcon, t: "Link Previews", d: "Hover any link to preview its domain, path and type." },
-    { i: BarChart3, t: "Personal Analytics", d: "Posts, comments, subs, reading time — all local." },
-    { i: History, t: "Local Thread History", d: "Every visited thread with title, date and count." },
+    { i: GitBranch, t: "Comment Tree Navigator",
+      d: "A collapsible sidebar showing every comment as a tree, one dot per author.",
+      h: "Open the RPT panel (button bottom-right, or press T). Click any node to jump straight to that comment — the page smooth-scrolls and briefly flashes the match." },
+    { i: ChevronsUpDown, t: "Comment Folding",
+      d: "Persistent collapse/expand for every branch of a thread.",
+      h: "Use the ▾ / ▴ chip on any comment, or press F to fold the one under your cursor. Shift+C collapses everything. Your folded state is remembered per URL and survives page reloads." },
+    { i: MessageSquare, t: "Conversation Mode",
+      d: "Reformats the thread as a chat-style back-and-forth for easier reading.",
+      h: "Open the panel and click Conversation (or press C). A full-screen overlay shows nested bubbles per author. Esc closes and restores your scroll position." },
+    { i: Layers, t: "Depth Layers",
+      d: "Coloured left-border stripes indicate nesting depth at a glance.",
+      h: "Automatic on every thread — no click needed. Toggle it off in Options → Automation if you prefer Reddit's default look." },
+    { i: Sparkles, t: "Smart Summary",
+      d: "Top voted, most discussed, long-substantive and controversial — computed locally from the parsed tree.",
+      h: "Press S or click Smart summary in the panel. Click any item in the modal to jump to that exact comment. Zero network calls." },
+    { i: ListChecks, t: "Thread Cleaner",
+      d: "Hide deleted, empty, bot, short or low-score comments to focus on signal.",
+      h: "Open Options → Thread Cleaner and enable the filters you want (minimum length, minimum score, etc.). They apply live on every Reddit thread you open." },
+    { i: Activity, t: "Thread Health",
+      d: "Local score for toxicity, quality and engagement based on comment length, replies and vote spread.",
+      h: "See the Health card in the side panel. Numbers refresh whenever you press the Resync button in the panel header." },
+    { i: Highlighter, t: "Keyword Highlighter",
+      d: "Your custom keywords are highlighted everywhere on Reddit.",
+      h: "Options → Highlighted keywords: type a comma-separated list (e.g. docker, rust). Matches are outlined in yellow. Combine with Custom rules for regex or author filters." },
+    { i: Tag, t: "Private User Tags",
+      d: "Attach your own label and colour to any Reddit username.",
+      h: "Options → User tags: enter the username, a label ('helpful', 'blocked'), pick a colour, save. The badge appears next to that user everywhere in Reddit." },
+    { i: Bold, t: "Formatting Toolbar",
+      d: "Bold, italic, code, quote, spoiler and link — one click above every Reddit textarea.",
+      h: "Just focus any comment or post editor: the RPT toolbar appears above it. Click a button to wrap the selected text with the correct Markdown." },
+    { i: FileDown, t: "Thread Exporter",
+      d: "Save any thread as Markdown, HTML or JSON for offline reading or citations.",
+      h: "Panel → Export, then choose the format. The file downloads locally — nothing leaves your browser." },
+    { i: Image, t: "Image Gallery Mode",
+      d: "Full-screen viewer for image posts with prev/next and keyboard support.",
+      h: "Press G or click Gallery in the panel. Use ← / → to browse, Home/End for first/last, Esc to close. The gallery resumes at the last image you viewed per thread." },
+    { i: Clock, t: "Thread Age Warning",
+      d: "Friendly banner when the thread you just opened is over a year old.",
+      h: "No setup — appears automatically. Disable it in Options → Automation if you don't want the reminder." },
+    { i: LinkIcon, t: "Link Previews",
+      d: "Hover any link inside a comment to preview its domain, path and detected type (image, video, article).",
+      h: "Just hover — a small tooltip appears near the cursor. Nothing is fetched from the linked site; the preview is derived from the URL itself." },
+    { i: BarChart3, t: "Personal Analytics",
+      d: "Local dashboard: threads read, subs visited, reading time, favourite authors.",
+      h: "Click the extension icon in the toolbar → Open analytics. Everything is computed from the local history — no server tracking." },
+    { i: History, t: "Local Thread History",
+      d: "Every Reddit thread you've opened with title, subreddit, date and comment count.",
+      h: "Open the popup and click History, or view it inside Analytics. Clear it any time from Options → Local data." },
   ];
 
   return (
@@ -359,12 +391,16 @@ function Index() {
             <p className={`mt-2 ${subtle}`}>{t("featuresSub")}</p>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {FEATURES.map((f) => (
-                <div key={f.t} className={`rounded-xl border p-5 transition ${card} ${cardHover}`}>
+                <div key={f.t} className={`flex flex-col rounded-xl border p-5 transition ${card} ${cardHover}`}>
                   <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
                     <f.i className="h-5 w-5" />
                   </div>
                   <h3 className="font-semibold">{f.t}</h3>
                   <p className={`mt-2 text-sm ${subtle}`}>{f.d}</p>
+                  <div className={`mt-3 border-t ${border} pt-3 text-xs leading-relaxed ${muted}`}>
+                    <span className="font-semibold uppercase tracking-wider text-[#3b82f6]">How to use</span>
+                    <p className="mt-1">{f.h}</p>
+                  </div>
                 </div>
               ))}
             </div>

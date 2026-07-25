@@ -167,6 +167,12 @@
       <div class="shortcut-row"><span>Refresh current thread</span><button type="button" class="rpt-shortcut-btn" data-s="refresh">—</button></div>
       <button id="shortcuts-reset" type="button" style="align-self:flex-start;margin-top:6px">Reset to defaults</button>
     </div>
+    <div class="tag-row" style="margin-top:12px;gap:8px">
+      <button id="shortcuts-export" type="button">Export shortcuts (JSON)</button>
+      <button id="shortcuts-import-btn" type="button">Import shortcuts…</button>
+      <input id="shortcuts-import-file" type="file" accept=".json,application/json" hidden>
+      <span id="shortcuts-status" class="muted" style="margin:0"></span>
+    </div>
   </section>
 
   <section>

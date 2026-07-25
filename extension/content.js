@@ -178,6 +178,22 @@
       return cleanup;
     },
   };
+  /* Attach explicit keyboard-help text to a modal and wire it to
+   * aria-describedby so screen readers announce the shortcuts as soon as
+   * the dialog opens. Visible for sighted keyboard users too.           */
+  RPT.a11y._helpSeq = 0;
+  RPT.a11y.addKeyHelp = function (root, text) {
+    if (!root || !text) return;
+    const id = `rpt-kbd-help-${++this._helpSeq}`;
+    const el = document.createElement("div");
+    el.className = "rpt-kbd-help";
+    el.id = id;
+    el.textContent = text;
+    const panel = root.querySelector(".rpt-overlay-panel, .rpt-cmdk") || root;
+    panel.appendChild(el);
+    const prev = root.getAttribute("aria-describedby");
+    root.setAttribute("aria-describedby", prev ? `${prev} ${id}` : id);
+  };
 
   /* ---------------- Custom keyboard shortcuts config ---------------- *
    * Loaded from chrome.storage (rpt_shortcuts) with sensible defaults so
@@ -467,6 +483,7 @@
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
       RPT.a11y.trapModal(overlay);
+      RPT.a11y.addKeyHelp(overlay, "Keyboard: Esc closes this dialog. Tab and Shift+Tab move focus between the close button and the conversation.");
     },
   };
 
@@ -568,6 +585,7 @@
       });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
+      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes. Tab and Shift+Tab move focus between items. Enter or Space jumps to the selected comment.");
     },
   };
 
@@ -906,6 +924,7 @@
       render();
       // Trap Tab within the palette; input keeps first focus.
       RPT.a11y.trapModal(back);
+      RPT.a11y.addKeyHelp(back, "Keyboard: Type to filter. Up and Down arrows navigate. Enter runs the selected command. Esc closes. Tab cycles focus inside the palette.");
       setTimeout(() => input.focus(), 20);
     },
     _highlight() {
@@ -1065,6 +1084,7 @@
       document.body.appendChild(o);
       // Focus trap + restore-on-close.
       RPT.a11y.trapModal(o);
+      RPT.a11y.addKeyHelp(o, "Keyboard: Left and Right arrows browse images. Home jumps to the first image, End to the last. Esc closes. Tab cycles between Previous, Next and Close.");
       // Resume at the last-viewed image for this thread.
       RPT.galleryPos.get(path).then((saved) => {
         if (saved > 0 && saved < unique.length) go(saved);
@@ -1232,6 +1252,7 @@
       o.addEventListener("click", (e) => { if (e.target === o) o.remove(); });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
+      RPT.a11y.addKeyHelp(o, "Keyboard: Esc closes this cheat sheet. Tab and Shift+Tab move focus to the close button.");
     },
   };
 
