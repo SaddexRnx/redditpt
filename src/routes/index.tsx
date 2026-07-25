@@ -264,7 +264,7 @@ function Index() {
   const isDark = theme === "dark";
   const bg = isDark ? "bg-[#0b0f14] text-white" : "bg-white text-[#0b1220]";
   const card = isDark ? "border-white/10 bg-white/[0.03]" : "border-slate-200 bg-slate-50";
-  const cardHover = isDark ? "hover:border-[#10b981]/60 hover:bg-white/[0.06]" : "hover:border-[#10b981] hover:bg-white";
+  const cardHover = isDark ? "hover:border-[#ff4500]/60 hover:bg-white/[0.06]" : "hover:border-[#ff4500] hover:bg-white";
   const subtle = isDark ? "text-white/60" : "text-slate-600";
   const muted = isDark ? "text-white/50" : "text-slate-500";
   const border = isDark ? "border-white/5" : "border-slate-200";
@@ -426,7 +426,7 @@ function Index() {
           <button
             onClick={() => setTheme(isDark ? "light" : "dark")}
             aria-label="Toggle theme"
-            className={`grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#10b981]`}
+            className={`grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
           >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
@@ -441,7 +441,7 @@ function Index() {
             </span>
             <h1 className="mt-6 text-4xl font-bold leading-tight md:text-6xl">
               {t("hero1")}<br />
-              <span className="text-[#10b981]">{t("hero2")}</span>
+              <span className="text-[#ff4500]">{t("hero2")}</span>
             </h1>
             <p className={`mt-6 max-w-2xl text-lg ${subtle}`}>{t("heroP")}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -473,7 +473,7 @@ function Index() {
                   className={`group rounded-xl border p-5 transition ${card} ${cardHover} [&_summary::-webkit-details-marker]:hidden`}
                 >
                   <summary className="flex cursor-pointer list-none items-center gap-3">
-                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
+                    <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#ff4500]/10 text-[#ff4500]">
                       <f.i className="h-5 w-5" />
                     </span>
                     <span className="flex-1 font-semibold">{f.t}</span>
@@ -501,7 +501,7 @@ function Index() {
         <section id="changelog" className={`border-t ${border} ${section2}`}>
           <div className="mx-auto max-w-5xl px-6 py-16">
             <div className="flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#10b981]/10 text-[#10b981]">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#ff4500]/10 text-[#ff4500]">
                 <Rocket className="h-5 w-5" />
               </div>
               <div>
@@ -509,15 +509,15 @@ function Index() {
                 <p className={`mt-1 text-sm ${subtle}`}>Every release since v1.0 — newest first.</p>
               </div>
             </div>
-            <ol className="relative mt-10 space-y-6 border-l border-[#10b981]/25 pl-6">
+            <ol className="relative mt-10 space-y-6 border-l border-[#ff4500]/25 pl-6">
               {CHANGELOG.map((r) => (
                 <li key={r.v} className="relative">
-                  <span className="absolute -left-[33px] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#10b981] text-[10px] font-bold text-black shadow-[0_0_0_4px_rgba(16,185,129,0.15)]">
+                  <span className="absolute -left-[33px] top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#ff4500] text-[10px] font-bold text-black shadow-[0_0_0_4px_rgba(255,69,0,0.15)]">
                     <r.i className="h-3 w-3" />
                   </span>
                   <div className={`rounded-xl border p-5 transition ${card} ${cardHover}`}>
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-md bg-[#10b981]/10 px-2 py-0.5 font-mono text-sm font-bold text-[#10b981]">v{r.v}</span>
+                      <span className="rounded-md bg-[#ff4500]/10 px-2 py-0.5 font-mono text-sm font-bold text-[#ff4500]">v{r.v}</span>
                       <h3 className="text-base font-semibold md:text-lg">{r.t}</h3>
                       <span className={`ml-auto text-xs ${muted}`}>{r.d}</span>
                     </div>
@@ -582,7 +582,7 @@ function InstallTabs({
   const copy = (v: string) => {
     navigator.clipboard?.writeText(v).then(() => { setCopied(v); setTimeout(() => setCopied(null), 1500); });
   };
-  const activeCls = "bg-[#10b981] text-black border-[#10b981]";
+  const activeCls = "bg-[#ff4500] text-black border-[#ff4500]";
   const tabs: { id: "chrome" | "ff" | "kiwi"; label: string; icon: ReactNode }[] = [
     { id: "chrome", label: t("tab_chrome"), icon: <Chrome className="h-4 w-4" /> },
     { id: "ff", label: t("tab_ff"), icon: <Globe className="h-4 w-4" /> },
@@ -631,7 +631,7 @@ function InstallTabs({
           return (
             <div key={i} className={`group relative rounded-2xl border p-5 transition ${card} ${cardHover}`}>
               <div className="mb-4 flex items-center justify-between">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#10b981] text-sm font-bold text-black">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff4500] text-sm font-bold text-black">
                   {i + 1}
                 </span>
                 <div className={`inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]`}>
@@ -643,7 +643,7 @@ function InstallTabs({
               {s.copy && (
                 <button
                   onClick={() => copy(s.copy!)}
-                  className={`mt-3 inline-flex items-center gap-2 rounded-lg border ${border} px-3 py-1.5 text-xs font-mono ${subtle} transition hover:text-[#10b981] hover:border-[#10b981]`}
+                  className={`mt-3 inline-flex items-center gap-2 rounded-lg border ${border} px-3 py-1.5 text-xs font-mono ${subtle} transition hover:text-[#ff4500] hover:border-[#ff4500]`}
                   aria-label={`Copy ${s.copy}`}
                 >
                   {copied === s.copy ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}

@@ -1042,7 +1042,7 @@
       const esc = RPT.utils.escapeHtml;
       const walk = (nodes) => `<ul>${nodes.map((n) => `<li><strong>${esc(n.author)}</strong> (${n.score})<br>${esc(n.body)}${n.children.length ? walk(n.children) : ""}</li>`).join("")}</ul>`;
       const p = RPT.state.post || {};
-      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#10b981}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>Comments</h2>${walk(RPT.state.tree || [])}`;
+      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#ff4500}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>Comments</h2>${walk(RPT.state.tree || [])}`;
       this._download("reddit-thread.html", "text/html", out);
     },
   };
