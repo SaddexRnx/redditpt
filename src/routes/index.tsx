@@ -335,6 +335,12 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
+    { v: "1.9.5", t: "Full translation coverage & flat colors", d: "New", i: Languages, items: [
+      "Removed every remaining gradient inside the extension — flat Reddit-orange tokens throughout the ⚡ Power features hub, primary CTAs and progress bars",
+      "Popup, options and content-script UI now translated end-to-end in all 7 languages (EN, ES, FR, DE, PT, JA, ZH) — no more English leaking into non-English locales",
+      "Version tagline synced across manifest, popup, options, About modal, README and site footer (v1.9.5)",
+      "Added missing i18n keys: power_features, command_palette, accessibility, custom_rules, saved_collections, about, about_changelog",
+    ]},
     { v: "1.9.3", t: "Shareable deep links, match cycling & reduced-motion focus", d: "New", i: Link2, items: [
       "Shareable comment links — hover any row in the Tree, click 🔗 to copy a URL that reopens the panel and flash-highlights the exact comment",
       "Also supports #rpt-author=<username> for jumping to a user's first comment in the thread",
