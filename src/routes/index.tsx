@@ -255,6 +255,38 @@ function downloadZip() {
     .catch((err) => alert(err.message));
 }
 
+/* Hero browser picker: one card per supported browser. Clicking jumps
+   to the install section, opens the right tab, then triggers the download
+   so the user reads the correct instructions before the ZIP lands. */
+function BrowserPick({
+  icon, label, sub, tab, isDark, border, t,
+}: {
+  icon: ReactNode; label: string; sub: string; tab: "chrome" | "ff" | "kiwi";
+  isDark: boolean; border: string; t: (k: string) => string;
+}) {
+  return (
+    <button
+      onClick={() => {
+        document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: tab }));
+        const el = document.getElementById("install");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        setTimeout(downloadZip, 350);
+      }}
+      className={`group flex items-center gap-3 rounded-xl border px-4 py-4 text-left transition ${border} ${isDark ? "bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#46d160]/60" : "bg-white hover:bg-slate-50 hover:border-[#46d160]"}`}
+      aria-label={`${t("install_for")} ${label}`}
+    >
+      <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#46d160]/10 text-[#46d160]">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate font-semibold">{label}</span>
+        <span className={`block text-xs ${isDark ? "text-white/50" : "text-slate-500"}`}>{sub}</span>
+      </span>
+      <Download className="h-4 w-4 shrink-0 text-[#46d160] opacity-0 transition group-hover:opacity-100" />
+    </button>
+  );
+}
+
 function useThemeAndLang() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [lang, setLang] = useState<Lang>("en");
