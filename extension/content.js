@@ -236,11 +236,14 @@
     open() {
       const overlay = document.createElement("div");
       overlay.className = "rpt-overlay";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-modal", "true");
+      overlay.setAttribute("aria-label", "Conversation mode");
       overlay.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
             <h2>${I.chat} Conversation Mode</h2>
-            <button class="rpt-close">${I.close}</button>
+            <button class="rpt-close" aria-label="Close">${I.close}</button>
           </div>
           <div class="rpt-convo-body"></div>
         </div>`;
@@ -325,6 +328,7 @@
       const s = this.compute();
       const o = document.createElement("div");
       o.className = "rpt-overlay";
+      o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Smart summary");
       const item = (c, meta) => `
         <div class="rpt-summary-item" data-id="${RPT.utils.escapeHtml(c.id)}">
           <div class="rpt-summary-meta"><strong>u/${RPT.utils.escapeHtml(c.author)}</strong> · ${meta}</div>
@@ -1058,7 +1062,7 @@
           <span class="rpt-chip" data-chip="__clear">Reset</span>
         </div>
         <nav class="rpt-tabs">
-          <button data-tab="tree" class="active">${I.tree} Tree</button>
+          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} Tree</button>
           <button data-tab="tools">${I.panel} Tools</button>
           <button data-tab="collect">${I.star} Saved</button>
           <button data-tab="filters">${I.filter} Clean</button>
