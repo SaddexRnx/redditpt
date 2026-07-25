@@ -36,6 +36,14 @@
 .rpt-qb.rpt-qb-min .rpt-qb-btn svg { width: 13px; height: 13px; }
 .rpt-qb-power-off { color: var(--rpt-muted) !important; opacity: .7; }
 .rpt-qb-power-off:hover { color: var(--rpt-green) !important; opacity: 1; }
+.rpt-about-link {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 8px;
+  background: var(--rpt-bg-2); border: 1px solid var(--rpt-border);
+  color: var(--rpt-text); text-decoration: none; font-size: 12px;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.rpt-about-link:hover { background: var(--rpt-bg-3); border-color: var(--rpt-green); color: var(--rpt-green); }
 .rpt-qb-btn {
   position: relative; display: inline-grid; place-items: center;
   width: 34px; height: 34px; border: none; border-radius: 999px;
