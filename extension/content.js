@@ -201,18 +201,40 @@
       if (!c) return;
       const collapsed = forceState ?? !c.el.classList.contains("rpt-collapsed");
       c.el.classList.toggle("rpt-collapsed", collapsed);
+      // Reddit's <shreddit-comment> supports a native `collapsed` attribute — use it
+      // so replies and body hide reliably inside the shadow DOM.
+      if (collapsed) c.el.setAttribute?.("collapsed", "");
+      else c.el.removeAttribute?.("collapsed");
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const key = location.pathname;
       map[key] = map[key] || {};
       map[key][id] = collapsed;
       await RPT.storage.set({ [this.STORAGE_KEY]: map });
     },
-    async collapseAll() { RPT.state.comments.forEach((c) => c.el.classList.add("rpt-collapsed")); },
-    async expandAll()  { RPT.state.comments.forEach((c) => c.el.classList.remove("rpt-collapsed")); },
+    async collapseAll() {
+      // Re-parse first so freshly-loaded comments are included.
+      RPT.features.commentTree.parse();
+      RPT.state.comments.forEach((c) => {
+        c.el.classList.add("rpt-collapsed");
+        c.el.setAttribute?.("collapsed", "");
+        // Old-Reddit fallback: uses its own `.collapsed` class on `.thing.comment`.
+        if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
+      });
+    },
+    async expandAll() {
+      RPT.features.commentTree.parse();
+      RPT.state.comments.forEach((c) => {
+        c.el.classList.remove("rpt-collapsed");
+        c.el.removeAttribute?.("collapsed");
+        if (c.el.classList?.contains("thing")) c.el.classList.remove("collapsed");
+      });
+    },
     async restore() {
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const saved = map[location.pathname] || {};
-      RPT.state.comments.forEach((c) => { if (saved[c.id]) c.el.classList.add("rpt-collapsed"); });
+      RPT.state.comments.forEach((c) => {
+        if (saved[c.id]) { c.el.classList.add("rpt-collapsed"); c.el.setAttribute?.("collapsed", ""); }
+      });
     },
   };
 
