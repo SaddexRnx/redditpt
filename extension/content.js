@@ -1507,7 +1507,11 @@
         </nav>
         <section class="rpt-tab-body">
           <div data-panel="tree" class="rpt-tabpane active">
-            <input class="rpt-search-box" placeholder="Search comments by author or text…">
+            <div class="rpt-tree-toolbar">
+              <input class="rpt-search-box" placeholder="Search text or author…" aria-label="Search comments">
+              <select class="rpt-author-filter" aria-label="Filter by author"><option value="">All authors</option></select>
+              <span class="rpt-tree-count" aria-live="polite"></span>
+            </div>
             <div class="rpt-tree-container"></div>
           </div>
           <div data-panel="tools" class="rpt-tabpane">
@@ -1563,13 +1567,30 @@
     async wirePanel(p) {
       RPT.features.commentTree.parse();
       RPT.features.commentTree.renderInto(p.querySelector(".rpt-tree-container"));
+      /* Populate author dropdown and wire combined text+author filter. */
       const search = p.querySelector(".rpt-search-box");
-      search.oninput = () => {
-        const q = search.value.toLowerCase();
+      const authorSel = p.querySelector(".rpt-author-filter");
+      const countEl = p.querySelector(".rpt-tree-count");
+      const authors = RPT.features.commentTree.authorList();
+      authorSel.innerHTML = '<option value="">All authors</option>' +
+        authors.map((a) => `<option value="${RPT.utils.escapeHtml(a.toLowerCase())}">${RPT.utils.escapeHtml(a)}</option>`).join("");
+      const applyFilter = () => {
+        const q = search.value.trim().toLowerCase();
+        const a = authorSel.value;
+        let shown = 0, total = 0;
         p.querySelectorAll(".rpt-tree li").forEach((li) => {
-          li.style.display = !q || li.textContent.toLowerCase().includes(q) ? "" : "none";
+          total++;
+          const okText = !q || (li.dataset.text || "").includes(q) || (li.dataset.author || "").includes(q);
+          const okAuthor = !a || li.dataset.author === a;
+          const visible = okText && okAuthor;
+          li.style.display = visible ? "" : "none";
+          if (visible) shown++;
         });
+        countEl.textContent = q || a ? `${shown}/${total}` : `${total}`;
       };
+      search.oninput = applyFilter;
+      authorSel.onchange = applyFilter;
+      applyFilter();
       p.querySelector(".rpt-panel-close").onclick = () => p.remove();
       const refreshBtn = p.querySelector(".rpt-panel-refresh");
       if (refreshBtn) {
