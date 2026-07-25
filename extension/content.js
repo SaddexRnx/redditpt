@@ -1199,7 +1199,7 @@
       document.body.appendChild(o);
       // Focus trap + restore-on-close.
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, (c) => `Keyboard: ${c.galleryPrev} previous, ${c.galleryNext} next. Home jumps to the first image, End to the last. Esc closes. Tab cycles between Previous, Next and Close.`);
+      RPT.a11y.addKeyHelp(o, () => tr("kbd_help_gallery"));
       // Resume at the last-viewed image for this thread.
       RPT.galleryPos.get(path).then((saved) => {
         if (saved > 0 && saved < unique.length) go(saved);
