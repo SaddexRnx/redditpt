@@ -1546,30 +1546,30 @@
         <header class="rpt-panel-head">
           <div class="rpt-brand"><span class="rpt-brand-dot"></span>Reddit Power Toolkit</div>
           <div class="rpt-panel-head-actions">
-            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" title="Thread parsing status">
-              <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+            <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="${tr("parsing_status")}" title="${tr("thread_parsing_status")}">
+              <span class="rpt-status-dot"></span><span class="rpt-status-txt">${tr("idle")}</span>
             </span>
-            <button class="rpt-panel-refresh" type="button" aria-label="Re-parse this thread" title="Refresh — re-parse comments, stats and colors">
+            <button class="rpt-panel-refresh" type="button" aria-label="${tr("reparse_thread")}" title="${tr("refresh_reparse")}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
             </button>
-            <button class="rpt-panel-close" aria-label="Close panel">×</button>
+            <button class="rpt-panel-close" aria-label="${tr("close_panel")}">×</button>
           </div>
         </header>
         <div class="rpt-chips">
-          <span class="rpt-chip" data-chip="op">OP only</span>
-          <span class="rpt-chip rpt-chip-blue" data-chip="mod">Mod only</span>
-          <span class="rpt-chip" data-chip="awarded">Awarded</span>
+          <span class="rpt-chip" data-chip="op">${tr("filter_op_only")}</span>
+          <span class="rpt-chip rpt-chip-blue" data-chip="mod">${tr("filter_mod_only")}</span>
+          <span class="rpt-chip" data-chip="awarded">${tr("filter_awarded")}</span>
           <span style="flex:1"></span>
-          <span class="rpt-chip" data-chip="__clear">Reset</span>
+          <span class="rpt-chip" data-chip="__clear">${tr("filter_reset")}</span>
         </div>
         <nav class="rpt-tabs">
-          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} Tree</button>
-          <button data-tab="tools">${I.panel} Tools</button>
-          <button data-tab="collect">${I.star} Saved</button>
-          <button data-tab="filters">${I.filter} Clean</button>
-          <button data-tab="highlight">${I.tag} Keywords</button>
-          <button data-tab="stats">${I.stats} Stats</button>
-          <button data-tab="export">${I.export} Export</button>
+          <button data-tab="tree" class="active" role="tab" aria-selected="true">${I.tree} ${tr("tree")}</button>
+          <button data-tab="tools">${I.panel} ${tr("tools")}</button>
+          <button data-tab="collect">${I.star} ${tr("collect")}</button>
+          <button data-tab="filters">${I.filter} ${tr("clean")}</button>
+          <button data-tab="highlight">${I.tag} ${tr("keywords_tab")}</button>
+          <button data-tab="stats">${I.stats} ${tr("stats")}</button>
+          <button data-tab="export">${I.export} ${tr("export")}</button>
         </nav>
         <section class="rpt-tab-body">
           <div data-panel="tree" class="rpt-tabpane active">
@@ -1584,7 +1584,7 @@
             <div class="rpt-tree-container"></div>
           </div>
           <div data-panel="tools" class="rpt-tabpane">
-            <div class="rpt-section-title">Views</div>
+            <div class="rpt-section-title">${tr("views")}</div>
             <div class="rpt-btnrow">
               <button data-act="summary">${I.summary}<div><strong>${tr("smart_summary_title")}</strong><span class="rpt-btn-sub">${tr("views_sub_summary")}</span></div></button>
               <button data-act="conv">${I.chat}<div><strong>${tr("conversation_mode")}</strong><span class="rpt-btn-sub">${tr("views_sub_conv")}</span></div></button>
@@ -1619,7 +1619,7 @@
           </div>
           <div data-panel="highlight" class="rpt-tabpane">
             <p class="rpt-muted">${tr("kw_panel_desc")}</p>
-            <textarea class="rpt-kw" rows="3" placeholder="docker, kubernetes, rust"></textarea>
+            <textarea class="rpt-kw" rows="3" placeholder="${tr("kw_placeholder")}"></textarea>
             <button class="rpt-kw-save">${tr("save_keywords")}</button>
           </div>
           <div data-panel="stats" class="rpt-tabpane rpt-stats"></div>
