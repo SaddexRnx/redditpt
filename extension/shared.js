@@ -42,6 +42,8 @@
       analytics_title: "Reddit Power Toolkit — Analytics",
       threads_visited: "Threads visited", comments_read: "Comments read", subs_seen: "Subreddits seen",
       reading_time: "Reading time", saved_comments: "Saved comments", recent_threads: "Recent threads",
+      enable_toolkit: "Enable toolkit",
+      enable_toolkit_sub: "Turn off to disable RPT and restore any comments it hid",
     },
     es: {
       appName: "Reddit Power Toolkit", tagline: "Local · v1.2",
