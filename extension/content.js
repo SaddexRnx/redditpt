@@ -12,7 +12,7 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.8.0",
+    VERSION: "1.9.3",
     BUILD_DATE: "2026-07-25",
   });
 
@@ -278,6 +278,60 @@
 
   /* ---------------- Comment tree parser ---------------- */
   RPT.features.commentTree = {
+    /* Cached list of currently-visible tree rows for match cycling. */
+    _matches: [], _matchIdx: -1,
+    /* Focus a comment in-page: expand ancestors, scroll, flash-highlight.
+       Respects the reduced-motion accessibility setting. */
+    focusNode(node) {
+      if (!node || !node.el) return;
+      try {
+        let p = node.el.parentElement;
+        while (p && p !== document.body) {
+          if (p.tagName === "SHREDDIT-COMMENT" && p.hasAttribute("collapsed")) p.removeAttribute("collapsed");
+          if (p.classList && p.classList.contains("collapsed")) p.classList.remove("collapsed");
+          p = p.parentElement;
+        }
+        if (node.el.tagName === "SHREDDIT-COMMENT" && node.el.hasAttribute("collapsed")) node.el.removeAttribute("collapsed");
+      } catch {}
+      const reduced = document.documentElement.getAttribute("data-rpt-motion") === "reduced"
+        || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches
+            && document.documentElement.getAttribute("data-rpt-motion") !== "auto");
+      node.el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
+      /* Skip the flashy pulse when user asked for reduced motion; use a
+         static outline instead so navigation still shows the target. */
+      if (reduced) {
+        node.el.classList.add("rpt-jump-static");
+        setTimeout(() => node.el.classList.remove("rpt-jump-static"), 2200);
+      } else {
+        node.el.classList.add("rpt-jump-flash");
+        setTimeout(() => node.el.classList.remove("rpt-jump-flash"), 1700);
+      }
+    },
+    /* Look up a parsed node by comment id, or the first one by author. */
+    findById(id) { return (RPT.state.comments || []).find((c) => c.id === id); },
+    findByAuthor(author) {
+      const a = String(author || "").toLowerCase();
+      return (RPT.state.comments || []).find((c) => (c.author || "").toLowerCase() === a);
+    },
+    /* Cycle through the currently visible tree rows (i.e. rows that pass
+       the search/author filter) so users can jump match-to-match. */
+    cycle(dir, panel) {
+      const rows = Array.from(panel.querySelectorAll(".rpt-tree li"))
+        .filter((li) => li.style.display !== "none")
+        .map((li) => li.querySelector(".rpt-tree-item"))
+        .filter(Boolean);
+      if (!rows.length) return;
+      this._matches = rows;
+      this._matchIdx = (this._matchIdx + (dir === "next" ? 1 : -1) + rows.length) % rows.length;
+      const row = rows[this._matchIdx];
+      row.scrollIntoView({ block: "nearest" });
+      rows.forEach((r) => r.classList.remove("rpt-tree-current"));
+      row.classList.add("rpt-tree-current");
+      row.click();
+      const cnt = panel.querySelector(".rpt-match-count");
+      if (cnt) cnt.textContent = `${this._matchIdx + 1}/${rows.length}`;
+    },
+
     parse() {
       const nodes = Array.from(RPT.selectors.commentNodes());
       const list = nodes.map((el) => ({
@@ -325,9 +379,22 @@
               <span class="rpt-author">${RPT.utils.escapeHtml(n.author)}</span>
               <span class="rpt-score">${n.score}</span>
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
+              <button class="rpt-tree-share" title="Copy shareable link to this comment" aria-label="Copy link">🔗</button>
             </div>`;
           li.querySelector(".rpt-author").style.color = color;
           const row = li.querySelector(".rpt-tree-item");
+          /* Share button: copy a deep link with #rpt-c=<id>. Anyone opening
+             it with the extension installed lands on the comment focused. */
+          const shareBtn = row.querySelector(".rpt-tree-share");
+          shareBtn.addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            const u = new URL(location.href);
+            u.hash = `rpt-c=${encodeURIComponent(n.id)}`;
+            const link = u.toString();
+            try { navigator.clipboard.writeText(link); } catch {}
+            shareBtn.textContent = "✓";
+            setTimeout(() => (shareBtn.textContent = "🔗"), 1200);
+          });
           /* Hover: quick preview bubble showing the full first ~400 chars,
              so a user can survey comments without leaving the tree. */
           let pv;
@@ -345,18 +412,7 @@
           /* Click: expand ancestors, scroll into view, trigger big highlight. */
           row.addEventListener("click", () => {
             pv && pv.remove(); pv = null;
-            try {
-              let p = n.el.parentElement;
-              while (p && p !== document.body) {
-                if (p.tagName === "SHREDDIT-COMMENT" && p.hasAttribute("collapsed")) p.removeAttribute("collapsed");
-                if (p.classList && p.classList.contains("collapsed")) p.classList.remove("collapsed");
-                p = p.parentElement;
-              }
-              if (n.el.tagName === "SHREDDIT-COMMENT" && n.el.hasAttribute("collapsed")) n.el.removeAttribute("collapsed");
-            } catch {}
-            n.el.scrollIntoView({ behavior: "smooth", block: "center" });
-            n.el.classList.add("rpt-jump-flash");
-            setTimeout(() => n.el.classList.remove("rpt-jump-flash"), 1700);
+            RPT.features.commentTree.focusNode(n);
           });
           if (n.children.length) { const c = document.createElement("ul"); walk(n.children, c); li.appendChild(c); }
           parent.appendChild(li);
