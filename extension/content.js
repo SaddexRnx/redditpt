@@ -1868,27 +1868,73 @@
       const gen = await RPT.general.load();
       if (!gen.showOnboarding) return;
       const t = window.RPT_I18N ? (k) => window.RPT_I18N.t(k) : (k) => k;
+      const auto = await RPT.autorun.load();
+      const langs = [["en","English"],["es","Español"],["fr","Français"],["de","Deutsch"],["pt","Português"],["ja","日本語"],["zh_CN","中文"]];
+      const curLang = window.RPT_I18N?.lang || "en";
+      const feats = [
+        ["cleaner",     t("auto_cleaner"),   "Hide deleted, empty, low-score & bot comments."],
+        ["highlighter", t("auto_highlight"), "Highlight your saved keywords across every thread."],
+        ["tags",        t("auto_tags"),      "Private colored labels for Reddit usernames."],
+        ["ageWarning",  t("auto_age"),       "Warn when a thread is very old before you reply."],
+        ["quickBar",    t("auto_bar"),       "Floating bottom-right toolbar with quick tools."],
+        ["saveButtons", t("auto_star"),      "Adds a ★ button to every comment for local collections."],
+        ["liveNew",     t("auto_live"),      "Adaptive polling for new comments (idle when inactive)."],
+      ];
       const wrap = document.createElement("div");
-      wrap.className = "rpt-onboard";
+      wrap.className = "rpt-onboard rpt-wizard";
+      wrap.setAttribute("role","dialog"); wrap.setAttribute("aria-modal","true");
       wrap.innerHTML = `
-        <div class="rpt-onboard-pulse"></div>
-        <div class="rpt-onboard-arrow"></div>
-        <div class="rpt-onboard-card">
-          <h4>${t("onboard_title")}</h4>
-          <p>${t("onboard_body")}</p>
-          <div class="rpt-onboard-actions">
-            <button data-act="dismiss">${t("onboard_ok")}</button>
-            <button class="rpt-primary-btn" data-act="tour">${t("onboard_open")}</button>
+        <div class="rpt-wizard-card" role="document">
+          <div class="rpt-wizard-head">
+            <div class="rpt-wizard-logo">RPT</div>
+            <div class="rpt-wizard-title">
+              <h4>${t("onboard_title")}</h4>
+              <p>${t("onboard_body")}</p>
+            </div>
+            <button class="rpt-wizard-x" data-act="skip" aria-label="Skip">×</button>
+          </div>
+          <div class="rpt-wizard-body">
+            <label class="rpt-wizard-label">${t("language")}</label>
+            <select class="rpt-wizard-lang">
+              ${langs.map(([k,l]) => `<option value="${k}" ${k===curLang?"selected":""}>${l}</option>`).join("")}
+            </select>
+            <div class="rpt-wizard-section">${t("choose_features") || "Choose what runs automatically"}</div>
+            <div class="rpt-wizard-feats">
+              ${feats.map(([k,label,note]) => `
+                <label class="rpt-wizard-feat">
+                  <input type="checkbox" data-feat="${k}" ${auto[k] ? "checked" : ""}>
+                  <div><strong>${RPT.utils.escapeHtml(label)}</strong><span>${RPT.utils.escapeHtml(note)}</span></div>
+                </label>`).join("")}
+            </div>
+          </div>
+          <div class="rpt-wizard-foot">
+            <button data-act="skip">${t("onboard_skip") || "Skip"}</button>
+            <button data-act="defaults">${t("onboard_defaults") || "Use defaults"}</button>
+            <button class="rpt-primary-btn" data-act="save">${t("onboard_save") || "Save & open panel"}</button>
           </div>
         </div>`;
+      const finish = async (openPanel) => {
+        await RPT.storage.set({ [this.KEY]: true });
+        wrap.remove();
+        if (openPanel) RPT.ui.togglePanel();
+      };
+      wrap.querySelector(".rpt-wizard-lang").addEventListener("change", (e) => {
+        try { window.RPT_I18N?.set?.(e.target.value); } catch {}
+      });
       wrap.addEventListener("click", async (e) => {
         const b = e.target.closest?.("button"); if (!b) return;
-        await RPT.storage.set({ [this.KEY]: true });
-        if (b.dataset.act === "tour") RPT.ui.togglePanel();
-        wrap.remove();
+        const a = b.dataset.act;
+        if (a === "skip") return finish(false);
+        if (a === "defaults") { await RPT.autorun.save({ ...RPT.autorun.defaults }); return finish(true); }
+        if (a === "save") {
+          const next = { ...auto };
+          wrap.querySelectorAll("[data-feat]").forEach((i) => { next[i.dataset.feat] = i.checked; });
+          await RPT.autorun.save(next);
+          return finish(true);
+        }
       });
       document.body.appendChild(wrap);
-      setTimeout(() => wrap.remove(), 40000);
+      try { RPT.a11y.trapModal(wrap); } catch {}
     },
   };
 
