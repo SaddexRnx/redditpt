@@ -3,7 +3,7 @@
   "name": "Reddit Power Toolkit",
   "version": "1.0.0",
   "description": "A local-first toolkit that supercharges the Reddit reading & writing experience: comment tree, folding, conversation mode, cleaner, stats, exporter, gallery and more.",
-  "permissions": ["storage", "activeTab", "tabs"],
+  "permissions": ["storage", "activeTab", "tabs", "scripting"],
   "host_permissions": [
     "https://www.reddit.com/*",
     "https://old.reddit.com/*",
