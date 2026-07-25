@@ -15,6 +15,8 @@
     VERSION: "1.9.5",
     BUILD_DATE: "2026-11-08",
   });
+  const tr = (key) => window.RPT_I18N?.t(key) || key;
+  const tx = (value) => window.RPT_I18N?.text(value) || value;
 
   /* ---------------- storage ---------------- */
   RPT.storage = {
@@ -362,7 +364,7 @@
       const roots = this.parse();
       container.innerHTML = "";
       if (!roots.length) {
-        container.innerHTML = '<p class="rpt-empty">No comments detected on this page.</p>';
+        container.innerHTML = `<p class="rpt-empty">${tr("no_comments_detected")}</p>`;
         return;
       }
       const ul = document.createElement("ul");
@@ -379,7 +381,7 @@
               <span class="rpt-author">${RPT.utils.escapeHtml(n.author)}</span>
               <span class="rpt-score">${n.score}</span>
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
-              <button class="rpt-tree-share" title="Copy shareable link to this comment" aria-label="Copy link">🔗</button>
+              <button class="rpt-tree-share" title="${tr("copy_share_link")}" aria-label="${tr("copy_link")}">🔗</button>
             </div>`;
           li.querySelector(".rpt-author").style.color = color;
           const row = li.querySelector(".rpt-tree-item");
@@ -401,7 +403,7 @@
           row.addEventListener("mouseenter", (ev) => {
             pv = document.createElement("div");
             pv.className = "rpt-tree-hoverpv";
-            pv.innerHTML = `<b>u/${RPT.utils.escapeHtml(n.author)} · ${n.score}</b>${RPT.utils.escapeHtml((n.body || "(no text)").slice(0, 400))}`;
+            pv.innerHTML = `<b>u/${RPT.utils.escapeHtml(n.author)} · ${n.score}</b>${RPT.utils.escapeHtml((n.body || tr("no_text")).slice(0, 400))}`;
             document.body.appendChild(pv);
             const r = row.getBoundingClientRect();
             const top = Math.max(8, Math.min(window.innerHeight - 180, r.top));
@@ -569,12 +571,12 @@
       overlay.className = "rpt-overlay";
       overlay.setAttribute("role", "dialog");
       overlay.setAttribute("aria-modal", "true");
-      overlay.setAttribute("aria-label", "Conversation mode");
+      overlay.setAttribute("aria-label", tr("conversation_mode"));
       overlay.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
-            <h2>${I.chat} Conversation Mode</h2>
-            <button class="rpt-close" aria-label="Close">${I.close}</button>
+            <h2>${I.chat} ${tr("conversation_mode")}</h2>
+            <button class="rpt-close" aria-label="${tr("close")}">${I.close}</button>
           </div>
           <div class="rpt-convo-body"></div>
         </div>`;
@@ -596,7 +598,7 @@
       overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
       document.body.appendChild(overlay);
       RPT.a11y.trapModal(overlay);
-      RPT.a11y.addKeyHelp(overlay, () => "Keyboard: Esc closes this dialog. Tab and Shift+Tab move focus between the close button and the conversation.");
+      RPT.a11y.addKeyHelp(overlay, () => tr("kbd_help_conversation"));
     },
   };
 
@@ -628,16 +630,16 @@
   RPT.features.health = {
     analyze() {
       const cs = RPT.state.comments;
-      if (!cs.length) return { score: 0, notes: ["No comments loaded."] };
+      if (!cs.length) return { score: 0, notes: [tr("no_comments_loaded")] };
       const notes = [];
       const deepest = cs.reduce((m, c) => Math.max(m, c.depth), 0);
       const withReplies = (RPT.state.tree || []).filter((r) => r.children.length).length;
       const dead = (RPT.state.tree || []).filter((r) => !r.children.length).length;
       const controversial = cs.filter((c) => c.score <= 0).length;
-      notes.push(`Discussion depth: ${deepest}`);
-      notes.push(`Root threads with replies: ${withReplies}`);
-      notes.push(`Dead branches (no replies): ${dead}`);
-      notes.push(`Controversial (score ≤ 0): ${controversial}`);
+      notes.push(`${tr("discussion_depth")}: ${deepest}`);
+      notes.push(`${tr("root_threads_replies")}: ${withReplies}`);
+      notes.push(`${tr("dead_branches")}: ${dead}`);
+      notes.push(`${tr("controversial_zero")}: ${controversial}`);
       const score = Math.max(0, Math.min(100, 40 + deepest * 4 + withReplies * 3 - dead - controversial * 2));
       return { score, notes };
     },
@@ -661,27 +663,27 @@
       const s = this.compute();
       const o = document.createElement("div");
       o.className = "rpt-overlay";
-      o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", "Smart summary");
+      o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); o.setAttribute("aria-label", tr("smart_summary_title"));
       const item = (c, meta) => `
         <div class="rpt-summary-item" data-id="${RPT.utils.escapeHtml(c.id)}">
           <div class="rpt-summary-meta"><strong>u/${RPT.utils.escapeHtml(c.author)}</strong> · ${meta}</div>
           <div class="rpt-summary-text">${RPT.utils.escapeHtml(c.body.slice(0, 240))}${c.body.length > 240 ? "…" : ""}</div>
         </div>`;
       const section = (title, items) =>
-        `<div class="rpt-summary-section"><h3>${title}</h3>${items.length ? items : '<div class="rpt-muted">Nothing found.</div>'}</div>`;
+        `<div class="rpt-summary-section"><h3>${title}</h3>${items.length ? items : `<div class="rpt-muted">${tr("nothing_found")}</div>`}</div>`;
       o.innerHTML = `
         <div class="rpt-overlay-panel">
           <div class="rpt-overlay-head">
-            <h2>${I.summary} Smart Summary</h2>
-            <button class="rpt-close">${I.close}</button>
+            <h2>${I.summary} ${tr("smart_summary_title")}</h2>
+            <button class="rpt-close" aria-label="${tr("close")}">${I.close}</button>
           </div>
           <div class="rpt-summary">${
             s ? `
-              ${section("▲ Top voted", s.top.map((c) => item(c, `${c.score} pts`)).join(""))}
-              ${section("💬 Most discussed threads", s.mostReplied.map((m) => item(m.node, `${m.size} replies`)).join(""))}
-              ${section("📄 Long & substantive", s.substantive.map((c) => item(c, `${c.body.length} chars · ${c.score} pts`)).join(""))}
-              ${section("⚡ Controversial", s.controversial.map((c) => item(c, `${c.score} pts`)).join(""))}
-            ` : '<p class="rpt-muted">No comments detected on this page.</p>'
+              ${section(tr("top_voted"), s.top.map((c) => item(c, `${c.score} ${tr("pts")}`)).join(""))}
+              ${section(tr("most_discussed_threads"), s.mostReplied.map((m) => item(m.node, `${m.size} ${tr("replies")}`)).join(""))}
+              ${section(tr("long_substantive"), s.substantive.map((c) => item(c, `${c.body.length} ${tr("chars")} · ${c.score} ${tr("pts")}`)).join(""))}
+              ${section(tr("controversial"), s.controversial.map((c) => item(c, `${c.score} ${tr("pts")}`)).join(""))}
+            ` : `<p class="rpt-muted">${tr("no_comments_detected")}</p>`
           }</div>
         </div>`;
       o.querySelector(".rpt-close").onclick = () => o.remove();
@@ -698,7 +700,7 @@
       });
       document.body.appendChild(o);
       RPT.a11y.trapModal(o);
-      RPT.a11y.addKeyHelp(o, () => "Keyboard: Esc closes. Tab and Shift+Tab move focus between items. Enter or Space jumps to the selected comment.");
+      RPT.a11y.addKeyHelp(o, () => tr("kbd_help_summary"));
     },
   };
 
@@ -777,8 +779,8 @@
       const el = document.querySelector(".rpt-live-pill"); if (!el) return;
       el.dataset.state = this._state;
       const secs = Math.round(this._interval / 1000);
-      const label = { live: `Live · ${secs}s`, idle: "Idle", paused: "Paused",
-        check: "Checking…", new: `+${delta ?? 0} new` }[this._state] || "";
+        const label = { live: `${tr("live")} · ${secs}s`, idle: tr("idle"), paused: tr("paused"),
+        check: tr("checking"), new: `+${delta ?? 0} ${tr("new_comments")}` }[this._state] || "";
       el.querySelector(".rpt-live-txt").textContent = label;
     },
     _countAll(children) {
@@ -875,8 +877,8 @@
         if (!anchor) return;
         const btn = document.createElement("button");
         btn.className = "rpt-save-btn" + (saved.has(c.id) ? " rpt-saved" : "");
-        btn.textContent = "★ save";
-        btn.title = "Save to your local collection";
+        btn.textContent = tr("save_local");
+        btn.title = tr("save_to_collection");
         btn.onclick = async (e) => {
           e.preventDefault(); e.stopPropagation();
           if (btn.classList.contains("rpt-saved")) {
