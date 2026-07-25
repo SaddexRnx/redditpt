@@ -40,24 +40,34 @@ html:not([data-rpt-theme])[data-color-scheme="light"] {
   }
 }
 
-/* ---------------- Floating quick-bar (replaces old FAB) ---------------- */
+/* ---------------- Floating quick-bar — TabBankruptcy pill ---------------- */
 .rpt-qb {
   position: fixed; bottom: 18px; right: 18px; z-index: 2147483000;
-  display: flex; align-items: center; gap: 2px; padding: 4px;
-  background: var(--rpt-bg-1); border: 1px solid var(--rpt-border);
-  border-radius: 999px; box-shadow: var(--rpt-shadow);
+  display: flex; align-items: center; gap: 3px; padding: 6px;
+  background: color-mix(in oklab, var(--rpt-bg-1) 92%, transparent);
+  border: 1px solid var(--rpt-border);
+  border-radius: 16px;
+  box-shadow: var(--rpt-shadow), 0 0 0 1px rgba(255,255,255,.02) inset;
   font: 12px var(--rpt-font); color: var(--rpt-text);
-  backdrop-filter: blur(10px);
-  transition: opacity .2s, transform .2s;
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  transition: opacity .2s, transform .2s, box-shadow .2s;
 }
-.rpt-qb.rpt-qb-min { padding: 2px; gap: 0; }
+.rpt-qb-group {
+  display: flex; align-items: center; gap: 2px;
+  padding: 2px; border-radius: 12px;
+  background: var(--rpt-bg-0);
+  border: 1px solid var(--rpt-border);
+}
+.rpt-qb.rpt-qb-min { padding: 3px; gap: 0; border-radius: 999px; }
+.rpt-qb.rpt-qb-min .rpt-qb-group { background: transparent; border: none; padding: 0; }
 .rpt-qb.rpt-qb-min .rpt-qb-brand,
 .rpt-qb.rpt-qb-min .rpt-qb-sep,
 .rpt-qb.rpt-qb-min .rpt-status-pill,
 .rpt-qb.rpt-qb-min .rpt-live-pill { display: none !important; }
-.rpt-qb.rpt-qb-min .rpt-qb-btn { width: 26px; height: 26px; }
-.rpt-qb.rpt-qb-min .rpt-qb-btn svg { width: 13px; height: 13px; }
-.rpt-qb-power-off { color: var(--rpt-muted) !important; opacity: .7; }
+.rpt-qb.rpt-qb-min .rpt-qb-btn { width: 28px; height: 28px; border-radius: 999px; }
+.rpt-qb.rpt-qb-min .rpt-qb-btn svg { width: 14px; height: 14px; }
+.rpt-qb-power-off { color: var(--rpt-muted) !important; opacity: .6; }
 .rpt-qb-power-off:hover { color: var(--rpt-green) !important; opacity: 1; }
 .rpt-about-link {
   display: flex; align-items: center; justify-content: space-between;
@@ -69,18 +79,25 @@ html:not([data-rpt-theme])[data-color-scheme="light"] {
 .rpt-about-link:hover { background: var(--rpt-bg-3); border-color: var(--rpt-green); color: var(--rpt-green); }
 .rpt-qb-btn {
   position: relative; display: inline-grid; place-items: center;
-  width: 34px; height: 34px; border: none; border-radius: 999px;
+  width: 32px; height: 32px; border: none; border-radius: 9px;
   background: transparent; color: var(--rpt-text); cursor: pointer;
-  transition: background .15s, color .15s, transform .1s;
+  transition: background .15s, color .15s, transform .08s;
 }
 .rpt-qb-btn:hover { background: var(--rpt-bg-3); color: var(--rpt-green); }
-.rpt-qb-btn.rpt-active { background: var(--rpt-green); color: #001912; }
-.rpt-qb-btn svg { width: 16px; height: 16px; stroke-width: 2; }
+.rpt-qb-btn:active { transform: scale(.94); }
+.rpt-qb-btn.rpt-active { background: var(--rpt-green); color: #fff; }
+.rpt-qb-btn svg { width: 15px; height: 15px; stroke-width: 2; }
 .rpt-qb-brand {
-  padding: 0 10px 0 12px; font-weight: 700; letter-spacing: .04em;
-  font-size: 11px; color: var(--rpt-green); user-select: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 8px 0 6px; font-weight: 700; letter-spacing: .04em;
+  font-size: 11px; color: var(--rpt-text); user-select: none;
 }
-.rpt-qb-sep { width: 1px; height: 20px; background: var(--rpt-border); margin: 0 2px; }
+.rpt-qb-brand::before {
+  content: ""; width: 8px; height: 8px; border-radius: 999px;
+  background: var(--rpt-green);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--rpt-green) 22%, transparent);
+}
+.rpt-qb-sep { width: 1px; height: 18px; background: var(--rpt-border); margin: 0 3px; }
 .rpt-qb-badge {
   position: absolute; top: 2px; right: 2px; min-width: 16px; height: 16px;
   padding: 0 4px; border-radius: 999px; background: var(--rpt-blue);
@@ -968,8 +985,8 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-power-toggle input:checked + .rpt-slider{background:var(--rpt-green,#46d160)}
 .rpt-power-toggle input:checked + .rpt-slider::before{transform:translateX(14px)}
 .rpt-power-toggle input:focus-visible + .rpt-slider{outline:2px solid var(--rpt-green,#46d160);outline-offset:2px}
-.rpt-qb-v2{color:#fbbf24}
-.rpt-qb-v2:hover{color:#f59e0b}
+.rpt-qb-v2{color:var(--rpt-green)}
+.rpt-qb-v2:hover{color:var(--rpt-green);background:color-mix(in oklab, var(--rpt-green) 18%, transparent)}
 .rpt-devmode *{outline:1px dashed rgba(255,69,0,.2)}
 
 /* --------- v1.9 System modules (perf, per-subreddit, backup) --------- */
