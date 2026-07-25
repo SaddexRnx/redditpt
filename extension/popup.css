@@ -80,6 +80,34 @@ body {
 .icon-btn svg { width: 15px; height: 15px; }
 .lang-chip { width: auto; padding: 0 8px; letter-spacing: 0.05em; }
 
+/* Language dropdown menu (opens from header chip) */
+.lang-wrap { position: relative; }
+.lang-menu {
+  position: absolute; top: calc(100% + 6px); right: 0;
+  min-width: 170px; max-height: 260px; overflow-y: auto;
+  margin: 0; padding: 4px; list-style: none;
+  background: var(--panel); border: 1px solid var(--border-strong);
+  border-radius: 10px; box-shadow: 0 12px 30px rgba(0,0,0,.45);
+  z-index: 50;
+}
+.lang-menu[hidden] { display: none; }
+.lang-menu li {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 12px; color: var(--text);
+  transition: background .12s, color .12s;
+}
+.lang-menu li:hover { background: var(--panel-2); color: var(--accent); }
+.lang-menu li.active { background: var(--panel-2); color: var(--accent); }
+.lang-menu .lang-code {
+  font-weight: 700; font-size: 10.5px; letter-spacing: .06em;
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 6px; border-radius: 5px; color: var(--muted);
+  min-width: 32px; text-align: center;
+}
+.lang-menu li.active .lang-code { color: var(--accent); border-color: var(--accent); }
+.lang-menu .lang-label { flex: 1; }
+
 /* Tabs */
 .tabs {
   display: flex; gap: 4px; padding: 10px 12px 0;
