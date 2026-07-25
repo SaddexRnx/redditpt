@@ -79,21 +79,35 @@ public/reddit-power-toolkit.zip  # Prebuilt release bundle
 
 ---
 
-## Install (Chrome / Edge / Brave / Kiwi)
+## Install — step by step
 
-1. Download or clone this repo
-2. Open `chrome://extensions`
-3. Enable **Developer mode** (top right)
-4. Click **Load unpacked** and select the `extension/` folder
-5. Pin the icon, open a Reddit thread, click the icon or press `Ctrl+K`
+### Chrome, Edge, Brave, Opera, Arc
 
-> On Kiwi Browser (Android): open `kiwi://extensions`, enable Developer mode, then use **+ (from .zip/.crx/.user.js)** with `public/reddit-power-toolkit.zip`.
+1. Download this repo (`Code → Download ZIP`) and unzip it, or clone with `git clone`.
+2. Open a new tab and go to `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`).
+3. Toggle **Developer mode** on (top-right corner).
+4. Click **Load unpacked** and pick the `extension/` folder from this repo.
+5. Pin **Reddit Power Toolkit** to the toolbar from the puzzle-piece menu.
+6. Open any Reddit comment thread (`reddit.com/r/*/comments/*`) and click the icon — the side panel opens and the floating **RPT** button appears bottom-right.
+7. If Reddit was already open before you installed, hit **Reload this tab** in the popup once.
 
-## Install (Firefox)
+### Firefox (128+)
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click **Load Temporary Add-on…**
-3. Select `extension/manifest.json`
+1. Download or clone this repo.
+2. Open `about:debugging#/runtime/this-firefox`.
+3. Click **Load Temporary Add-on…**.
+4. Navigate into the `extension/` folder and pick **`manifest.json`**.
+5. Open a Reddit thread — the toolkit runs immediately.
+6. Temporary add-ons are removed when Firefox restarts. To keep it permanently, install a signed build from AMO (planned) or use Firefox Developer Edition / Nightly with `xpinstall.signatures.required = false`.
+
+### Kiwi Browser (Android)
+
+1. Download `public/reddit-power-toolkit.zip` from this repo to your phone.
+2. Open Kiwi and go to `kiwi://extensions`.
+3. Enable **Developer mode** (top-right).
+4. Tap **+ (from .zip/.crx/.user.js)** and pick the downloaded zip.
+5. Force-stop Kiwi from Android app settings, then reopen it (Kiwi needs a full restart to activate new content scripts).
+6. Open a Reddit comment thread — the floating **RPT** button appears bottom-right.
 
 ---
 
@@ -149,6 +163,17 @@ What the extension **never** does:
 
 ## FAQ & Troubleshooting
 
+**What does the "Ready · X comments" pill mean and why does it disappear?**
+The status pill lives in the panel header and the quick-bar. It shows `Parsing thread…` (blue, pulsing dot) whenever the extension is re-reading the comment tree — this happens on load, after SPA navigation, and whenever Reddit lazy-loads more comments. When parsing finishes it turns green with `Ready · N comments` for ~1.4 seconds and then fades out. If you never see it settle on green, Reddit is still streaming comments in (scroll to the bottom), or a browser extension like Vimium is mutating the DOM every second — try disabling other extensions on `reddit.com`.
+
+**The master "Enable toolkit" toggle in the popup — what does turning it off do?**
+Turning the master switch off in the popup:
+- Removes the floating quick-bar, side panel, modals, and tour overlay from every Reddit tab.
+- Un-hides every comment the Cleaner had filtered out (`.rpt-hidden` is neutralised via CSS).
+- Stops all polling, mutation watching, and DOM parsing.
+- Persists across tabs and sessions (`chrome.storage.local` key: `rpt_enabled`).
+Turning it back on triggers a full re-parse of the currently open Reddit tab without a page reload. Your keywords, tags, collections and history are never deleted — the toggle is purely a runtime switch.
+
 **The extension icon does nothing on Reddit.**
 Reddit was probably already open before the extension installed or updated. Open the popup — if it shows a "Reload tab" prompt, click it. Alternatively, refresh the Reddit tab manually. This is expected Chrome behaviour and applies to every MV3 extension.
 
@@ -193,6 +218,65 @@ Kiwi occasionally needs a full app restart after enabling a new extension. Force
 ---
 
 ## Development
+
+Extension: edit files under `extension/` and reload from `chrome://extensions`.
+
+Landing site:
+
+```bash
+bun install
+bun run dev
+```
+
+---
+
+## Verifying parsing in Firefox and Kiwi
+
+The extension uses the exact same content script on every browser, but the way to confirm it's actually parsing differs.
+
+**Firefox**
+1. Load the temporary add-on (see install steps).
+2. Open a Reddit comment thread and click the RPT icon → **Open side panel**.
+3. Watch the status pill in the panel header — it must go `Parsing thread…` → `Ready · N comments`.
+4. Open **`about:debugging` → This Firefox → Reddit Power Toolkit → Inspect** to open the extension's devtools. In the console run `window.RPT?.state.comments.length` on the Reddit tab — a positive number confirms parsing works.
+5. If the pill never appears, ensure the site is `https://www.reddit.com/*` (host permissions do not currently cover `old.reddit.com` in strict Firefox permission mode — grant it from `about:addons → RPT → Permissions`).
+
+**Kiwi (Android)**
+1. After installing from the zip, force-stop Kiwi from Android app settings and reopen it (required — content scripts don't inject into pages open before install).
+2. Open a Reddit thread. The floating **RPT** button should appear bottom-right within 1-2 seconds.
+3. Long-press the RPT button → the popup shows **Activation status: Active**. If it shows **Not injected**, tap **Reload this tab**.
+4. To inspect: connect the phone to a desktop Chrome via USB, visit `chrome://inspect/#devices`, click **Inspect** on the Reddit tab, then run `window.__RPT_LOADED__` and `window.RPT.state.comments.length` in the console.
+
+---
+
+## Cross-browser compatibility checklist
+
+Run through this list on each browser before shipping a release. Every row must pass on Chrome, Firefox, and Kiwi.
+
+| # | Check | How to verify | Chrome | Firefox | Kiwi |
+|---|-------|---------------|:------:|:-------:|:----:|
+| 1 | Extension installs cleanly | Follow install steps for that browser | ☐ | ☐ | ☐ |
+| 2 | Popup opens and shows activation status | Click toolbar icon on a Reddit thread | ☐ | ☐ | ☐ |
+| 3 | Master toggle switches state | Toggle in popup, panel disappears/reappears without reload | ☐ | ☐ | ☐ |
+| 4 | Floating RPT quick-bar appears on `/comments/` pages | Open any comment thread | ☐ | ☐ | ☐ |
+| 5 | Status pill reaches `Ready · N comments` | Watch pill after page load | ☐ | ☐ | ☐ |
+| 6 | Side panel opens with `T` and via popup button | Press `T` on a Reddit thread | ☐ | ☐ | ☐ |
+| 7 | Comment tree renders and jumps to comments | Click any node in the Tree tab | ☐ | ☐ | ☐ |
+| 8 | Collapse all + persistence works | Press `C`, reload page, chains stay folded | ☐ | ☐ | ☐ |
+| 9 | Author colors render | Enable in Options → Panel legend shows colored dots | ☐ | ☐ | ☐ |
+| 10 | Gallery keyboard nav (`←`/`→`) works | Press `G`, arrow-key through images | ☐ | ☐ | ☐ |
+| 11 | Command palette opens with `Ctrl+K` | Trigger on any Reddit page | ☐ | ☐ | ☐ |
+| 12 | Smart summary produces top/discussed/controversial | Open from panel or `Ctrl+K` | ☐ | ☐ | ☐ |
+| 13 | Live-new polling toggles and shows status | Enable Live-new, wait for a poll cycle | ☐ | ☐ | ☐ |
+| 14 | Cleaner hides deleted/low-score comments | Configure in Options, reload thread | ☐ | ☐ | ☐ |
+| 15 | Save-to-collection ★ works | Star a comment, check Analytics page | ☐ | ☐ | ☐ |
+| 16 | Export as JSON/Markdown/HTML downloads a file | Trigger from popup or panel | ☐ | ☐ | ☐ |
+| 17 | Settings export/import round-trip | Export JSON, wipe, re-import | ☐ | ☐ | ☐ |
+| 18 | Language switch translates popup + panel | Change from `Language` dropdown | ☐ | ☐ | ☐ |
+| 19 | Light / Dark / High-contrast themes render correctly | Toggle in popup + Options | ☐ | ☐ | ☐ |
+| 20 | Storage persists across browser restart | Save a keyword, restart browser | ☐ | ☐ | ☐ |
+
+> Kiwi note: rows 10-11 depend on a physical keyboard. On a touch-only device, use the equivalent on-screen buttons in the quick-bar and panel.
 
 Extension: edit files under `extension/` and reload from `chrome://extensions`.
 
