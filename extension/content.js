@@ -1566,6 +1566,9 @@
             <div class="rpt-tree-toolbar">
               <input class="rpt-search-box" placeholder="Search text or author…" aria-label="Search comments">
               <select class="rpt-author-filter" aria-label="Filter by author"><option value="">All authors</option></select>
+              <button class="rpt-match-prev" title="Previous match" aria-label="Previous match">◀</button>
+              <button class="rpt-match-next" title="Next match" aria-label="Next match">▶</button>
+              <span class="rpt-match-count" aria-live="polite"></span>
               <span class="rpt-tree-count" aria-live="polite"></span>
             </div>
             <div class="rpt-tree-container"></div>
