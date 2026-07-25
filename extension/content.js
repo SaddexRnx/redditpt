@@ -365,34 +365,83 @@
 
   /* ---------------- Live "new comments" indicator ---------------- *
    * Polls Reddit's own thread JSON (same origin, public endpoint) —
-   * no external server, still 100% local.                             */
+   * no external server, still 100% local. Adaptive polling: faster
+   * when the user is active, slower when idle or tab hidden.          */
   RPT.features.liveNew = {
-    _timer: null, _baseline: 0, _latest: 0,
+    _timer: null, _baseline: 0, _latest: 0, _lastActive: Date.now(),
+    _state: "paused", _interval: 45000, _errBackoff: 0,
+    _bindActivity() {
+      if (this._bound) return; this._bound = true;
+      const bump = () => { this._lastActive = Date.now(); };
+      window.addEventListener("pointermove", bump, { passive: true });
+      window.addEventListener("scroll", bump, { passive: true });
+      window.addEventListener("keydown", bump);
+      document.addEventListener("visibilitychange", () => this._reschedule());
+    },
+    _pickInterval() {
+      if (document.hidden) return 120000;
+      const idle = Date.now() - this._lastActive;
+      if (idle > 180000) return 120000;
+      if (idle < 30000)  return 20000;
+      return 45000;
+    },
+    _reschedule() {
+      if (!this._timer) return;
+      const next = Math.max(this._pickInterval(), this._errBackoff);
+      if (next !== this._interval) {
+        this._interval = next;
+        clearInterval(this._timer);
+        this._timer = setInterval(() => this._poll(), this._interval);
+        this._renderStatus();
+      }
+    },
+    async _poll() {
+      this._setState("check");
+      try {
+        const url = location.pathname.replace(/\/$/, "") + ".json?limit=500&raw_json=1";
+        const r = await fetch(url, { credentials: "omit" });
+        if (!r.ok) { this._errBackoff = Math.min((this._errBackoff || 45000) * 2, 300000); this._setState("idle"); this._reschedule(); return; }
+        this._errBackoff = 0;
+        const j = await r.json();
+        const listing = Array.isArray(j) && j[1]?.data?.children;
+        if (!listing) { this._setState("idle"); return; }
+        const count = this._countAll(listing);
+        this._latest = count;
+        const delta = Math.max(0, count - this._baseline);
+        RPT.ui.updateNewBadge(delta);
+        this._setState(delta > 0 ? "new" : "live", delta);
+        this._reschedule();
+      } catch { this._setState("idle"); }
+    },
     async start() {
       const auto = await RPT.autorun.load();
-      if (!auto.liveNew) return;
-      if (!RPT.utils.isRedditThread()) return;
+      if (!auto.liveNew || !RPT.utils.isRedditThread()) { this._setState("paused"); return; }
       this.stop();
+      this._bindActivity();
       this._baseline = RPT.state.comments.length ||
         document.querySelectorAll("shreddit-comment, .thing.comment").length;
-      const poll = async () => {
-        try {
-          const url = location.pathname.replace(/\/$/, "") + ".json?limit=500&raw_json=1";
-          const r = await fetch(url, { credentials: "omit" });
-          if (!r.ok) return;
-          const j = await r.json();
-          const listing = Array.isArray(j) && j[1]?.data?.children;
-          if (!listing) return;
-          const count = this._countAll(listing);
-          this._latest = count;
-          const delta = Math.max(0, count - this._baseline);
-          RPT.ui.updateNewBadge(delta);
-        } catch { /* silent */ }
-      };
-      poll();
-      this._timer = setInterval(poll, 45000);
+      this._interval = this._pickInterval();
+      this._poll();
+      this._timer = setInterval(() => this._poll(), this._interval);
+      this._setState("live");
     },
-    stop() { if (this._timer) clearInterval(this._timer); this._timer = null; RPT.ui.updateNewBadge(0); },
+    stop() {
+      if (this._timer) clearInterval(this._timer);
+      this._timer = null; RPT.ui.updateNewBadge(0);
+      this._setState("paused");
+    },
+    _setState(s, delta) {
+      this._state = s;
+      this._renderStatus(delta);
+    },
+    _renderStatus(delta) {
+      const el = document.querySelector(".rpt-live-pill"); if (!el) return;
+      el.dataset.state = this._state;
+      const secs = Math.round(this._interval / 1000);
+      const label = { live: `Live · ${secs}s`, idle: "Idle", paused: "Paused",
+        check: "Checking…", new: `+${delta ?? 0} new` }[this._state] || "";
+      el.querySelector(".rpt-live-txt").textContent = label;
+    },
     _countAll(children) {
       let n = 0;
       for (const c of children) {
@@ -403,7 +452,7 @@
       }
       return n;
     },
-    reset() { this._baseline = this._latest || this._baseline; RPT.ui.updateNewBadge(0); },
+    reset() { this._baseline = this._latest || this._baseline; RPT.ui.updateNewBadge(0); this._setState("live"); },
   };
 
   /* ---------------- Filter chips (OP / Mod / Awarded) ---------------- */
@@ -444,6 +493,26 @@
     KEY: "rpt_collections",
     async list() { const { [this.KEY]: v = [] } = await RPT.storage.get(this.KEY); return v; },
     async save(all) { await RPT.storage.set({ [this.KEY]: all }); },
+    async importMerged(items) {
+      const all = await this.list();
+      const seen = new Set(all.map((x) => x.url + "|" + x.id));
+      let added = 0;
+      for (const it of items) {
+        if (!it || !it.body || !it.author) continue;
+        const key = (it.url || "") + "|" + (it.id || it.author + "-" + it.savedAt);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        all.unshift({
+          id: it.id || (it.author + "-" + (it.savedAt || Date.now())),
+          author: String(it.author), body: String(it.body),
+          score: Number(it.score) || 0, url: String(it.url || ""),
+          title: String(it.title || ""), savedAt: it.savedAt || new Date().toISOString(),
+        });
+        added++;
+      }
+      await this.save(all.slice(0, 500));
+      return added;
+    },
     async add(c) {
       const all = await this.list();
       if (all.some((x) => x.id === c.id)) return;
