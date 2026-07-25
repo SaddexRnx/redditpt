@@ -24,10 +24,28 @@
   --accent-fg: #ffffff;
 }
 body {
-  margin: 0; width: 380px;
+  margin: 0; width: 380px; max-width: 100vw;
   background: var(--bg); color: var(--text);
   font: 13px/1.4 -apple-system, "Inter", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]) {
+    --bg: #ffffff; --panel: #f6f8fa; --panel-2: #eef2f7;
+    --border: #d9e0e8; --border-strong: #c3cbd6;
+    --text: #0b1220; --muted: #55637a; --accent-fg: #ffffff;
+  }
+}
+@media (max-width: 400px) {
+  body { width: 100vw; }
+  main { padding: 12px; }
+  .stat-grid { grid-template-columns: 1fr; }
+  .tool-grid, .tool-grid.three { grid-template-columns: 1fr; }
+  .app-header { padding: 12px 14px; }
+  .tabs { padding: 8px 10px 0; overflow-x: auto; }
+  .tab { padding: 8px 10px; font-size: 11.5px; }
+  .primary-card { padding: 12px; gap: 10px; }
+  .primary-icon { width: 36px; height: 36px; }
 }
 
 /* Header */
