@@ -85,6 +85,25 @@ document.getElementById("reset").onclick = async () => {
   location.reload();
 };
 
+/* -------- Author color legend (deterministic HSL per username) -------- */
+function authorColor(name) {
+  const s = String(name || "unknown");
+  let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return `hsl(${h % 360} 70% 60%)`;
+}
+function renderAuthorLegend() {
+  const host = document.getElementById("author-color-swatches");
+  if (!host) return;
+  const sample = ["spez", "AutoModerator", "gallowboob", "shitty_watercolour", "poem_for_your_sprog", "unidan", "you"];
+  host.innerHTML = sample.map((u) => {
+    const c = authorColor(u);
+    return `<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:var(--bg-2);border:1px solid var(--border);font-size:12px">
+      <span style="width:10px;height:10px;border-radius:999px;background:${c}"></span>
+      <span style="color:${c};font-weight:600">u/${u}</span>
+    </span>`;
+  }).join("");
+}
+
 /* -------- Accessibility -------- */
 async function initA11y() {
   const { [KEYS.a11y]: cur = {} } = await get(KEYS.a11y);
