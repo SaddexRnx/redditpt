@@ -70,6 +70,12 @@
       );
     },
     isRedditThread() { return /\/(r|user)\/[^/]+\/comments\//.test(location.pathname); },
+    /* Deterministic HSL color per author (used for tree dots + comment side-stripe). */
+    authorColor(name) {
+      const s = String(name || "unknown");
+      let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+      return `hsl(${h % 360} 70% 60%)`;
+    },
   };
 
   /* ---------------- icon set (inline SVG) ---------------- */
@@ -154,12 +160,15 @@
       const walk = (nodes, parent) => {
         nodes.forEach((n) => {
           const li = document.createElement("li");
+          const color = RPT.utils.authorColor(n.author);
           li.innerHTML = `
             <div class="rpt-tree-item" data-id="${RPT.utils.escapeHtml(n.id)}">
+              <span class="rpt-author-dot" style="background:${color}"></span>
               <span class="rpt-author">${RPT.utils.escapeHtml(n.author)}</span>
               <span class="rpt-score">${n.score}</span>
               <span class="rpt-preview">${RPT.utils.escapeHtml(n.body.slice(0, 100))}</span>
             </div>`;
+          li.querySelector(".rpt-author").style.color = color;
           li.querySelector(".rpt-tree-item").addEventListener("click", () => {
             n.el.scrollIntoView({ behavior: "smooth", block: "center" });
             n.el.classList.add("rpt-flash");
@@ -171,6 +180,24 @@
       };
       walk(roots, ul);
       container.appendChild(ul);
+    },
+  };
+
+  /* ---------------- Author auto-coloring on live comments ---------------- *
+   * Applies a colored left border + author-name tint to each comment so users
+   * are visually distinguishable at a glance. Works on both new and old Reddit. */
+  RPT.features.authorColors = {
+    apply() {
+      RPT.state.comments.forEach((c) => {
+        const color = RPT.utils.authorColor(c.author);
+        c.el.classList.add("rpt-authored");
+        c.el.style.setProperty("--rpt-author-color", color);
+        const authorEl = c.el.querySelector?.("a[href*='/user/'], [slot='authorName'] a, .author");
+        if (authorEl && !authorEl.dataset.rptTinted) {
+          authorEl.dataset.rptTinted = "1";
+          authorEl.style.color = color;
+        }
+      });
     },
   };
 
@@ -195,18 +222,40 @@
       if (!c) return;
       const collapsed = forceState ?? !c.el.classList.contains("rpt-collapsed");
       c.el.classList.toggle("rpt-collapsed", collapsed);
+      // Reddit's <shreddit-comment> supports a native `collapsed` attribute — use it
+      // so replies and body hide reliably inside the shadow DOM.
+      if (collapsed) c.el.setAttribute?.("collapsed", "");
+      else c.el.removeAttribute?.("collapsed");
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const key = location.pathname;
       map[key] = map[key] || {};
       map[key][id] = collapsed;
       await RPT.storage.set({ [this.STORAGE_KEY]: map });
     },
-    async collapseAll() { RPT.state.comments.forEach((c) => c.el.classList.add("rpt-collapsed")); },
-    async expandAll()  { RPT.state.comments.forEach((c) => c.el.classList.remove("rpt-collapsed")); },
+    async collapseAll() {
+      // Re-parse first so freshly-loaded comments are included.
+      RPT.features.commentTree.parse();
+      RPT.state.comments.forEach((c) => {
+        c.el.classList.add("rpt-collapsed");
+        c.el.setAttribute?.("collapsed", "");
+        // Old-Reddit fallback: uses its own `.collapsed` class on `.thing.comment`.
+        if (c.el.classList?.contains("thing")) c.el.classList.add("collapsed");
+      });
+    },
+    async expandAll() {
+      RPT.features.commentTree.parse();
+      RPT.state.comments.forEach((c) => {
+        c.el.classList.remove("rpt-collapsed");
+        c.el.removeAttribute?.("collapsed");
+        if (c.el.classList?.contains("thing")) c.el.classList.remove("collapsed");
+      });
+    },
     async restore() {
       const { [this.STORAGE_KEY]: map = {} } = await RPT.storage.get(this.STORAGE_KEY);
       const saved = map[location.pathname] || {};
-      RPT.state.comments.forEach((c) => { if (saved[c.id]) c.el.classList.add("rpt-collapsed"); });
+      RPT.state.comments.forEach((c) => {
+        if (saved[c.id]) { c.el.classList.add("rpt-collapsed"); c.el.setAttribute?.("collapsed", ""); }
+      });
     },
   };
 
@@ -988,7 +1037,7 @@
       const bar = document.createElement("div");
       bar.className = "rpt-qb";
       const btn = (act, icon, label, sc) => `
-        <button class="rpt-qb-btn" data-act="${act}" aria-label="${label}">
+        <button class="rpt-qb-btn" data-act="${act}" aria-label="${label}" title="${label}${sc ? ` (${sc})` : ""}">
           ${icon}
           <span class="rpt-qb-tip">${label}${sc ? `<kbd>${sc}</kbd>` : ""}</span>
         </button>`;
@@ -1004,12 +1053,12 @@
       <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
         <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
       </span>
-        <button class="rpt-qb-btn" data-act="new" aria-label="New comments">
+        <button class="rpt-qb-btn" data-act="new" aria-label="New comments" title="Jump to newest (N)">
           ${I.bell}
           <span class="rpt-qb-badge" style="display:none">0</span>
           <span class="rpt-qb-tip">New comments<kbd>N</kbd></span>
         </button>
-      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette">
+      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette" title="Command palette (⌘K)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
         <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
       </button>
@@ -1248,19 +1297,49 @@
       const h = RPT.features.health.analyze();
       const el = p.querySelector('[data-panel="stats"]');
       if (!s) { el.innerHTML = '<p class="rpt-empty">No comments on this page.</p>'; return; }
+      const jump = (author) => {
+        const c = RPT.state.comments.find((x) => x.author === author);
+        if (!c) return;
+        c.el.scrollIntoView({ behavior: "smooth", block: "center" });
+        c.el.classList.add("rpt-flash"); setTimeout(() => c.el.classList.remove("rpt-flash"), 1500);
+      };
+      const jumpDeepest = () => {
+        const deepest = RPT.state.comments.slice().sort((a, b) => b.depth - a.depth)[0];
+        if (deepest) { deepest.el.scrollIntoView({ behavior: "smooth", block: "center" });
+          deepest.el.classList.add("rpt-flash"); setTimeout(() => deepest.el.classList.remove("rpt-flash"), 1500); }
+      };
+      const jumpLongest = () => jump(s.longest.author);
+      const jumpFirst = () => {
+        const first = RPT.state.comments[0];
+        if (first) { first.el.scrollIntoView({ behavior: "smooth", block: "center" });
+          first.el.classList.add("rpt-flash"); setTimeout(() => first.el.classList.remove("rpt-flash"), 1500); }
+      };
+      const chipsHtml = (arr, fmt) => arr.map(([u, n]) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(u)}">${RPT.utils.escapeHtml(u)} <em>${fmt(n)}</em></span>`).join(" ") || "—";
+      const branchesHtml = (arr) => arr.map((b) => `<span class="rpt-stat-chip" data-author="${RPT.utils.escapeHtml(b.author)}">${RPT.utils.escapeHtml(b.author)} <em>${b.size}</em></span>`).join(" ") || "—";
       el.innerHTML = `
-        <div class="rpt-card"><div class="rpt-k">Comments loaded</div><div class="rpt-v">${s.total}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="first" title="Jump to first comment"><div class="rpt-k">Comments loaded</div><div class="rpt-v">${s.total}</div></div>
         <div class="rpt-card"><div class="rpt-k">Avg length</div><div class="rpt-v">${s.avgLength} chars</div></div>
-        <div class="rpt-card"><div class="rpt-k">Deepest chain</div><div class="rpt-v">${s.deepest}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Longest comment</div><div class="rpt-v">${s.longest.author} — ${s.longest.length} chars</div></div>
-        <div class="rpt-card"><div class="rpt-k">Most replied</div><div class="rpt-v">${s.mostReplied.map(([u, n]) => `${u} (${n})`).join(", ") || "—"}</div></div>
-        <div class="rpt-card"><div class="rpt-k">Top branches</div><div class="rpt-v">${s.branches.map((b) => `${b.author} (${b.size})`).join(", ") || "—"}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="deepest" title="Jump to deepest comment"><div class="rpt-k">Deepest chain</div><div class="rpt-v">${s.deepest}</div></div>
+        <div class="rpt-card rpt-clickable" data-jump="longest" title="Jump to longest comment"><div class="rpt-k">Longest comment</div><div class="rpt-v">${RPT.utils.escapeHtml(s.longest.author)} — ${s.longest.length} chars</div></div>
+        <div class="rpt-card"><div class="rpt-k">Most replied</div><div class="rpt-v rpt-chips-v">${chipsHtml(s.mostReplied, (n) => `(${n})`)}</div></div>
+        <div class="rpt-card"><div class="rpt-k">Top branches</div><div class="rpt-v rpt-chips-v">${branchesHtml(s.branches)}</div></div>
         <div class="rpt-card rpt-health">
           <div class="rpt-k">Thread health</div>
           <div class="rpt-v">${h.score}/100</div>
           <div class="rpt-health-bar"><div class="rpt-health-fill" style="width:${h.score}%"></div></div>
           <ul>${h.notes.map((n) => `<li>${RPT.utils.escapeHtml(n)}</li>`).join("")}</ul>
         </div>`;
+      el.querySelectorAll(".rpt-card[data-jump]").forEach((card) => {
+        card.onclick = () => {
+          const k = card.dataset.jump;
+          if (k === "first") jumpFirst();
+          else if (k === "deepest") jumpDeepest();
+          else if (k === "longest") jumpLongest();
+        };
+      });
+      el.querySelectorAll(".rpt-stat-chip").forEach((chip) => {
+        chip.onclick = () => jump(chip.dataset.author);
+      });
     },
   };
 
@@ -1308,6 +1387,7 @@
     if (auto.cleaner) await RPT.features.cleaner.apply();
     if (auto.highlighter) await RPT.features.highlighter.apply();
     if (auto.tags) await RPT.features.userTags.apply();
+    RPT.features.authorColors.apply();
     await RPT.features.rules.apply();
     RPT.features.chips.apply();
     await RPT.features.collections.attach();
@@ -1327,6 +1407,21 @@
     RPT.features.shortcuts.init();
     RPT.features.liveNew.start();
     RPT.tour.maybeShow();
+    // Detect SPA navigation between Reddit threads and re-run everything.
+    (() => {
+      let last = location.href;
+      const onNav = () => {
+        if (location.href === last) return;
+        last = location.href;
+        RPT.state = { tree: null, comments: [], post: null };
+        RPT.features.liveNew.stop();
+        setTimeout(() => { runAll(); RPT.features.liveNew.start(); }, 600);
+      };
+      window.addEventListener("popstate", onNav);
+      const _ps = history.pushState, _rs = history.replaceState;
+      history.pushState = function () { const r = _ps.apply(this, arguments); onNav(); return r; };
+      history.replaceState = function () { const r = _rs.apply(this, arguments); onNav(); return r; };
+    })();
     // Re-apply rules whenever they change from Options
     try {
       chrome.storage.onChanged.addListener((changes, area) => {
