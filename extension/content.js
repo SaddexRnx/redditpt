@@ -1131,6 +1131,53 @@
     },
   };
 
+  /* ---------------- About modal ---------------- */
+  RPT.features.about = {
+    open() {
+      document.querySelector(".rpt-modal.rpt-about")?.remove();
+      const m = document.createElement("div");
+      m.className = "rpt-modal rpt-about";
+      m.setAttribute("role", "dialog");
+      m.setAttribute("aria-modal", "true");
+      m.setAttribute("aria-label", "About Reddit Power Toolkit");
+      m.innerHTML = `
+        <div class="rpt-modal-card" style="max-width:420px">
+          <header class="rpt-modal-head">
+            <strong>About Reddit Power Toolkit</strong>
+            <button class="rpt-x" data-x aria-label="Close">×</button>
+          </header>
+          <div class="rpt-modal-body" style="padding:16px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+              <div style="width:44px;height:44px;border-radius:10px;background:var(--rpt-green);color:#001912;display:grid;place-items:center;font-weight:800">RPT</div>
+              <div>
+                <div style="font-weight:700;font-size:14px">Reddit Power Toolkit</div>
+                <div style="color:var(--rpt-muted);font-size:12px">Version <strong>${RPT.VERSION}</strong> · Built ${RPT.BUILD_DATE}</div>
+              </div>
+            </div>
+            <p style="color:var(--rpt-muted);font-size:12px;line-height:1.5;margin:0 0 14px">
+              A 100% local browser extension that upgrades Reddit reading and writing. No accounts, no servers, no tracking.
+            </p>
+            <div style="display:grid;gap:8px">
+              <a class="rpt-about-link" href="https://github.com/Saddex-x/reddit-power-toolkit/releases" target="_blank" rel="noopener">
+                <span>Changelog & releases</span><span aria-hidden="true">↗</span>
+              </a>
+              <a class="rpt-about-link" href="https://github.com/Saddex-x/reddit-power-toolkit" target="_blank" rel="noopener">
+                <span>GitHub repository</span><span aria-hidden="true">↗</span>
+              </a>
+              <a class="rpt-about-link" href="https://t.me/Saddex_x" target="_blank" rel="noopener">
+                <span>Telegram — @Saddex_x</span><span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>`;
+      m.addEventListener("click", (e) => {
+        if (e.target === m || e.target.closest?.("[data-x]")) m.remove();
+      });
+      document.body.appendChild(m);
+      RPT.a11y?.trapModal?.(m);
+    },
+  };
+
   /* ---------------- Link preview ---------------- */
   RPT.features.linkPreview = {
     attach() {
