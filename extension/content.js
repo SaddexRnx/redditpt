@@ -1766,6 +1766,7 @@
         if (changes.rpt_shortcuts) {
           RPT.customKeys.load().then(() => RPT.a11y.refreshKeyHelp());
         }
+        if (changes.rpt_enabled) RPT.setEnabled(changes.rpt_enabled.newValue !== false);
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
