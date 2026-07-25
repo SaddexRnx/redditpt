@@ -4,6 +4,15 @@
   <img src="public/logo.png" alt="Reddit Power Toolkit logo" width="120" height="120">
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/version-1.7.0-10b981?style=flat-square" alt="Version 1.7.0">
+  <img src="https://img.shields.io/badge/manifest-v3-3b82f6?style=flat-square" alt="Manifest V3">
+  <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
+</p>
+
+> **Current release: v1.7.0** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddex-x/reddit-power-toolkit/releases) for full history.
+
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
 Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
