@@ -70,6 +70,12 @@
       );
     },
     isRedditThread() { return /\/(r|user)\/[^/]+\/comments\//.test(location.pathname); },
+    /* Deterministic HSL color per author (used for tree dots + comment side-stripe). */
+    authorColor(name) {
+      const s = String(name || "unknown");
+      let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+      return `hsl(${h % 360} 70% 60%)`;
+    },
   };
 
   /* ---------------- icon set (inline SVG) ---------------- */
