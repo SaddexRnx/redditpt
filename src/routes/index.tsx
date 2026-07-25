@@ -410,6 +410,22 @@ function Index() {
           <a href="#privacy" className={`${subtle} hover:text-inherit`}>{t("nav_privacy")}</a>
         </nav>
         <div className="flex items-center gap-2">
+          <a
+            href="https://github.com/Saddex"
+            target="_blank" rel="noreferrer"
+            aria-label="GitHub"
+            className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
+          >
+            <Github className="h-4 w-4" />
+          </a>
+          <a
+            href="https://t.me/Saddex_x"
+            target="_blank" rel="noreferrer"
+            aria-label="Telegram @Saddex_x"
+            className={`hidden sm:grid h-8 w-8 place-items-center rounded-lg border ${border} ${subtle} hover:text-[#ff4500]`}
+          >
+            <MessageCircle className="h-4 w-4" />
+          </a>
           <div className={`flex items-center gap-1.5 rounded-lg border ${border} px-2 py-1 text-xs ${subtle}`}>
             <Languages className="h-3.5 w-3.5" />
             <select
@@ -563,9 +579,16 @@ function Index() {
       </main>
 
       <footer className={`border-t ${border}`}>
-        <div className={`mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-6 py-8 text-sm sm:flex-row sm:items-center ${muted}`}>
-          <span>{t("footerA")}</span>
-          <span className="flex items-center gap-2"><Github className="h-4 w-4" /> {t("footerB")}</span>
+        <div className={`mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 px-6 py-8 text-sm sm:flex-row sm:items-center ${muted}`}>
+          <span>Uses the Reddit color palette · 100% local, zero tracking.</span>
+          <div className="flex flex-wrap items-center gap-4">
+            <a href="https://github.com/Saddex" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
+              <Github className="h-4 w-4" /> github.com/Saddex
+            </a>
+            <a href="https://t.me/Saddex_x" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-[#ff4500]">
+              <MessageCircle className="h-4 w-4" /> @Saddex_x
+            </a>
+          </div>
         </div>
       </footer>
     </div>
