@@ -1764,7 +1764,23 @@
       }, 900);
     })();
     runAll();
-    new MutationObserver(runAll).observe(document.body, { childList: true, subtree: true });
+    // Only re-parse on real Reddit comment DOM changes. Ignore mutations
+    // caused by RPT itself (marked with the rpt- prefix or inside our UI)
+    // and skip while a parse is in flight — this fixes the constant
+    // "Parsing… / Ready" flashing users saw before.
+    new MutationObserver((muts) => {
+      if (!RPT.enabled || RPT._parsing) return;
+      for (const m of muts) {
+        const t = m.target;
+        if (t?.closest?.(".rpt-panel, .rpt-quickbar, .rpt-modal, .rpt-tour, .rpt-sr-live, .rpt-status-pill")) continue;
+        const addedReal = [...m.addedNodes].some((n) => {
+          if (n.nodeType !== 1) return false;
+          if (n.className && typeof n.className === "string" && n.className.startsWith("rpt-")) return false;
+          return n.tagName === "SHREDDIT-COMMENT" || n.querySelector?.("shreddit-comment, [data-testid='comment']");
+        });
+        if (addedReal) { runAll(); return; }
+      }
+    }).observe(document.body, { childList: true, subtree: true });
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
