@@ -973,31 +973,31 @@
     _sel: 0, _filtered: [], _root: null,
     commands() {
       return [
-        { id: "panel",    label: "Open side panel",       kbd: "T",  run: () => RPT.ui.togglePanel() },
-        { id: "summary",  label: "Smart summary",         kbd: "S",  run: () => RPT.features.summary.open() },
-        { id: "gallery",  label: "Image gallery",         kbd: "G",  run: () => RPT.features.gallery.open() },
-        { id: "conv",     label: "Conversation mode",     kbd: "C",  run: () => RPT.features.conversation.open() },
-        { id: "layers",   label: "Toggle depth layers",   kbd: "L",  run: () => {
+        { id: "panel",    label: tr("open_panel"),       kbd: "T",  run: () => RPT.ui.togglePanel() },
+        { id: "summary",  label: tr("smart_summary_title"),         kbd: "S",  run: () => RPT.features.summary.open() },
+        { id: "gallery",  label: tr("image_gallery"),         kbd: "G",  run: () => RPT.features.gallery.open() },
+        { id: "conv",     label: tr("conversation_mode"),     kbd: "C",  run: () => RPT.features.conversation.open() },
+        { id: "layers",   label: tr("depth_layers_title"),   kbd: "L",  run: () => {
           document.body.classList.toggle("rpt-layers-on");
           document.body.classList.contains("rpt-layers-on") ? RPT.features.layers.apply() : RPT.features.layers.remove();
         } },
-        { id: "collapse", label: "Collapse all comments", kbd: "⇧C", run: () => RPT.features.folding.collapseAll() },
-        { id: "expand",   label: "Expand all comments",   kbd: "⇧E", run: () => RPT.features.folding.expandAll() },
-        { id: "newest",   label: "Jump to newest comment", kbd: "N", run: () => RPT.features.shortcuts._jumpToNewest() },
-        { id: "live",     label: "Toggle live-new polling", run: async () => {
+        { id: "collapse", label: tr("collapse_all_comments"), kbd: "⇧C", run: () => RPT.features.folding.collapseAll() },
+        { id: "expand",   label: tr("expand_all_comments"),   kbd: "⇧E", run: () => RPT.features.folding.expandAll() },
+        { id: "newest",   label: tr("jump_newest"), kbd: "N", run: () => RPT.features.shortcuts._jumpToNewest() },
+        { id: "live",     label: tr("toggle_live_polling"), run: async () => {
           const a = await RPT.autorun.load(); a.liveNew = !a.liveNew; await RPT.autorun.save(a);
           a.liveNew ? RPT.features.liveNew.start() : RPT.features.liveNew.stop();
         } },
-        { id: "chip-op",   label: "Filter: OP only",    run: () => RPT.features.chips.toggle("op") },
-        { id: "chip-mod",  label: "Filter: Mod only",   run: () => RPT.features.chips.toggle("mod") },
-        { id: "chip-awd",  label: "Filter: Awarded",    run: () => RPT.features.chips.toggle("awarded") },
-        { id: "chip-none", label: "Filter: Reset",      run: () => { RPT.features.chips.active.clear(); RPT.features.chips.apply(); } },
-        { id: "md",       label: "Export as Markdown", run: () => RPT.features.exporter.md() },
-        { id: "json",     label: "Export as JSON",     run: () => RPT.features.exporter.json() },
-        { id: "html",     label: "Export as HTML",     run: () => RPT.features.exporter.html() },
-        { id: "kbd",      label: "Keyboard shortcuts", kbd: "?", run: () => RPT.features.shortcuts.cheatsheet() },
-        { id: "settings", label: "Open settings",       run: () => chrome.runtime.sendMessage({ type: "OPEN_OPTIONS" }) },
-        { id: "analytics",label: "Open analytics dashboard", run: () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }) },
+        { id: "chip-op",   label: tr("filter_op_only"),    run: () => RPT.features.chips.toggle("op") },
+        { id: "chip-mod",  label: tr("filter_mod_only"),   run: () => RPT.features.chips.toggle("mod") },
+        { id: "chip-awd",  label: tr("filter_awarded"),    run: () => RPT.features.chips.toggle("awarded") },
+        { id: "chip-none", label: tr("filter_reset"),      run: () => { RPT.features.chips.active.clear(); RPT.features.chips.apply(); } },
+        { id: "md",       label: tr("export_markdown"), run: () => RPT.features.exporter.md() },
+        { id: "json",     label: tr("export_json"),     run: () => RPT.features.exporter.json() },
+        { id: "html",     label: tr("export_as_html"),     run: () => RPT.features.exporter.html() },
+        { id: "kbd",      label: tr("keyboard_shortcuts"), kbd: "?", run: () => RPT.features.shortcuts.cheatsheet() },
+        { id: "settings", label: tr("open_settings"),       run: () => chrome.runtime.sendMessage({ type: "OPEN_OPTIONS" }) },
+        { id: "analytics",label: tr("open_analytics_dashboard"), run: () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }) },
         { id: "theme",    label: "Toggle theme (dark/light)", run: () => window.RPT_THEME?.set(window.RPT_THEME.current === "dark" ? "light" : "dark") },
       ];
     },
@@ -1007,10 +1007,10 @@
       const back = document.createElement("div");
       back.className = "rpt-cmdk-backdrop";
       back.innerHTML = `
-        <div class="rpt-cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
-          <input type="text" placeholder="Type a command…" aria-label="Command" autocomplete="off">
+        <div class="rpt-cmdk" role="dialog" aria-modal="true" aria-label="${tr("command_palette")}">
+          <input type="text" placeholder="${tr("type_command")}" aria-label="${tr("command")}" autocomplete="off">
           <ul role="listbox"></ul>
-          <div class="rpt-cmdk-foot"><span><kbd>↑↓</kbd> navigate</span><span><kbd>↵</kbd> run</span><span><kbd>Esc</kbd> close</span></div>
+          <div class="rpt-cmdk-foot"><span><kbd>↑↓</kbd> ${tr("arrow_nav")}</span><span><kbd>↵</kbd> ${tr("enter_run")}</span><span><kbd>Esc</kbd> ${tr("esc_close")}</span></div>
         </div>`;
       this._root = back;
       const input = back.querySelector("input");
@@ -1021,7 +1021,7 @@
         this._sel = 0;
         list.innerHTML = this._filtered.length
           ? this._filtered.map((c, i) => `<li role="option" data-i="${i}" class="${i === 0 ? "rpt-cmdk-sel" : ""}"><span>${RPT.utils.escapeHtml(c.label)}</span>${c.kbd ? `<span class="rpt-cmdk-kbd">${c.kbd}</span>` : ""}</li>`).join("")
-          : `<div class="rpt-cmdk-empty">No commands match “${RPT.utils.escapeHtml(query)}”.</div>`;
+          : `<div class="rpt-cmdk-empty">${tr("no_commands_match")} “${RPT.utils.escapeHtml(query)}”.</div>`;
       };
       input.addEventListener("input", () => render(input.value));
       input.addEventListener("keydown", (e) => {
@@ -1134,7 +1134,7 @@
       const esc = RPT.utils.escapeHtml;
       const walk = (nodes) => `<ul>${nodes.map((n) => `<li><strong>${esc(n.author)}</strong> (${n.score})<br>${esc(n.body)}${n.children.length ? walk(n.children) : ""}</li>`).join("")}</ul>`;
       const p = RPT.state.post || {};
-      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#ff4500}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>Comments</h2>${walk(RPT.state.tree || [])}`;
+      const out = `<!doctype html><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{font:14px system-ui;max-width:780px;margin:2rem auto;padding:0 1rem;background:#0b0f14;color:#e6edf5}li{margin:.5rem 0}strong{color:#ff4500}</style><h1>${esc(p.title)}</h1><p>${esc(p.body || "")}</p><h2>${tr("comments_header")}</h2>${walk(RPT.state.tree || [])}`;
       this._download("reddit-thread.html", "text/html", out);
     },
   };
@@ -1145,7 +1145,7 @@
       const imgs = Array.from(document.querySelectorAll('shreddit-post img, [data-testid="post-container"] img, .expando img, a.title img'))
         .map((i) => i.src).filter((s) => /^https?:/.test(s) && !/emoji|avatar|award/i.test(s));
       const unique = Array.from(new Set(imgs));
-      if (!unique.length) { alert("No images detected on this page."); return; }
+      if (!unique.length) { alert(tr("no_images_detected")); return; }
       let idx = 0;
       const path = location.pathname;
       const savePos = RPT.utils.debounce((i) => RPT.galleryPos.set(path, i), 300);
@@ -1153,20 +1153,20 @@
       o.className = "rpt-overlay rpt-gallery";
       o.setAttribute("role", "dialog");
       o.setAttribute("aria-modal", "true");
-      o.setAttribute("aria-label", "Image gallery");
+      o.setAttribute("aria-label", tr("image_gallery"));
       o.tabIndex = -1;
       o.innerHTML = `
-        <button class="rpt-g-prev" type="button" aria-label="Previous image (Left arrow)" title="Previous (←)">‹</button>
-        <img class="rpt-g-img" alt="Gallery image 1 of ${unique.length}" src="${unique[0]}">
-        <button class="rpt-g-next" type="button" aria-label="Next image (Right arrow)" title="Next (→)">›</button>
-        <button class="rpt-close rpt-g-close" type="button" aria-label="Close gallery (Esc)" title="Close (Esc)">×</button>
+        <button class="rpt-g-prev" type="button" aria-label="${tr("previous_image")}" title="${tr("previous")} (←)">‹</button>
+        <img class="rpt-g-img" alt="${tr("gallery_image")} 1 ${tr("of")} ${unique.length}" src="${unique[0]}">
+        <button class="rpt-g-next" type="button" aria-label="${tr("next_image")}" title="${tr("next")} (→)">›</button>
+        <button class="rpt-close rpt-g-close" type="button" aria-label="${tr("close_gallery")}" title="${tr("close_word")} (Esc)">×</button>
         <div class="rpt-g-count" aria-live="polite">1 / ${unique.length}</div>`;
       const img = o.querySelector(".rpt-g-img");
       const count = o.querySelector(".rpt-g-count");
       const go = (n) => {
         idx = (n + unique.length) % unique.length;
         img.src = unique[idx];
-        img.alt = `Gallery image ${idx + 1} of ${unique.length}`;
+        img.alt = `${tr("gallery_image")} ${idx + 1} ${tr("of")} ${unique.length}`;
         count.textContent = `${idx + 1} / ${unique.length}`;
         savePos(idx);
       };
@@ -1434,43 +1434,43 @@
       bar.innerHTML = `
         <div class="rpt-qb-brand">RPT</div>
         <div class="rpt-qb-sep"></div>
-        ${btn("panel", I.panel, "Panel", "T")}
-        ${btn("summary", I.summary, "Smart summary", "S")}
-        ${btn("conv", I.chat, "Conversation", "C")}
-        ${btn("gallery", I.image, "Gallery", "G")}
-        ${btn("fold", I.fold, "Collapse all", "⇧C")}
+        ${btn("panel", I.panel, tr("panel"), "T")}
+        ${btn("summary", I.summary, tr("smart_summary_title"), "S")}
+        ${btn("conv", I.chat, tr("conversation_mode"), "C")}
+        ${btn("gallery", I.image, tr("image_gallery"), "G")}
+        ${btn("fold", I.fold, tr("collapse_all_short"), "⇧C")}
         <div class="rpt-qb-sep"></div>
-      <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="Parsing status" title="Thread parsing status">
-        <span class="rpt-status-dot"></span><span class="rpt-status-txt">Idle</span>
+      <span class="rpt-status-pill" data-state="idle" role="status" aria-live="polite" aria-label="${tr("parsing_status")}" title="${tr("thread_parsing_status")}">
+        <span class="rpt-status-dot"></span><span class="rpt-status-txt">${tr("idle")}</span>
       </span>
-      <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="Live polling status">
-        <span class="rpt-live-dot"></span><span class="rpt-live-txt">Paused</span>
+      <span class="rpt-live-pill" data-state="paused" role="status" aria-live="polite" aria-label="${tr("live_polling_status")}">
+        <span class="rpt-live-dot"></span><span class="rpt-live-txt">${tr("paused")}</span>
       </span>
-        <button class="rpt-qb-btn" data-act="new" aria-label="New comments" title="Jump to newest (N)">
+        <button class="rpt-qb-btn" data-act="new" aria-label="${tr("new_comments")}" title="${tr("jump_newest")} (N)">
           ${I.bell}
           <span class="rpt-qb-badge" style="display:none">0</span>
-          <span class="rpt-qb-tip">New comments<kbd>N</kbd></span>
+          <span class="rpt-qb-tip">${tr("new_comments")}<kbd>N</kbd></span>
         </button>
-      <button class="rpt-qb-btn" data-act="cmdk" aria-label="Command palette" title="Command palette (⌘K)">
+      <button class="rpt-qb-btn" data-act="cmdk" aria-label="${tr("command_palette")}" title="${tr("command_palette")} (⌘K)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h4M7 13h10M7 17h6"/></svg>
-        <span class="rpt-qb-tip">Command palette<kbd>⌘K</kbd></span>
+        <span class="rpt-qb-tip">${tr("command_palette")}<kbd>⌘K</kbd></span>
       </button>
         ${btn("kbd", I.kbd, "Shortcuts", "?")}
-        ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, "About Reddit Power Toolkit")}
-        <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="Power features" title="Power features (36 tools)">
+        ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, tr("about"))}
+        <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="${tr("power_features")}" title="${tr("power_features")}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          <span class="rpt-qb-tip">Power features (36)</span>
+          <span class="rpt-qb-tip">${tr("power_features")}</span>
         </button>
         <div class="rpt-qb-sep"></div>
-        <button class="rpt-qb-btn" data-act="size" aria-label="Toggle toolbar size" title="Toggle toolbar size">
+        <button class="rpt-qb-btn" data-act="size" aria-label="${tr("toggle_toolbar_size")}" title="${tr("toggle_toolbar_size")}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          <span class="rpt-qb-tip">Compact / Comfortable</span>
+          <span class="rpt-qb-tip">${tr("compact_comfortable")}</span>
         </button>
-        <button class="rpt-qb-btn rpt-qb-power" data-act="power" aria-label="Turn extension off" title="Turn extension on/off">
+        <button class="rpt-qb-btn rpt-qb-power" data-act="power" aria-label="${tr("turn_off")}" title="${tr("turn_on_off")}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-          <span class="rpt-qb-tip">Turn extension off</span>
+          <span class="rpt-qb-tip">${tr("turn_off")}</span>
         </button>
-        ${btn("close", I.close, "Hide toolbar")}`;
+        ${btn("close", I.close, tr("hide_toolbar"))}`;
       bar.addEventListener("click", (e) => {
         const b = e.target.closest?.("[data-act]");
         if (!b) return;
@@ -1498,7 +1498,7 @@
     RPT.features.liveNew._renderStatus();
     // Reflect current status on the freshly mounted pill.
     RPT.status.set(RPT.state.comments.length ? "ready" : "idle",
-      RPT.state.comments.length ? `Ready · ${RPT.state.comments.length} comments` : "Idle");
+      RPT.state.comments.length ? `${tr("ready")} · ${RPT.state.comments.length} ${tr("comments")}` : tr("idle"));
     },
     toggleSize() {
       const bar = document.querySelector(".rpt-qb");
@@ -1513,7 +1513,7 @@
       RPT.setEnabled?.(next);
       const btn = document.querySelector('.rpt-qb-btn[data-act="power"]');
       if (btn) {
-        btn.title = next ? "Turn extension off" : "Turn extension on";
+        btn.title = next ? tr("turn_off") : tr("turn_on");
         btn.setAttribute("aria-label", btn.title);
         btn.classList.toggle("rpt-qb-power-off", !next);
       }
@@ -1574,10 +1574,10 @@
         <section class="rpt-tab-body">
           <div data-panel="tree" class="rpt-tabpane active">
             <div class="rpt-tree-toolbar">
-              <input class="rpt-search-box" placeholder="Search text or author…" aria-label="Search comments">
-              <select class="rpt-author-filter" aria-label="Filter by author"><option value="">All authors</option></select>
-              <button class="rpt-match-prev" title="Previous match" aria-label="Previous match">◀</button>
-              <button class="rpt-match-next" title="Next match" aria-label="Next match">▶</button>
+              <input class="rpt-search-box" placeholder="${tr("search_text_author")}" aria-label="${tr("search_comments")}">
+              <select class="rpt-author-filter" aria-label="${tr("filter_by_author")}"><option value="">${tr("all_authors")}</option></select>
+              <button class="rpt-match-prev" title="${tr("previous_match")}" aria-label="${tr("previous_match")}">◀</button>
+              <button class="rpt-match-next" title="${tr("next_match")}" aria-label="${tr("next_match")}">▶</button>
               <span class="rpt-match-count" aria-live="polite"></span>
               <span class="rpt-tree-count" aria-live="polite"></span>
             </div>
@@ -1586,49 +1586,49 @@
           <div data-panel="tools" class="rpt-tabpane">
             <div class="rpt-section-title">Views</div>
             <div class="rpt-btnrow">
-              <button data-act="summary">${I.summary}<div><strong>Smart summary</strong><span class="rpt-btn-sub">Top voted · discussed · controversial</span></div></button>
-              <button data-act="conv">${I.chat}<div><strong>Conversation mode</strong><span class="rpt-btn-sub">Chat-style thread view</span></div></button>
-              <button data-act="gallery">${I.image}<div><strong>Image gallery</strong><span class="rpt-btn-sub">Full-screen with prev / next</span></div></button>
-              <button data-act="layers">${I.layers}<div><strong>Toggle depth layers</strong><span class="rpt-btn-sub">Colored depth indicators</span></div></button>
+              <button data-act="summary">${I.summary}<div><strong>${tr("smart_summary_title")}</strong><span class="rpt-btn-sub">${tr("views_sub_summary")}</span></div></button>
+              <button data-act="conv">${I.chat}<div><strong>${tr("conversation_mode")}</strong><span class="rpt-btn-sub">${tr("views_sub_conv")}</span></div></button>
+              <button data-act="gallery">${I.image}<div><strong>${tr("image_gallery")}</strong><span class="rpt-btn-sub">${tr("views_sub_gallery")}</span></div></button>
+              <button data-act="layers">${I.layers}<div><strong>${tr("depth_layers_title")}</strong><span class="rpt-btn-sub">${tr("views_sub_layers")}</span></div></button>
             </div>
-            <div class="rpt-section-title">Folding</div>
+            <div class="rpt-section-title">${tr("folding")}</div>
             <div class="rpt-btnrow">
-              <button data-act="collapse">${I.fold}Collapse all comments</button>
-              <button data-act="expand">${I.fold}Expand all comments</button>
+              <button data-act="collapse">${I.fold}${tr("collapse_all_comments")}</button>
+              <button data-act="expand">${I.fold}${tr("expand_all_comments")}</button>
             </div>
-            <div class="rpt-section-title">Automation</div>
+            <div class="rpt-section-title">${tr("automation")}</div>
             <div id="rpt-autorun-list"></div>
-            <div class="rpt-section-title">Help</div>
+            <div class="rpt-section-title">${tr("help")}</div>
             <div class="rpt-btnrow">
-              <button data-act="kbd">${I.kbd}Keyboard shortcuts</button>
-              <button data-act="analytics">${I.stats}Open analytics dashboard</button>
-              <button data-act="settings">${I.settings}Open settings</button>
+              <button data-act="kbd">${I.kbd}${tr("keyboard_shortcuts")}</button>
+              <button data-act="analytics">${I.stats}${tr("open_analytics_dashboard")}</button>
+              <button data-act="settings">${I.settings}${tr("open_settings")}</button>
             </div>
           </div>
           <div data-panel="collect" class="rpt-tabpane">
-            <p class="rpt-muted">Comments you've starred with the ★ button. Stored locally.</p>
+            <p class="rpt-muted">${tr("saved_comments_desc")}</p>
             <div id="rpt-collect-list"></div>
           </div>
           <div data-panel="filters" class="rpt-tabpane">
-            <p class="rpt-muted">Hide noisy comments on every Reddit thread.</p>
-            <label><input type="checkbox" data-f="hideDeleted"> Hide deleted / removed</label>
-            <label><input type="checkbox" data-f="hideEmpty"> Hide empty</label>
-            <label><input type="checkbox" data-f="hideBots"> Hide bots / AutoModerator</label>
-            <label><input type="checkbox" data-f="hideShort"> Hide very short comments</label>
-            <label><input type="checkbox" data-f="hideLowScore"> Hide low-score comments (&lt; 1)</label>
+            <p class="rpt-muted">${tr("filters_desc")}</p>
+            <label><input type="checkbox" data-f="hideDeleted"> ${tr("hide_deleted_removed")}</label>
+            <label><input type="checkbox" data-f="hideEmpty"> ${tr("hide_empty_comments")}</label>
+            <label><input type="checkbox" data-f="hideBots"> ${tr("hide_bots_am")}</label>
+            <label><input type="checkbox" data-f="hideShort"> ${tr("hide_very_short_comments")}</label>
+            <label><input type="checkbox" data-f="hideLowScore"> ${tr("hide_low_score_comments")}</label>
           </div>
           <div data-panel="highlight" class="rpt-tabpane">
-            <p class="rpt-muted">Comma-separated keywords, highlighted everywhere on Reddit.</p>
+            <p class="rpt-muted">${tr("kw_panel_desc")}</p>
             <textarea class="rpt-kw" rows="3" placeholder="docker, kubernetes, rust"></textarea>
-            <button class="rpt-kw-save">Save keywords</button>
+            <button class="rpt-kw-save">${tr("save_keywords")}</button>
           </div>
           <div data-panel="stats" class="rpt-tabpane rpt-stats"></div>
           <div data-panel="export" class="rpt-tabpane">
-            <p class="rpt-muted">Export this thread to a file, entirely locally.</p>
+            <p class="rpt-muted">${tr("export_thread_desc")}</p>
             <div class="rpt-btnrow">
-              <button data-act="md">${I.export}Export as Markdown</button>
-              <button data-act="json">${I.export}Export as JSON</button>
-              <button data-act="html">${I.export}Export as HTML</button>
+              <button data-act="md">${I.export}${tr("export_markdown")}</button>
+              <button data-act="json">${I.export}${tr("export_json")}</button>
+              <button data-act="html">${I.export}${tr("export_as_html")}</button>
             </div>
           </div>
         </section>`;
@@ -1641,7 +1641,7 @@
       const authorSel = p.querySelector(".rpt-author-filter");
       const countEl = p.querySelector(".rpt-tree-count");
       const authors = RPT.features.commentTree.authorList();
-      authorSel.innerHTML = '<option value="">All authors</option>' +
+      authorSel.innerHTML = `<option value="">${tr("all_authors")}</option>` +
         authors.map((a) => `<option value="${RPT.utils.escapeHtml(a.toLowerCase())}">${RPT.utils.escapeHtml(a)}</option>`).join("");
       const applyFilter = () => {
         const q = search.value.trim().toLowerCase();
@@ -1876,7 +1876,7 @@
   RPT.status = {
     set(state, msg) {
       // state: "parsing" | "ready" | "idle"
-      const label = msg || (state === "parsing" ? "Parsing…" : state === "ready" ? "Ready" : "Idle");
+      const label = msg || (state === "parsing" ? tr("parsing") : state === "ready" ? tr("ready") : tr("idle"));
       document.querySelectorAll(".rpt-status-pill").forEach((el) => {
         el.dataset.state = state;
         const t = el.querySelector(".rpt-status-txt");
@@ -1891,13 +1891,13 @@
       // Reliable screen-reader announcement — the pill itself may not be
       // visible when the panel is closed, so route through a dedicated
       // visually-hidden aria-live region.
-      try { RPT.a11y?.announce(`Thread status: ${label}`); } catch {}
+      try { RPT.a11y?.announce(`${tr("thread_status")}: ${label}`); } catch {}
     },
   };
   const _runAllImpl = async () => {
     if (!RPT.enabled) return;
     RPT._parsing = true;
-    RPT.status.set("parsing", "Parsing thread…");
+    RPT.status.set("parsing", tr("parsing_thread"));
     const auto = await RPT.autorun.load();
     RPT.features.commentTree.parse();
     RPT.features.layers.remove();
@@ -1914,7 +1914,7 @@
     if (auto.ageWarning) RPT.features.ageWarning.check();
     RPT.features.history.record();
     RPT.features.history.trackAnalytics();
-    RPT.status.set("ready", `Ready · ${RPT.state.comments.length} comments`);
+    RPT.status.set("ready", `${tr("ready")} · ${RPT.state.comments.length} ${tr("comments")}`);
     // Give the DOM a tick to settle so the MutationObserver we set below
     // doesn't fire on our own edits and cause a parsing/ready flicker.
     setTimeout(() => { RPT._parsing = false; }, 300);
