@@ -95,19 +95,45 @@ document.addEventListener("DOMContentLoaded", async () => {
     chrome.storage.local.set({ rpt_enabled: master.checked });
   });
 
-  // language selector
-  const sel = $("#lang-select");
-  window.RPT_I18N.LANGS.forEach(([code, label]) => {
-    const o = document.createElement("option");
-    o.value = code; o.textContent = label; if (code === window.RPT_I18N.current) o.selected = true;
-    sel.appendChild(o);
+  // Language dropdown (header chip toggles a small popover menu)
+  const langMenu = $("#lang-menu");
+  const langChip = $("#lang-chip");
+  const buildLangMenu = () => {
+    langMenu.innerHTML = "";
+    window.RPT_I18N.LANGS.forEach(([code, label]) => {
+      const li = document.createElement("li");
+      li.setAttribute("role", "option");
+      li.dataset.code = code;
+      if (code === window.RPT_I18N.current) li.classList.add("active");
+      li.innerHTML = `<span class="lang-code">${code.toUpperCase()}</span><span class="lang-label">${label}</span>`;
+      li.addEventListener("click", async () => {
+        await window.RPT_I18N.set(code);
+        window.RPT_I18N.apply(document);
+        syncChip();
+        buildLangMenu();
+        closeLangMenu();
+        refreshActivation();
+      });
+      langMenu.appendChild(li);
+    });
+  };
+  const openLangMenu = () => {
+    langMenu.hidden = false;
+    langChip.setAttribute("aria-expanded", "true");
+  };
+  const closeLangMenu = () => {
+    langMenu.hidden = true;
+    langChip.setAttribute("aria-expanded", "false");
+  };
+  buildLangMenu();
+  langChip?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    langMenu.hidden ? openLangMenu() : closeLangMenu();
   });
-  sel.addEventListener("change", async () => {
-    await window.RPT_I18N.set(sel.value);
-    window.RPT_I18N.apply(document);
-    syncChip();
-    refreshActivation();
+  document.addEventListener("click", (e) => {
+    if (!langMenu.hidden && !langMenu.contains(e.target) && e.target !== langChip) closeLangMenu();
   });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLangMenu(); });
 
   $("#theme-toggle").addEventListener("click", async () => {
     await window.RPT_THEME.set(window.RPT_THEME.current === "dark" ? "light" : "dark");
@@ -148,11 +174,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Language chip mirrors dropdown
-  const langChip = $("#lang-chip");
+  // Language chip label
   const syncChip = () => { if (langChip) langChip.textContent = (window.RPT_I18N.current || "en").toUpperCase(); };
   syncChip();
-  langChip?.addEventListener("click", () => $("#lang-select")?.focus());
 
   $("#reload-btn").addEventListener("click", async () => {
     const tab = await activeTab();
