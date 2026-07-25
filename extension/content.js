@@ -11,6 +11,7 @@
   const RPT = (window.RPT = {
     features: {},
     state: { tree: null, comments: [], post: null },
+    enabled: true,
   });
 
   /* ---------------- storage ---------------- */
@@ -1657,6 +1658,12 @@
         el.dataset.state = state;
         const t = el.querySelector(".rpt-status-txt");
         if (t) t.textContent = label;
+        // Auto-hide the pill shortly after "ready" so it doesn't sit there
+        // pulsing/flashing forever. Only visible while actively parsing.
+        clearTimeout(el._rptHide);
+        if (state === "ready" || state === "idle") {
+          el._rptHide = setTimeout(() => { el.dataset.state = "hidden"; }, 1400);
+        }
       });
       // Reliable screen-reader announcement — the pill itself may not be
       // visible when the panel is closed, so route through a dedicated
@@ -1665,6 +1672,8 @@
     },
   };
   const _runAllImpl = async () => {
+    if (!RPT.enabled) return;
+    RPT._parsing = true;
     RPT.status.set("parsing", "Parsing thread…");
     const auto = await RPT.autorun.load();
     RPT.features.commentTree.parse();
@@ -1683,6 +1692,9 @@
     RPT.features.history.record();
     RPT.features.history.trackAnalytics();
     RPT.status.set("ready", `Ready · ${RPT.state.comments.length} comments`);
+    // Give the DOM a tick to settle so the MutationObserver we set below
+    // doesn't fire on our own edits and cause a parsing/ready flicker.
+    setTimeout(() => { RPT._parsing = false; }, 300);
   };
   const runAll = RPT.utils.debounce(_runAllImpl, 400);
   // Force immediate re-parse — used by the panel Refresh button.
@@ -1706,6 +1718,24 @@
     window.RPT_A11Y?.load();
     RPT.a11y.ensureLive();
     RPT.customKeys.load();
+    // Master ON/OFF from the popup — everything short-circuits when off.
+    RPT.setEnabled = (on) => {
+      RPT.enabled = !!on;
+      document.documentElement.dataset.rptOff = on ? "" : "1";
+      if (!on) {
+        // Unhide every comment RPT had filtered out.
+        document.querySelectorAll(".rpt-hidden").forEach((el) => el.classList.remove("rpt-hidden"));
+        document.querySelectorAll(".rpt-panel, .rpt-tour, .rpt-modal").forEach((el) => el.remove());
+      } else {
+        runAll();
+      }
+    };
+    try {
+      chrome.storage.local.get("rpt_enabled", (v) => {
+        RPT.enabled = v?.rpt_enabled !== false;
+        document.documentElement.dataset.rptOff = RPT.enabled ? "" : "1";
+      });
+    } catch {}
     RPT.ui.mount();
     RPT.features.linkPreview.attach();
     RPT.features.shortcuts.init();
@@ -1736,6 +1766,7 @@
         if (changes.rpt_shortcuts) {
           RPT.customKeys.load().then(() => RPT.a11y.refreshKeyHelp());
         }
+        if (changes.rpt_enabled) RPT.setEnabled(changes.rpt_enabled.newValue !== false);
       });
     } catch {}
     // Auto-open the panel on first visit to a comment thread (opt-out via Options)
@@ -1752,7 +1783,23 @@
       }, 900);
     })();
     runAll();
-    new MutationObserver(runAll).observe(document.body, { childList: true, subtree: true });
+    // Only re-parse on real Reddit comment DOM changes. Ignore mutations
+    // caused by RPT itself (marked with the rpt- prefix or inside our UI)
+    // and skip while a parse is in flight — this fixes the constant
+    // "Parsing… / Ready" flashing users saw before.
+    new MutationObserver((muts) => {
+      if (!RPT.enabled || RPT._parsing) return;
+      for (const m of muts) {
+        const t = m.target;
+        if (t?.closest?.(".rpt-panel, .rpt-quickbar, .rpt-modal, .rpt-tour, .rpt-sr-live, .rpt-status-pill")) continue;
+        const addedReal = [...m.addedNodes].some((n) => {
+          if (n.nodeType !== 1) return false;
+          if (n.className && typeof n.className === "string" && n.className.startsWith("rpt-")) return false;
+          return n.tagName === "SHREDDIT-COMMENT" || n.querySelector?.("shreddit-comment, [data-testid='comment']");
+        });
+        if (addedReal) { runAll(); return; }
+      }
+    }).observe(document.body, { childList: true, subtree: true });
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

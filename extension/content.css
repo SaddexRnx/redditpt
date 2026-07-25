@@ -119,7 +119,16 @@
 }
 .rpt-status-pill[data-state="ready"] { color: var(--rpt-green); border-color: var(--rpt-green); }
 .rpt-status-pill[data-state="ready"] .rpt-status-dot { background: var(--rpt-green); box-shadow: 0 0 6px var(--rpt-green); }
+.rpt-status-pill[data-state="hidden"] { opacity: 0; pointer-events: none; transition: opacity .3s; }
 @keyframes rpt-pulse { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+
+/* Master OFF: hide every RPT overlay and un-hide filtered comments. */
+html[data-rpt-off="1"] .rpt-qb,
+html[data-rpt-off="1"] .rpt-panel,
+html[data-rpt-off="1"] .rpt-tour,
+html[data-rpt-off="1"] .rpt-modal,
+html[data-rpt-off="1"] .rpt-status-pill { display: none !important; }
+html[data-rpt-off="1"] .rpt-hidden { display: revert !important; }
 
 /* Filter chips (OP / mod / awarded / etc) */
 .rpt-chips {

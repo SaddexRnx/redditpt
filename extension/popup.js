@@ -85,6 +85,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.RPT_I18N.apply(document);
   updateThemeIcon();
 
+  // Master toggle
+  const master = $("#master-enable");
+  chrome.storage.local.get("rpt_enabled", (v) => {
+    master.checked = v?.rpt_enabled !== false;
+  });
+  master.addEventListener("change", () => {
+    chrome.storage.local.set({ rpt_enabled: master.checked });
+  });
+
   // language selector
   const sel = $("#lang-select");
   window.RPT_I18N.LANGS.forEach(([code, label]) => {

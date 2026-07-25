@@ -381,7 +381,7 @@ function Index() {
     <div className={`min-h-screen ${bg} transition-colors`}>
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#10b981] font-bold text-black">RPT</div>
+          <img src="/logo.png" alt="Reddit Power Toolkit logo" className="h-10 w-10 rounded-xl" />
           <span className="font-semibold">Reddit Power Toolkit</span>
         </div>
         <nav className="hidden gap-6 text-sm md:flex">
