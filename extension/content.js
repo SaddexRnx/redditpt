@@ -1952,10 +1952,6 @@
     },
   };
 
-  /* ---------------- First-run tour ---------------- */
-  RPT.tour = {
-    KEY: "rpt_tour_seen",
-    async maybeShow() {
       const { [this.KEY]: seen } = await RPT.storage.get(this.KEY);
       if (seen) return;
       if (!RPT.utils.isRedditThread()) return;
@@ -2039,11 +2035,6 @@
           return finish(true);
         }
       });
-      document.body.appendChild(wrap);
-      try { RPT.a11y.trapModal(wrap); } catch {}
-    },
-  };
-
   /* ---------------- Bootstrap ---------------- */
   RPT.status = {
     set(state, msg) {
