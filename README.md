@@ -122,6 +122,93 @@ You can export everything to JSON and wipe local storage at any time from **Opti
 
 ---
 
+## Permissions
+
+Reddit Power Toolkit asks for the minimum permissions needed to run entirely on your machine. Nothing here enables tracking or remote access.
+
+| Permission | Why it's needed |
+|------------|-----------------|
+| `storage` | Save your settings, custom shortcuts, saved collections, per-thread gallery position, and local history via `chrome.storage.local`. Never synced to a server. |
+| `activeTab` | Let the popup act on the Reddit tab you're currently viewing (open the panel, run Summary, toggle Live-new). Access is granted only after you click the extension icon. |
+| `tabs` | Detect when you navigate between Reddit threads (SPA route changes) so the panel, stats, and colors resync automatically. Only tab URLs on reddit.com are read. |
+| `scripting` | Inject the content script on demand from the popup when Reddit was already open before the extension was installed or updated, so you don't have to reload the tab manually. |
+| **Host permissions** — `*.reddit.com/*` | Required to read the comment DOM and render the overlay UI on Reddit pages. The extension has zero access to any other website. |
+| `web_accessible_resources` — `analytics.html` | Allows the local Analytics dashboard page (bundled inside the extension) to open from a Reddit tab. No external URL is loaded. |
+
+What the extension **never** does:
+
+- No `<all_urls>` or non-Reddit host access
+- No `cookies`, `history`, `bookmarks`, `downloads`, `webRequest`, or `nativeMessaging` permissions
+- No remote code execution — every script is bundled inside the extension package
+
+---
+
+## Screenshots
+
+Drop your own captures into `docs/screenshots/` using the filenames below and they will render here automatically. GIFs work the same way.
+
+| Preview | What it shows |
+|---------|----------------|
+| ![Side panel](docs/screenshots/side-panel.png) | **Side Panel** — the main dashboard mounted on a Reddit thread |
+| ![Command palette](docs/screenshots/command-palette.gif) | **Command Palette** (`Ctrl+K`) — fuzzy-search every action |
+| ![Smart summary](docs/screenshots/smart-summary.png) | **Smart Summary modal** — top / discussed / controversial |
+| ![Rule builder](docs/screenshots/rule-builder.gif) | **Rule Builder modal** — live keyword / author / regex preview |
+| ![Gallery](docs/screenshots/gallery.gif) | **Image Gallery Mode** — keyboard navigation with resume |
+| ![Collections](docs/screenshots/collections.png) | **Collections modal** — saved comments with JSON/CSV export |
+| ![Options — general](docs/screenshots/options-general.png) | **Options → General** — theme, language, auto-open, author colors |
+| ![Options — shortcuts](docs/screenshots/options-shortcuts.png) | **Options → Shortcuts** — remap keys with conflict detection |
+| ![Options — accessibility](docs/screenshots/options-a11y.png) | **Options → Accessibility** — color-blind palettes & high contrast |
+| ![Analytics dashboard](docs/screenshots/analytics.png) | **Analytics dashboard** — local usage stats |
+
+> Recording tip: use Chrome's built-in **DevTools → Recorder** or [Peek](https://github.com/firecow/peek) to capture short (< 5 s) MP4/GIFs of each modal, then commit them to `docs/screenshots/`.
+
+---
+
+## FAQ & Troubleshooting
+
+**The extension icon does nothing on Reddit.**
+Reddit was probably already open before the extension installed or updated. Open the popup — if it shows a "Reload tab" prompt, click it. Alternatively, refresh the Reddit tab manually. This is expected Chrome behaviour and applies to every MV3 extension.
+
+**I don't see the floating RPT button on a comment thread.**
+1. Confirm the URL is a comment page (`reddit.com/r/.../comments/...`) — the toolbar hides on the front page and profile pages.
+2. Open the popup and check **Activation status**. If it says "Not injected", click **Reload tab**.
+3. If you're on `old.reddit.com`, make sure host permissions include it (they do by default).
+
+**A keyboard shortcut isn't working / triggers the wrong action.**
+- Open **Options → Shortcuts**. If the conflict banner is shown, click **Reset** on one of the clashing rows.
+- Reddit itself binds several single-letter keys (e.g. `A`, `S`, `X`). Rebind the conflicting RPT shortcut to something like `Alt+…` or `Shift+…`.
+- Some browser extensions (Vimium, Surfingkeys) intercept `J/K/F`. Disable them on `reddit.com` or rebind RPT to different keys.
+- If nothing responds, ensure focus is not inside a Reddit reply textarea — shortcuts are suppressed while typing.
+
+**"Import failed: invalid file" when restoring settings.**
+- The file must be a JSON export produced by RPT (Options → **Export settings**). Files edited by hand or produced by another version may fail validation.
+- Check the top-level object contains at least `version` and one of `shortcuts`, `general`, `a11y`, or `gallery`.
+- Unknown accessibility or theme values are rejected on purpose; open the file, remove the bad entry, and re-import.
+- If a shortcut import shows conflicts after loading, resolve them from the banner or hit **Reset to defaults**.
+
+**Collections CSV import silently skips rows.**
+CSV rows without a valid `permalink` or `id` column are ignored to protect the store. Re-export a valid file from another browser or use the JSON format, which is stricter and clearer.
+
+**"Collapse all" only folds part of the thread.**
+Reddit lazy-loads deep chains. Scroll to the bottom to force additional comments to mount, click **Refresh / Resync** in the panel header, then run **Collapse all** again. The collapsed state is remembered per URL.
+
+**Author colors look wrong or are missing.**
+Open **Options → General** and confirm **Show author colors** is enabled. Colors are deterministic per username — if a user still looks uncolored, click the panel **Resync** button.
+
+**Live-new never shows updates.**
+Live-new uses adaptive polling (slower when the tab is idle). Move the mouse over the panel to switch to active polling. If the pill stays gray, Reddit is likely rate-limiting your session — wait 60 seconds and try again.
+
+**The extension broke after a Reddit redesign.**
+Reddit changes DOM class names frequently. Update `RPT.selectors` in `extension/content.js`, reload the extension from `chrome://extensions`, and open an issue with the failing selector so a fix can ship for everyone.
+
+**Firefox: "This add-on could not be installed because it appears to be corrupt."**
+You're likely trying to load the `.zip`. In Firefox, use `about:debugging` → **Load Temporary Add-on…** and pick `extension/manifest.json` directly. Permanent installs require signing via AMO.
+
+**Kiwi Browser: nothing happens after loading the zip.**
+Kiwi occasionally needs a full app restart after enabling a new extension. Force-stop Kiwi from Android settings, reopen, then visit a Reddit thread.
+
+---
+
 ## Development
 
 Extension: edit files under `extension/` and reload from `chrome://extensions`.
