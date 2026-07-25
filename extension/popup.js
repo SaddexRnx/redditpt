@@ -31,6 +31,7 @@ const actions = {
   a11y:        () => chrome.runtime.openOptionsPage(),
   analytics:   () => chrome.runtime.sendMessage({ type: "OPEN_ANALYTICS" }),
   options:     () => chrome.runtime.openOptionsPage(),
+  v2:          () => runInPage(() => window.RPT?.v2?.openHub?.()),
 };
 
 /** Ping the content script to see whether RPT loaded on the current tab. */

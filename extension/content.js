@@ -12,7 +12,7 @@
     features: {},
     state: { tree: null, comments: [], post: null },
     enabled: true,
-    VERSION: "1.7.0",
+    VERSION: "1.8.0",
     BUILD_DATE: "2026-07-25",
   });
 
@@ -1365,6 +1365,10 @@
       </button>
         ${btn("kbd", I.kbd, "Shortcuts", "?")}
         ${btn("about", `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`, "About Reddit Power Toolkit")}
+        <button class="rpt-qb-btn rpt-qb-v2" data-act="v2" aria-label="Power features" title="Power features (36 tools)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <span class="rpt-qb-tip">Power features (36)</span>
+        </button>
         <div class="rpt-qb-sep"></div>
         <button class="rpt-qb-btn" data-act="size" aria-label="Toggle toolbar size" title="Toggle toolbar size">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
@@ -1388,6 +1392,7 @@
       else if (a === "cmdk")    RPT.features.cmdk.open();
         else if (a === "kbd")     RPT.features.shortcuts.cheatsheet();
         else if (a === "about")   RPT.features.about.open();
+        else if (a === "v2")      window.RPT?.v2?.openHub?.();
         else if (a === "size")    RPT.ui.toggleSize();
         else if (a === "power")   RPT.ui.togglePower();
         else if (a === "close")   { bar.remove(); RPT.autorun.load().then((v) => RPT.autorun.save({ ...v, quickBar: false })); }
