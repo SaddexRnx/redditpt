@@ -104,13 +104,12 @@ html:not([data-rpt-theme])[data-color-scheme="light"] {
 /* ---------------- Side panel ---------------- */
 .rpt-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
-  width: min(420px, 100vw);
+  width: clamp(320px, 32vw, 440px);
   background: var(--rpt-bg-0); color: var(--rpt-text);
   z-index: 2147483001; box-shadow: var(--rpt-shadow);
   display: flex; flex-direction: column; font: 13px var(--rpt-font);
   border-left: 1px solid var(--rpt-border);
   animation: rpt-slide-in .25s ease-out;
-  resize: horizontal; overflow: auto; min-width: 320px; max-width: 100vw;
 }
 @keyframes rpt-slide-in { from { transform: translateX(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .rpt-panel-head {
