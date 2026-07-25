@@ -283,6 +283,12 @@ async function initCollections() {
 
 /* -------- Custom keyboard shortcuts (gallery prev/next, collapse all, refresh) -------- */
 const SHORTCUT_DEF = { galleryPrev: "ArrowLeft", galleryNext: "ArrowRight", collapseAll: "Shift+C", refresh: "R" };
+const SHORTCUT_LABELS = {
+  galleryPrev: "Gallery — previous image",
+  galleryNext: "Gallery — next image",
+  collapseAll: "Collapse all comments",
+  refresh: "Refresh current thread",
+};
 function shortcutEventToStr(e) {
   if (["Shift","Control","Alt","Meta","OS"].includes(e.key)) return "";
   const parts = [];
@@ -296,6 +302,30 @@ function shortcutEventToStr(e) {
   parts.push(k);
   return parts.join("+");
 }
+/* Find every pair of actions bound to the same key so we can warn about
+ * conflicts and let the user resolve them without leaving the page.       */
+function findShortcutConflicts(cur) {
+  const byKey = {};
+  for (const [action, key] of Object.entries(cur)) {
+    if (!key) continue;
+    (byKey[key] = byKey[key] || []).push(action);
+  }
+  return Object.entries(byKey).filter(([, actions]) => actions.length > 1);
+}
+function renderConflicts(cur) {
+  const host = document.getElementById("shortcuts-conflicts");
+  if (!host) return;
+  const conflicts = findShortcutConflicts(cur);
+  if (!conflicts.length) { host.style.display = "none"; host.innerHTML = ""; return; }
+  host.style.display = "block";
+  host.innerHTML = conflicts.map(([key, actions]) => {
+    const items = actions.map((a) => SHORTCUT_LABELS[a] || a).join(", ");
+    const buttons = actions.map((a) =>
+      `<button type="button" data-clear="${a}" style="margin-left:6px;font-size:12px">Reset "${SHORTCUT_LABELS[a] || a}"</button>`
+    ).join("");
+    return `<div style="margin:4px 0"><strong>${key}</strong> is bound to: ${items}. ${buttons}</div>`;
+  }).join("");
+}
 async function initShortcuts() {
   const load = async () => {
     const { [KEYS.shortcuts]: v = {} } = await get(KEYS.shortcuts);
@@ -306,6 +336,17 @@ async function initShortcuts() {
     document.querySelectorAll(".rpt-shortcut-btn").forEach((b) => {
       b.textContent = cur[b.dataset.s] || "—";
       b.setAttribute("aria-label", `${b.previousElementSibling?.textContent || b.dataset.s}: ${cur[b.dataset.s]}. Click to change.`);
+    });
+    renderConflicts(cur);
+    // Wire per-conflict "Reset this action" buttons.
+    document.querySelectorAll("#shortcuts-conflicts [data-clear]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const action = btn.dataset.clear;
+        const c = await load();
+        c[action] = SHORTCUT_DEF[action];
+        await set({ [KEYS.shortcuts]: c });
+        render();
+      });
     });
   };
   document.querySelectorAll(".rpt-shortcut-btn").forEach((b) => {
@@ -320,7 +361,17 @@ async function initShortcuts() {
         if (e.key === "Escape") { done(); b.textContent = orig; return; }
         const s = shortcutEventToStr(e);
         if (!s) { done(); b.textContent = orig; return; }
-        const cur = await load(); cur[b.dataset.s] = s;
+        const cur = await load();
+        // Check for conflicts before committing so the user can back out.
+        const conflictingAction = Object.entries(cur).find(([k, v]) => k !== b.dataset.s && v === s);
+        if (conflictingAction) {
+          const ok = confirm(
+            `"${s}" is already assigned to "${SHORTCUT_LABELS[conflictingAction[0]] || conflictingAction[0]}".\n\n` +
+            `Assign it to "${SHORTCUT_LABELS[b.dataset.s] || b.dataset.s}" anyway? Both will trigger — you can resolve the conflict from the warning that appears.`
+          );
+          if (!ok) { done(); b.textContent = orig; return; }
+        }
+        cur[b.dataset.s] = s;
         await set({ [KEYS.shortcuts]: cur });
         done(); render();
       };
@@ -328,44 +379,111 @@ async function initShortcuts() {
     });
   });
   document.getElementById("shortcuts-reset").addEventListener("click", async () => {
+    if (!confirm("Reset all custom keyboard shortcuts to their standard bindings?")) return;
     await set({ [KEYS.shortcuts]: { ...SHORTCUT_DEF } });
     render();
+    flash("Shortcuts reset to defaults.");
   });
-  /* Export / import so users can back up or move keybindings across browsers. */
+  /* Export / import full settings backup — shortcuts + general + a11y +
+   * per-thread gallery positions — so users can fully restore their setup. */
   const status = document.getElementById("shortcuts-status");
   const flash = (msg, isErr) => {
     status.textContent = msg;
     status.style.color = isErr ? "var(--red)" : "var(--green)";
-    setTimeout(() => { status.textContent = ""; status.style.color = ""; }, 3000);
+    setTimeout(() => { status.textContent = ""; status.style.color = ""; }, 4000);
   };
   document.getElementById("shortcuts-export").addEventListener("click", async () => {
     const cur = await load();
-    download(
-      "rpt-shortcuts.json",
-      "application/json",
-      JSON.stringify({ schema: "rpt-shortcuts/1", exportedAt: new Date().toISOString(), shortcuts: cur }, null, 2),
-    );
-    flash("Exported.");
+    const bag = await get([KEYS.general, KEYS.a11y, "rpt_gallery_pos"]);
+    const payload = {
+      schema: "rpt-settings/1",
+      exportedAt: new Date().toISOString(),
+      shortcuts: cur,
+      general: bag[KEYS.general] || {},
+      a11y: bag[KEYS.a11y] || {},
+      galleryPos: bag.rpt_gallery_pos || {},
+    };
+    download("rpt-settings.json", "application/json", JSON.stringify(payload, null, 2));
+    flash("Settings exported.");
   });
   const file = document.getElementById("shortcuts-import-file");
   document.getElementById("shortcuts-import-btn").addEventListener("click", () => file.click());
   file.addEventListener("change", async () => {
     const f = file.files?.[0]; if (!f) return;
-    try {
-      const parsed = JSON.parse(await f.text());
-      const src = parsed?.shortcuts || parsed;
-      if (!src || typeof src !== "object") throw new Error("bad shape");
-      const next = { ...SHORTCUT_DEF };
+    const errors = [];
+    const applied = [];
+    let text = "";
+    try { text = await f.text(); } catch { flash("Could not read the file.", true); file.value = ""; return; }
+    let parsed;
+    try { parsed = JSON.parse(text); }
+    catch { flash("Invalid JSON — the file is not valid JSON.", true); file.value = ""; return; }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      flash("Invalid file — expected a JSON object.", true); file.value = ""; return;
+    }
+    // ---- shortcuts ----
+    const src = parsed.shortcuts && typeof parsed.shortcuts === "object"
+      ? parsed.shortcuts
+      : (parsed.schema ? null : parsed); // support raw shortcut-only objects
+    if (src && typeof src === "object" && !Array.isArray(src)) {
+      const cur = await load();
+      const next = { ...cur };
       let n = 0;
-      for (const k of Object.keys(SHORTCUT_DEF)) {
-        if (typeof src[k] === "string" && src[k].length && src[k].length < 40) { next[k] = src[k]; n++; }
+      for (const [k, v] of Object.entries(src)) {
+        if (!(k in SHORTCUT_DEF)) { errors.push(`Unknown shortcut "${k}" ignored.`); continue; }
+        if (typeof v !== "string" || !v.length || v.length > 40) {
+          errors.push(`Invalid value for "${k}" — must be a non-empty string.`); continue;
+        }
+        next[k] = v; n++;
       }
-      if (!n) throw new Error("no valid entries");
-      await set({ [KEYS.shortcuts]: next });
+      if (n) { await set({ [KEYS.shortcuts]: next }); applied.push(`${n} shortcut${n === 1 ? "" : "s"}`); }
+    }
+    // ---- general ----
+    if (parsed.general && typeof parsed.general === "object") {
+      const { [KEYS.general]: cur = {} } = await get(KEYS.general);
+      const next = { ...cur };
+      let n = 0;
+      for (const k of Object.keys(G_DEF)) {
+        if (k in parsed.general) {
+          if (typeof parsed.general[k] !== "boolean") { errors.push(`general.${k} must be true/false.`); continue; }
+          next[k] = parsed.general[k]; n++;
+        }
+      }
+      if (n) { await set({ [KEYS.general]: next }); applied.push("general preferences"); }
+    }
+    // ---- a11y ----
+    if (parsed.a11y && typeof parsed.a11y === "object") {
+      const allowed = { palette: ["default","deuteranopia","protanopia","tritanopia","mono"],
+                        contrast: ["normal","high"], text: ["normal","large"], motion: ["auto","reduced"] };
+      const { [KEYS.a11y]: cur = {} } = await get(KEYS.a11y);
+      const next = { ...cur };
+      let n = 0;
+      for (const [k, values] of Object.entries(allowed)) {
+        if (k in parsed.a11y) {
+          if (!values.includes(parsed.a11y[k])) { errors.push(`a11y.${k} has an unknown value.`); continue; }
+          next[k] = parsed.a11y[k]; n++;
+        }
+      }
+      if (n) { await set({ [KEYS.a11y]: next }); applied.push("accessibility"); window.RPT_A11Y?.set?.(next); }
+    }
+    // ---- galleryPos ----
+    if (parsed.galleryPos && typeof parsed.galleryPos === "object" && !Array.isArray(parsed.galleryPos)) {
+      const clean = {};
+      let n = 0;
+      for (const [path, idx] of Object.entries(parsed.galleryPos)) {
+        if (typeof path === "string" && path.length < 500 && Number.isFinite(Number(idx))) {
+          clean[path] = Number(idx); n++;
+          if (n > 200) break;
+        }
+      }
+      if (n) { await set({ rpt_gallery_pos: clean }); applied.push("gallery positions"); }
+    }
+    if (!applied.length) {
+      flash(errors[0] || "No valid settings found in file — nothing imported.", true);
+    } else {
+      const msg = `Imported: ${applied.join(", ")}.` + (errors.length ? ` (${errors.length} entr${errors.length === 1 ? "y" : "ies"} skipped — see console)` : "");
+      if (errors.length) console.warn("[RPT] Import warnings:", errors);
+      flash(msg, false);
       render();
-      flash(`Imported ${n} shortcut${n === 1 ? "" : "s"}.`);
-    } catch {
-      flash("Could not import — invalid file.", true);
     }
     file.value = "";
   });
