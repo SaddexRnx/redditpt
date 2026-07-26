@@ -1,5 +1,5 @@
 /**
- * Reddit Power Toolkit — v2.0.0-beta React content-script overlay.
+ * Reddit Power Toolkit — v2.0.1 React content-script overlay.
  *
  * The legacy runtime (shared/reddit-api/content/features-v2*) is loaded
  * BEFORE this file and owns the QuickBar + side panel. This module mounts
@@ -116,7 +116,7 @@ function Panel({ onClose }: { onClose: () => void }) {
       <div style={styles.panel}>
         <header style={styles.header}>
           <div>
-            <div style={styles.title}>⚡ Power Features <span style={styles.badge}>v2.0.0-beta</span></div>
+            <div style={styles.title}>⚡ Power Features <span style={styles.badge}>v2.0.1</span></div>
             <div style={styles.sub}>{activeCount}/{total} enabled · runs 100% locally</div>
           </div>
           <button style={styles.close} onClick={onClose} aria-label="Close">✕</button>
