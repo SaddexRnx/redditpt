@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Reddit Power Toolkit — CSS variable mirrors of Tailwind theme.
+   Consumed by pages AND injected Reddit UI (via ?inline import).
+   Tailwind theme references these via var(--rpt-*), so changing
+   a value here changes every className instantly.
+   ============================================================ */
+:root,
+[data-rpt-theme="dark"] {
+  --rpt-bg: #08090b;
+  --rpt-panel: #101215;
+  --rpt-panel-2: #16191f;
+  --rpt-panel-3: #1d2129;
+  --rpt-border: color-mix(in oklab, #ffffff 8%, transparent);
+  --rpt-border-strong: color-mix(in oklab, #ffffff 14%, transparent);
+  --rpt-text: #f2f4f8;
+  --rpt-muted: #8b93a3;
+  --rpt-accent: #ff5a1f;
+  --rpt-accent-2: #ff8a4c;
+  --rpt-accent-fg: #ffffff;
+  --rpt-success: #4ade80;
+  --rpt-warn: #f5b83d;
+  --rpt-danger: #f87171;
+}
+
+[data-rpt-theme="light"] {
+  --rpt-bg: #fafbfc;
+  --rpt-panel: #ffffff;
+  --rpt-panel-2: #f4f6fa;
+  --rpt-panel-3: #e9edf3;
+  --rpt-border: color-mix(in oklab, #0b1220 8%, transparent);
+  --rpt-border-strong: color-mix(in oklab, #0b1220 16%, transparent);
+  --rpt-text: #0b1220;
+  --rpt-muted: #55637a;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]) {
+    --rpt-bg: #fafbfc;
+    --rpt-panel: #ffffff;
+    --rpt-panel-2: #f4f6fa;
+    --rpt-panel-3: #e9edf3;
+    --rpt-border: color-mix(in oklab, #0b1220 8%, transparent);
+    --rpt-border-strong: color-mix(in oklab, #0b1220 16%, transparent);
+    --rpt-text: #0b1220;
+    --rpt-muted: #55637a;
+  }
+}
+
+html,
+body {
+  background: var(--rpt-bg);
+  color: var(--rpt-text);
+  font-family: theme('fontFamily.sans');
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--rpt-accent);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--rpt-border-strong);
+  border: 2px solid var(--rpt-bg);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--rpt-muted); }
+::selection { background: color-mix(in oklab, var(--rpt-accent) 40%, transparent); color: var(--rpt-text); }
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Reusable component primitives — kept small on purpose. Everything else
+   uses Tailwind utility classes in the components themselves. */
+@layer components {
+  .rpt-card {
+    @apply bg-panel border border-border rounded-lg p-4 shadow-card;
+  }
+  .rpt-btn {
+    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md
+           text-sm font-semibold bg-panel-2 border border-border text-text
+           hover:border-accent hover:text-accent transition-colors;
+  }
+  .rpt-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 h-9 px-4 rounded-md
+           text-sm font-semibold bg-accent text-accent-fg
+           hover:brightness-110 active:translate-y-px transition;
+  }
+  .rpt-btn-danger {
+    @apply inline-flex items-center justify-center gap-2 h-9 px-3 rounded-md
+           text-sm font-semibold bg-danger text-white hover:brightness-110 transition;
+  }
+  .rpt-input {
+    @apply w-full h-9 px-3 rounded-md bg-panel-2 border border-border text-text
+           text-sm outline-none focus:border-accent focus:bg-panel transition-colors;
+  }
+  .rpt-label {
+    @apply text-[11px] font-semibold uppercase tracking-wider text-muted;
+  }
+  .rpt-kbd {
+    @apply inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5
+           rounded bg-panel-3 border border-border-strong font-mono text-[11px] text-muted;
+  }
+}
