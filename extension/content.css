@@ -880,9 +880,28 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 .rpt-v2-table{width:100%;border-collapse:collapse;font-size:13px}
 .rpt-v2-table th,.rpt-v2-table td{padding:6px 8px;border-bottom:1px solid var(--rpt-border,#1e293b);text-align:left}
 .rpt-v2-cmp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:10px 0}
-.rpt-v2-cmp-grid>div{background:var(--rpt-bg-2,#0f172a);border:1px solid var(--rpt-border,#1e293b);padding:10px;border-radius:8px}
-.rpt-v2-cmp-grid small{color:var(--rpt-muted,#94a3b8);display:block;font-size:11px}
-.rpt-v2-cmp-grid strong{font-size:18px;color:#ff4500}
+.rpt-v2-cmp-grid>div{background:var(--rpt-bg-1);border:1px solid var(--rpt-border);padding:10px;border-radius:10px}
+.rpt-v2-cmp-grid small{color:var(--rpt-muted);display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.rpt-v2-cmp-grid strong{font-size:18px;color:var(--rpt-text)}
+
+/* Subreddit analyzer — TabBankruptcy theme */
+.rpt-sub-head{padding:12px 14px;background:var(--rpt-bg-1);border:1px solid var(--rpt-border);border-radius:12px;margin-bottom:14px}
+.rpt-section-title{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--rpt-muted);font-weight:700}
+.rpt-metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.rpt-bars{display:grid;gap:6px}
+.rpt-bar-row{display:grid;grid-template-columns:80px 1fr 90px;gap:10px;align-items:center;font-size:12px;color:var(--rpt-text)}
+.rpt-bar{height:8px;background:var(--rpt-bg-2);border:1px solid var(--rpt-border);border-radius:999px;overflow:hidden}
+.rpt-bar i{display:block;height:100%;background:var(--rpt-green);border-radius:inherit}
+.rpt-bar-row b{color:var(--rpt-muted);font-weight:600;text-align:right;font-size:11px}
+.rpt-hours{display:grid;grid-template-columns:repeat(24,1fr);gap:2px;align-items:end;height:70px;padding:6px;background:var(--rpt-bg-1);border:1px solid var(--rpt-border);border-radius:10px}
+.rpt-hour{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px}
+.rpt-hour i{width:100%;background:var(--rpt-green);border-radius:2px 2px 0 0;min-height:2px}
+.rpt-hour span{font-size:9px;color:var(--rpt-muted)}
+.rpt-linklist{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
+.rpt-linklist li{padding:8px 10px;background:var(--rpt-bg-1);border:1px solid var(--rpt-border);border-radius:8px;font-size:12px}
+.rpt-linklist a{color:var(--rpt-text);font-weight:600;text-decoration:none}
+.rpt-linklist a:hover{color:var(--rpt-green);text-decoration:underline}
+.rpt-badge-off{display:inline-block;padding:2px 8px;font-size:10px;font-weight:700;border-radius:999px;background:var(--rpt-bg-2);border:1px solid var(--rpt-border);color:var(--rpt-muted);text-transform:uppercase;letter-spacing:.06em;margin-left:6px}
 .rpt-v2-pre{background:#020617;padding:10px;border-radius:6px;font-size:11px;max-height:300px;overflow:auto;color:#94a3b8}
 .rpt-v2-bars>div{display:grid;grid-template-columns:80px 1fr 40px;gap:8px;align-items:center;margin:4px 0;font-size:12px}
 .rpt-v2-bar{height:8px;background:var(--rpt-bg-2,#0f172a);border-radius:4px;overflow:hidden}
