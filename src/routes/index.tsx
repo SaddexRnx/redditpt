@@ -506,7 +506,15 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.10.7", t: "Diagnostics, charts & fetch-on-demand", d: "Latest", i: Rocket, items: [
+    { v: "2.0.0-beta", t: "React overlay + Vite migration", d: "Latest · Beta", i: Rocket, items: [
+      "Full Vite + React + TypeScript + Tailwind migration under extension-src/ — production builds are minified, tree-shaken and per-target for Chrome and Firefox",
+      "New React content-script overlay mounted inside an isolated Shadow DOM so Reddit CSS can never leak in — opens with the ⚡ v2 floating button (bottom-left) or the Alt+Shift+P shortcut",
+      "All 36 Power features wired into the new UI with live enable/disable toggles synced through chrome.storage.local — flip a switch and both the React overlay and the legacy hub update together",
+      "Conflict-safe execution: a single-flight mutex prevents two Power features from mutating the DOM at the same time, so heavy modules stop stepping on each other",
+      "Keyboard-first panel: focus-trapped, Esc closes, every control carries an explicit aria-label",
+      "Manifest carries version_name \"2.0.0-beta\" so browsers show the beta tag while keeping the numeric version valid for the Chrome Web Store",
+    ]},
+    { v: "1.10.7", t: "Diagnostics, charts & fetch-on-demand", d: "", i: Rocket, items: [
       "New Data Sources & Diagnostics inspector — see every Reddit JSON endpoint the toolkit called, per module, with status, cache hit, duration and error message; rolling log of the last 200 requests",
       "Interactive SVG charts in the Subreddit Analyzer — hour-of-day histogram and 7-day posting trend, rebuilt live per subreddit with hover tooltips",
       "Refresh live data button on the Subreddit Analyzer and Performance panel, plus per-module Fetch latest now — clears the cache and re-runs just that feature",
