@@ -1,0 +1,123 @@
+/* ==========================================================================
+   Reddit Power Toolkit — Shared Design Tokens
+   Single source of truth for popup, options and analytics pages.
+   Injected UI (content.css) uses --rpt-* mirrors of the same palette.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  /* Surfaces — deep neutral stack, OLED-friendly */
+  --bg:            #08090b;
+  --panel:         #101215;
+  --panel-2:       #16191f;
+  --panel-3:       #1d2129;
+  --border:        color-mix(in oklab, #ffffff 8%, transparent);
+  --border-strong: color-mix(in oklab, #ffffff 14%, transparent);
+
+  /* Text */
+  --text:          #f2f4f8;
+  --muted:         #8b93a3;
+
+  /* Brand + status */
+  --accent:        #ff5a1f;
+  --accent-2:      #ff8a4c;
+  --accent-fg:     #ffffff;
+  --accent-glow:   0 0 0 1px color-mix(in oklab, #ff5a1f 40%, transparent),
+                   0 10px 30px -8px color-mix(in oklab, #ff5a1f 45%, transparent);
+  --success:       #4ade80;
+  --warn:          #f5b83d;
+  --danger:        #f87171;
+
+  /* Legacy aliases (analytics.css / older selectors) */
+  --bg-0: var(--bg);
+  --bg-1: var(--panel);
+  --bg-2: var(--panel-2);
+  --bg-3: var(--panel-3);
+  --green: var(--accent);
+  --blue:  var(--success);
+  --red:   var(--danger);
+
+  /* Scale */
+  --radius-sm: 8px;
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow:    0 1px 0 color-mix(in oklab, #ffffff 4%, transparent) inset,
+               0 10px 30px -12px rgba(0,0,0,.6);
+  --shadow-lg: 0 1px 0 color-mix(in oklab, #ffffff 6%, transparent) inset,
+               0 24px 60px -16px rgba(0,0,0,.7);
+  --font: "Inter", -apple-system, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Light theme — explicit user pick */
+[data-rpt-theme="light"] {
+  --bg:            #fafbfc;
+  --panel:         #ffffff;
+  --panel-2:       #f4f6fa;
+  --panel-3:       #e9edf3;
+  --border:        color-mix(in oklab, #0b1220 8%, transparent);
+  --border-strong: color-mix(in oklab, #0b1220 16%, transparent);
+  --text:          #0b1220;
+  --muted:         #55637a;
+  --shadow:    0 1px 0 rgba(255,255,255,.6) inset,
+               0 10px 30px -14px rgba(15,23,42,.18);
+  --shadow-lg: 0 1px 0 rgba(255,255,255,.8) inset,
+               0 24px 60px -18px rgba(15,23,42,.22);
+}
+/* Light theme — follow system when user hasn't picked */
+@media (prefers-color-scheme: light) {
+  html:not([data-rpt-theme]) {
+    --bg:            #fafbfc;
+    --panel:         #ffffff;
+    --panel-2:       #f4f6fa;
+    --panel-3:       #e9edf3;
+    --border:        color-mix(in oklab, #0b1220 8%, transparent);
+    --border-strong: color-mix(in oklab, #0b1220 16%, transparent);
+    --text:          #0b1220;
+    --muted:         #55637a;
+    --shadow:    0 1px 0 rgba(255,255,255,.6) inset,
+                 0 10px 30px -14px rgba(15,23,42,.18);
+    --shadow-lg: 0 1px 0 rgba(255,255,255,.8) inset,
+                 0 24px 60px -18px rgba(15,23,42,.22);
+  }
+}
+
+/* ---------- Base ---------- */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.55 var(--font);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body { margin: 0; }
+
+/* ---------- Focus + motion ---------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 25%, transparent);
+  border-radius: var(--radius-sm);
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Scrollbars ---------- */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+::selection { background: color-mix(in oklab, var(--accent) 40%, transparent); color: var(--text); }
