@@ -166,10 +166,30 @@
     id: "communityCompare", name: "Community comparison",
     desc: "Snapshot the current subreddit and compare with saved snapshots.",
     KEY: "rpt_v2_communities",
-    snapshot() {
+    /* Sync fallback kept for callers that can't await (legacy call sites). */
+    snapshot() { return this._buildSnap(collectPosts()); },
+    async snapshotLive() {
       const sub = currentSubreddit();
-      if (!sub) { toast("Open a subreddit to snapshot"); return null; }
-      const posts = collectPosts();
+      if (!sub) return null;
+      const posts = await postsLive(sub, "hot");
+      const snap = this._buildSnap(posts);
+      /* Merge in real subreddit metadata from Reddit's about endpoint. */
+      try {
+        const meta = await window.RPT_API?.about?.(sub);
+        if (meta) {
+          snap.members = meta.subscribers;
+          snap.online = meta.active_user_count ?? meta.accounts_active;
+          snap.created = meta.created_utc ? new Date(meta.created_utc * 1000).toISOString() : snap.created;
+          snap.description = meta.public_description || meta.description || snap.description;
+          snap.isNsfw = !!meta.over18;
+          snap.subType = meta.subreddit_type || "";
+        }
+      } catch {}
+      return snap;
+    },
+    _buildSnap(posts) {
+      const sub = currentSubreddit();
+      if (!sub) { return null; }
       const wordFreq = {};
       posts.forEach((p) => {
         (p.title.toLowerCase().match(/[a-z]{4,}/g) || []).forEach((w) => wordFreq[w] = (wordFreq[w] || 0) + 1);
@@ -199,7 +219,7 @@
     },
     async open() {
       const stored = await S.get(this.KEY, {});
-      const snapNow = this.snapshot();
+      const snapNow = await this.snapshotLive();
       const list = Object.values(stored);
       const rows = list.map((s) => `
         <tr>
