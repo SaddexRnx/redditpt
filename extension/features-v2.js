@@ -475,7 +475,7 @@
     id: "subAnalyzer", name: "Subreddit analyzer dashboard",
     desc: "Full breakdown of the current subreddit from loaded data.",
     /* Pull as many rich signals as we can from the DOM without any network calls. */
-    _harvest(sub) {
+    async _harvest(sub) {
       const posts = collectPosts();
       const snap = V.modules.communityCompare.snapshot() || {};
       /* Sidebar / header metadata — try both old & new Reddit layouts. */
@@ -512,6 +512,31 @@
         'shreddit-rule, [data-testid="subreddit-rule"], .side .titlebox ol li'
       ).length;
 
+      /* Live fetch — Reddit's public JSON works from any origin logged in as the
+         current user, no API key. This gives us reliable members / online /
+         created / description / rules even when the DOM doesn't expose them. */
+      let live = {};
+      try {
+        const [aboutR, rulesR] = await Promise.all([
+          fetch(`/r/${sub}/about.json`, { credentials: "include" }).then(r=>r.ok?r.json():null).catch(()=>null),
+          fetch(`/r/${sub}/about/rules.json`, { credentials: "include" }).then(r=>r.ok?r.json():null).catch(()=>null),
+        ]);
+        const d = aboutR?.data || {};
+        live = {
+          members: d.subscribers,
+          online: d.active_user_count ?? d.accounts_active,
+          created: d.created_utc ? d.created_utc * 1000 : null,
+          description: d.public_description || d.description || "",
+          isNsfw: !!d.over18,
+          isPrivate: d.subreddit_type === "private" || d.subreddit_type === "restricted",
+          rulesCount: Array.isArray(rulesR?.rules) ? rulesR.rules.length : 0,
+          rules: Array.isArray(rulesR?.rules) ? rulesR.rules.slice(0,20).map(r=>r.short_name||r.violation_reason||"") : [],
+          title: d.title || "",
+          lang: d.lang || "",
+          type: d.subreddit_type || "",
+        };
+      } catch {}
+
       /* Post-derived stats. */
       const scores = posts.map(p=>p.score).sort((a,b)=>a-b);
       const median = scores.length ? scores[Math.floor(scores.length/2)] : 0;
@@ -537,19 +562,27 @@
 
       return {
         sub, snap, posts,
-        members: membersRaw ? String(membersRaw).trim() : "",
-        online: onlineRaw ? String(onlineRaw).trim() : "",
-        created: createdRaw,
-        isNsfw, isPrivate, description, mods, rulesCount,
+        members: live.members ?? (membersRaw ? String(membersRaw).trim() : ""),
+        online: live.online ?? (onlineRaw ? String(onlineRaw).trim() : ""),
+        created: live.created || createdRaw,
+        isNsfw: live.isNsfw || isNsfw,
+        isPrivate: live.isPrivate || isPrivate,
+        description: live.description || description,
+        mods, rulesCount: live.rulesCount || rulesCount,
+        rules: live.rules || [],
+        title: live.title || "",
+        lang: live.lang || "",
+        type: live.type || "",
         median, max, nsfwCount, spoilerCount,
         topAuthors, hours, peakHour, dated,
         topByScore, topByComments,
       };
     },
-    open() {
+    async open() {
       const sub = currentSubreddit();
       if (!sub) return toast(tr("open_subreddit_page") || "Open a subreddit page");
-      const h = this._harvest(sub);
+      modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, `<p class="rpt-muted">${tx("Loading")}…</p>`, { wide: true });
+      const h = await this._harvest(sub);
       const snap = h.snap;
       const totalPosts = h.posts.length || snap.posts || 0;
       const fmtDate = (v) => {
@@ -589,6 +622,14 @@
           <span class="rpt-muted"> · ${valFn(p)} ${esc(tx(label))} · u/${esc(p.author||"?")}</span></li>`).join("")}</ul>`
         : `<p class="rpt-muted">${tr("none") || "None"}</p>`;
 
+      const fmtNum = (n) => {
+        if (n == null || n === "") return "—";
+        const x = Number(n);
+        if (!isFinite(x)) return String(n);
+        if (x >= 1e6) return (x/1e6).toFixed(1).replace(/\.0$/,"") + "M";
+        if (x >= 1e3) return (x/1e3).toFixed(1).replace(/\.0$/,"") + "k";
+        return String(x);
+      };
       const badges = [
         h.isNsfw ? `<span class="rpt-badge-off">NSFW 18+</span>` : "",
         h.isPrivate ? `<span class="rpt-badge-off">${tr("private") || "Private"}</span>` : "",
@@ -602,10 +643,10 @@
           </div>
         </div>
 
-        <h4 class="rpt-section-title">${esc(tr("overview") || "Overview")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Overview"))}</h4>
         <div class="rpt-metric-grid">
-          ${stat("Members", esc(h.members || "—"))}
-          ${stat("Online now", esc(h.online || "—"))}
+          ${stat("Members", esc(fmtNum(h.members)))}
+          ${stat("Online now", esc(fmtNum(h.online)))}
           ${stat("Created", fmtDate(h.created))}
           ${stat("Rules", h.rulesCount || "—")}
           ${stat("Posts loaded", totalPosts)}
@@ -618,44 +659,48 @@
           ${stat("Unique authors", Object.keys(h.topAuthors.reduce((a,[k])=>((a[k]=1),a),{})).length || h.topAuthors.length)}
         </div>
 
-        <h4 class="rpt-section-title">${esc(tr("content_types") || "Content types")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Content types"))}</h4>
         <div class="rpt-bars">${typesRow}</div>
 
-        <h4 class="rpt-section-title">${esc(tr("posting_activity") || "Posting activity by hour")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Posting activity by hour"))}</h4>
         ${hoursRow}
 
-        <h4 class="rpt-section-title">${esc(tr("top_authors") || "Top authors on this page")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Top authors on this page"))}</h4>
         <div class="rpt-chips-v">${h.topAuthors.length
           ? h.topAuthors.map(([a,c]) => chip(`u/${a}`, c)).join("")
-          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+          : `<p class="rpt-muted">${tx("None")}</p>`}</div>
 
-        <h4 class="rpt-section-title">${esc(tr("top_flairs") || "Top flairs")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Top flairs"))}</h4>
         <div class="rpt-chips-v">${flairs.length
           ? flairs.slice(0,10).map(([f,c])=>chip(f,c)).join("")
-          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+          : `<p class="rpt-muted">${tx("None")}</p>`}</div>
 
-        <h4 class="rpt-section-title">${esc(tr("top_domains") || "Top domains")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Top domains"))}</h4>
         <div class="rpt-chips-v">${domains.length
           ? domains.map(([d,c])=>chip(d,c)).join("")
-          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+          : `<p class="rpt-muted">${tx("None")}</p>`}</div>
 
-        <h4 class="rpt-section-title">${esc(tr("popular_keywords") || "Popular keywords")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Popular keywords"))}</h4>
         <div class="rpt-chips-v">${kw.length
           ? kw.map(k=>chip(k.w, k.c)).join("")
-          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+          : `<p class="rpt-muted">${tx("None")}</p>`}</div>
 
-        <h4 class="rpt-section-title">${esc(tr("highest_scored_posts") || "Highest-scored posts")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Highest-scored posts"))}</h4>
         ${linkList(h.topByScore, p=>p.score, "score")}
 
-        <h4 class="rpt-section-title">${esc(tr("most_commented_posts") || "Most-commented posts")}</h4>
+        <h4 class="rpt-section-title">${esc(tx("Most-commented posts"))}</h4>
         ${linkList(h.topByComments, p=>p.comments, "comments")}
 
+        ${h.rules && h.rules.length ? `
+          <h4 class="rpt-section-title">${esc(tx("Rules"))}</h4>
+          <ol class="rpt-linklist">${h.rules.map(r=>`<li>${esc(r)}</li>`).join("")}</ol>` : ""}
+
         ${h.mods.length ? `
-          <h4 class="rpt-section-title">${esc(tr("moderators") || "Moderators")}</h4>
+          <h4 class="rpt-section-title">${esc(tx("Moderators"))}</h4>
           <div class="rpt-chips-v">${h.mods.map(m=>chip(`u/${m}`,"")).join("")}</div>` : ""}
 
         <p class="rpt-muted" style="margin-top:14px;font-size:11px">
-          ${esc(tr("local_snapshot_note") || "Snapshot computed from posts currently loaded in your feed. Scroll the subreddit before opening this dashboard for a bigger sample.")}
+          ${esc(tx("Live data from Reddit's public JSON, combined with posts currently loaded in your feed. Scroll for a bigger sample."))}
         </p>`;
       modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, body, { wide: true });
     },
