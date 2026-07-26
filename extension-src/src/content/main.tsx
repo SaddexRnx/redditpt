@@ -77,7 +77,7 @@ function useEnabled() {
     setEnabled((prev) => ({ ...prev, [id]: next }));
     const key = "rpt_v2_enabled";
     const current = await new Promise<Record<string, boolean>>((r) =>
-      chrome.storage.local.get({ [key]: {} }, (v) => r(v[key] || {}))
+      chrome.storage.local.get([key], (v) => r((v[key] as Record<string, boolean>) || {}))
     );
     current[id] = next;
     await new Promise<void>((r) => chrome.storage.local.set({ [key]: current }, () => r()));
