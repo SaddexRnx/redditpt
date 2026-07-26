@@ -87,7 +87,9 @@ extension/            # The browser extension (load this folder unpacked)
 └── icons/
 
 src/                  # Marketing / documentation site
-public/reddit-power-toolkit.zip  # Prebuilt release bundle
+public/reddit-power-toolkit-chrome.zip   # Chrome / Edge / Brave / Kiwi bundle
+public/reddit-power-toolkit-firefox.zip  # Firefox 128+ bundle
+public/reddit-power-toolkit.zip          # Chrome-compatible fallback alias
 ```
 
 ---
@@ -115,7 +117,7 @@ public/reddit-power-toolkit.zip  # Prebuilt release bundle
 
 ### Kiwi Browser (Android)
 
-1. Download `public/reddit-power-toolkit.zip` from this repo to your phone.
+1. Download `public/reddit-power-toolkit-chrome.zip` from this repo to your phone.
 2. Open Kiwi and go to `kiwi://extensions`.
 3. Enable **Developer mode** (top-right).
 4. Tap **+ (from .zip/.crx/.user.js)** and pick the downloaded zip.
