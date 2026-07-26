@@ -7,24 +7,27 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
-  /* Surfaces */
-  --bg:            #0d1117;
-  --panel:         #161b22;
-  --panel-2:       #1c2129;
-  --panel-3:       #232b36;
-  --border:        #262d38;
-  --border-strong: #333c4a;
+  /* Surfaces — deep neutral stack, OLED-friendly */
+  --bg:            #08090b;
+  --panel:         #101215;
+  --panel-2:       #16191f;
+  --panel-3:       #1d2129;
+  --border:        color-mix(in oklab, #ffffff 8%, transparent);
+  --border-strong: color-mix(in oklab, #ffffff 14%, transparent);
 
   /* Text */
-  --text:          #e6edf5;
-  --muted:         #8a95a5;
+  --text:          #f2f4f8;
+  --muted:         #8b93a3;
 
   /* Brand + status */
-  --accent:        #ff4500;
+  --accent:        #ff5a1f;
+  --accent-2:      #ff8a4c;
   --accent-fg:     #ffffff;
-  --success:       #46d160;
-  --warn:          #f59e0b;
-  --danger:        #ef4444;
+  --accent-glow:   0 0 0 1px color-mix(in oklab, #ff5a1f 40%, transparent),
+                   0 10px 30px -8px color-mix(in oklab, #ff5a1f 45%, transparent);
+  --success:       #4ade80;
+  --warn:          #f5b83d;
+  --danger:        #f87171;
 
   /* Legacy aliases (analytics.css / older selectors) */
   --bg-0: var(--bg);
@@ -36,42 +39,48 @@
   --red:   var(--danger);
 
   /* Scale */
-  --radius-sm: 6px;
-  --radius:    10px;
-  --radius-lg: 12px;
-  --radius-xl: 14px;
-  --shadow:    0 8px 24px -8px rgba(0,0,0,.45);
-  --shadow-lg: 0 20px 50px -12px rgba(0,0,0,.55);
-  --font: -apple-system, "Inter", "Segoe UI", Roboto, system-ui, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius-sm: 8px;
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow:    0 1px 0 color-mix(in oklab, #ffffff 4%, transparent) inset,
+               0 10px 30px -12px rgba(0,0,0,.6);
+  --shadow-lg: 0 1px 0 color-mix(in oklab, #ffffff 6%, transparent) inset,
+               0 24px 60px -16px rgba(0,0,0,.7);
+  --font: "Inter", -apple-system, "SF Pro Display", "Segoe UI", Roboto, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* Light theme — explicit user pick */
 [data-rpt-theme="light"] {
-  --bg:            #ffffff;
-  --panel:         #f6f8fa;
-  --panel-2:       #eef2f7;
-  --panel-3:       #e2e8f0;
-  --border:        #d9e0e8;
-  --border-strong: #c3cbd6;
+  --bg:            #fafbfc;
+  --panel:         #ffffff;
+  --panel-2:       #f4f6fa;
+  --panel-3:       #e9edf3;
+  --border:        color-mix(in oklab, #0b1220 8%, transparent);
+  --border-strong: color-mix(in oklab, #0b1220 16%, transparent);
   --text:          #0b1220;
-  --muted:         #4a5566;
-  --shadow:    0 8px 24px -8px rgba(15,23,42,.14);
-  --shadow-lg: 0 20px 50px -12px rgba(15,23,42,.18);
+  --muted:         #55637a;
+  --shadow:    0 1px 0 rgba(255,255,255,.6) inset,
+               0 10px 30px -14px rgba(15,23,42,.18);
+  --shadow-lg: 0 1px 0 rgba(255,255,255,.8) inset,
+               0 24px 60px -18px rgba(15,23,42,.22);
 }
 /* Light theme — follow system when user hasn't picked */
 @media (prefers-color-scheme: light) {
   html:not([data-rpt-theme]) {
-    --bg:            #ffffff;
-    --panel:         #f6f8fa;
-    --panel-2:       #eef2f7;
-    --panel-3:       #e2e8f0;
-    --border:        #d9e0e8;
-    --border-strong: #c3cbd6;
+    --bg:            #fafbfc;
+    --panel:         #ffffff;
+    --panel-2:       #f4f6fa;
+    --panel-3:       #e9edf3;
+    --border:        color-mix(in oklab, #0b1220 8%, transparent);
+    --border-strong: color-mix(in oklab, #0b1220 16%, transparent);
     --text:          #0b1220;
-    --muted:         #4a5566;
-    --shadow:    0 8px 24px -8px rgba(15,23,42,.14);
-    --shadow-lg: 0 20px 50px -12px rgba(15,23,42,.18);
+    --muted:         #55637a;
+    --shadow:    0 1px 0 rgba(255,255,255,.6) inset,
+                 0 10px 30px -14px rgba(15,23,42,.18);
+    --shadow-lg: 0 1px 0 rgba(255,255,255,.8) inset,
+                 0 24px 60px -18px rgba(15,23,42,.22);
   }
 }
 
@@ -79,7 +88,8 @@
 html, body {
   background: var(--bg);
   color: var(--text);
-  font: 13px/1.5 var(--font);
+  font: 13px/1.55 var(--font);
+  font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
