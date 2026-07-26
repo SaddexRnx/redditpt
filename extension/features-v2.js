@@ -114,6 +114,53 @@
   }
   V._sub = currentSubreddit;
 
+  /* Live-data helper: pull up to 100 posts for a subreddit from Reddit's own
+   * JSON endpoint, then merge with anything already visible in the DOM (so
+   * we keep the `el` reference for modules that mutate the page — hiding,
+   * sorting, highlighting…). Falls back to DOM-only if the fetch fails
+   * (private sub, rate limit, offline). Cached for 60s by RPT_API. */
+  async function postsLive(sub, sort = "hot") {
+    const domPosts = collectPosts();
+    const target = sub || currentSubreddit();
+    if (!target || !window.RPT_API) return domPosts;
+    let fetched = [];
+    try {
+      const [hot, nu] = await Promise.all([
+        window.RPT_API.posts(target, sort, { limit: 100 }),
+        sort === "new" ? Promise.resolve([]) : window.RPT_API.posts(target, "new", { limit: 100 }),
+      ]);
+      const byId = new Map();
+      [...hot, ...nu].forEach((p) => { if (!byId.has(p.id)) byId.set(p.id, p); });
+      fetched = [...byId.values()];
+    } catch { /* keep DOM */ }
+    if (!fetched.length) return domPosts;
+    /* Re-attach DOM element references when the same permalink shows up. */
+    const domByLink = new Map(domPosts.map((p) => [String(p.permalink || "").replace(/^https?:\/\/[^/]+/, ""), p.el]));
+    fetched.forEach((p) => {
+      const key = String(p.permalink || "").replace(/^https?:\/\/[^/]+/, "");
+      const el = domByLink.get(key);
+      if (el) p.el = el;
+    });
+    return fetched;
+  }
+  V._postsLive = postsLive;
+
+  /* Small helper: show a transient "loading…" body and swap in real content. */
+  async function withLoading(title, opts, worker) {
+    const m = modal(title, `<p class="rpt-muted">${esc(tx("Loading live data from Reddit"))}…</p>`, opts || {});
+    try {
+      const html = await worker();
+      const body = m.querySelector(".rpt-v2-body");
+      if (body) body.innerHTML = html;
+      return m;
+    } catch (e) {
+      const body = m.querySelector(".rpt-v2-body");
+      if (body) body.innerHTML = `<p class="rpt-muted">${esc(tx("Couldn't reach Reddit — falling back to on-page data."))}</p>`;
+      return m;
+    }
+  }
+  V._withLoading = withLoading;
+
   /* ============ 1. COMMUNITY COMPARISON TOOL ============ */
   V.modules.communityCompare = {
     id: "communityCompare", name: "Community comparison",
