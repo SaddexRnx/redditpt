@@ -459,6 +459,8 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 - **v1.8** — 36 advanced local-first power modules
 - **v1.9** — Performance panel, per-subreddit rules, backup/restore, lazy loading
 - **v1.9.1–1.10.3** — Mobile UI fixes, deep links, browser downloads, full i18n cleanup and French translation repair
+- **v1.10.6–1.10.9** — Live Reddit JSON client, Data Sources & Diagnostics inspector, interactive charts, unified OLED design system
+- **v2.0.1 (current)** — Full Vite + React + TypeScript + Tailwind migration, React Shadow-DOM overlay, conflict-safe execution for all 36 Power features, versioned per-browser downloads
 
 ---
 
