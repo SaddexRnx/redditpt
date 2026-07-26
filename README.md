@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.10.3-10b981?style=flat-square" alt="Version 1.10.3">
+  <img src="https://img.shields.io/badge/version-1.10.7-10b981?style=flat-square" alt="Version 1.10.7">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.10.3** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
+> **Current release: v1.10.7** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -54,6 +54,10 @@ Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
 20. **Collections** — save & star comments, JSON/CSV export & import
 21. **Command Palette** — `Ctrl+K` for every action
 22. **Configurable Shortcuts** — remap keys, conflict detection, reset to defaults
+23. **Live Reddit JSON client** — every remote-capable module fetches real live data with 60s cache and graceful DOM fallback
+24. **Subreddit Analyzer with charts** — interactive SVG histograms (hour-of-day + 7-day trend), per-section timestamps, and a **Refresh live data** button that forces a fresh fetch
+25. **Data Sources & Diagnostics inspector** — see which Reddit endpoints were used per module, response status, timings and errors — plus a **Fetch latest now** action per module
+26. **Endpoint fallbacks** — when `about.json`/`rules.json` return empty (private, quarantined, or rate-limited), the toolkit transparently falls back to `/api/info.json` and the sidebar `widgets.json` and reports which source succeeded
 
 ---
 
@@ -302,7 +306,24 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases).
 
-### v1.10.3 — current
+### v1.10.7 — current
+
+- **Data Sources & Diagnostics** inspector: per-module summary of endpoints called, plus a rolling log of the last 200 Reddit JSON requests with status, cache-hit flag, duration and errors.
+- **Interactive charts** in the Subreddit Analyzer — SVG bar charts for hour-of-day posting activity and the last 7 days of posting trend, rebuilt live per subreddit.
+- **Refresh live data** button on the Subreddit Analyzer and Performance panel; per-module **Fetch latest now** actions clear the cache and re-run just that feature.
+- **Per-section timestamps** on the analyzer (Posts / About / Rules) so you always know how fresh each block is.
+- **Endpoint fallbacks**: `about.json` → `/api/info.json?sr_name=…`; `rules.json` → sidebar `widgets.json` rules widget. Missing fields (members, online now, created, rules) are recomputed from the best available response.
+- **Field provenance** shown under each Overview card (e.g. `about.json → data.subscribers`) so you can see exactly which JSON field powers each number.
+- Manifest, popup, Options, README, website footer and About panel synced to **v1.10.7**.
+
+### v1.10.6
+
+- Live Reddit JSON client (`reddit-api.js`) shared across all remote-capable modules.
+- Subreddit analyzer, health monitor, timeline, calendar, content exporter, trend tracker, old-gold finder, age sort and repost detector now sample up to 200 real posts.
+- Post & user hover cards upgrade with real karma, ratios, awards, account age.
+- Performance panel exposes Reddit JSON cache stats.
+
+### v1.10.3
 
 - **Full extension redesign** — consistent spacing, aligned button labels, and a fixed-size About icon in the popup (no more oversized SVG).
 - **First-run onboarding wizard** — pick your language, toggle each feature with a short note under it, and either Skip or Use defaults.
