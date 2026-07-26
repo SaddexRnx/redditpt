@@ -531,21 +531,34 @@
         const p = posts.find((x) => x.el === node);
         if (!p) return;
         if (!this._card) { this._card = document.createElement("div"); this._card.className = "rpt-v2-postcard"; document.body.appendChild(this._card); }
-        const ratio = p.comments ? Math.round((p.comments / Math.max(1, p.score)) * 100) : 0;
-        this._card.innerHTML = `
-          <div class="rpt-uc-head"><strong>${esc(p.title.slice(0, 80))}</strong></div>
-          <div class="rpt-uc-grid">
-            <div><small>Score</small><strong>▲${p.score}</strong></div>
-            <div><small>Comments</small><strong>${p.comments}</strong></div>
-            <div><small>Engage</small><strong>${ratio}%</strong></div>
-            <div><small>Type</small><strong>${esc(p.type)}</strong></div>
-            <div><small>Domain</small><strong>${esc(p.domain || "self")}</strong></div>
-            <div><small>Flair</small><strong>${esc(p.flair || "—")}</strong></div>
-          </div>`;
+        const render = (live) => {
+          const score = live?.score ?? p.score;
+          const comments = live?.comments ?? p.comments;
+          const ratio = comments ? Math.round((comments / Math.max(1, score)) * 100) : 0;
+          const upv = live?.upvoteRatio != null ? Math.round(live.upvoteRatio * 100) + "%" : "—";
+          this._card.innerHTML = `
+            <div class="rpt-uc-head"><strong>${esc((live?.title || p.title).slice(0, 80))}</strong></div>
+            <div class="rpt-uc-grid">
+              <div><small>Score</small><strong>▲${score}</strong></div>
+              <div><small>Comments</small><strong>${comments}</strong></div>
+              <div><small>${esc(tx("Upvote ratio"))}</small><strong>${upv}</strong></div>
+              <div><small>${esc(tx("Awards"))}</small><strong>${live?.awards ?? 0}</strong></div>
+              <div><small>Engage</small><strong>${ratio}%</strong></div>
+              <div><small>Type</small><strong>${esc(live?.type || p.type)}</strong></div>
+              <div><small>Domain</small><strong>${esc(live?.domain || p.domain || "self")}</strong></div>
+              <div><small>Flair</small><strong>${esc(live?.flair || p.flair || "—")}</strong></div>
+            </div>`;
+        };
+        render(null);
         const r = node.getBoundingClientRect();
         this._card.style.left = Math.min(window.innerWidth - 320, r.right + 8) + "px";
         this._card.style.top = Math.max(8, r.top) + "px";
         this._card.style.display = "block";
+        /* Upgrade with real numbers from Reddit's JSON. */
+        const pid = window.RPT_API?.permalinkToId?.(p.permalink);
+        if (pid && window.RPT_API) {
+          window.RPT_API.comments(pid, { limit: 1, depth: 0 }).then((t) => { if (t && this._card?.style.display !== "none") render(t.post); }).catch(() => {});
+        }
       }, true);
       document.addEventListener("mouseleave", () => { if (this._card) this._card.style.display = "none"; }, true);
     },
