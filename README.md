@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0--beta-46d160?style=flat-square" alt="Version 2.0.0-beta">
+  <img src="https://img.shields.io/badge/version-2.0.1-46d160?style=flat-square" alt="Version 2.0.1">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: **v2.0.0-beta**** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
+> **Current release: **v2.0.1**** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -74,19 +74,15 @@ Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
 ## Project Structure
 
 ```
-extension/            # The browser extension (load this folder unpacked)
-├── manifest.json
-├── background.js
-├── content.js        # Modular RPT.* runtime
-├── content.css
-├── popup.{html,js,css}
-├── options.{html,js,css}
-├── analytics.{html,js,css}
-├── shared.js         # i18n + shared helpers
-├── _locales/         # EN, ES, FR, DE, PT, JA, ZH
-└── icons/
+extension-src/        # The browser extension source (Vite + React + TS + Tailwind)
+├── src/manifest.ts   # MV3 manifest generator (Chrome / Firefox targets)
+├── src/pages/        # popup, options, analytics — React + Tailwind
+├── src/content/      # Shadow-DOM overlay + vendored legacy runtime
+├── src/background/   # MV3 service worker
+├── public/_locales/  # EN, ES, FR, DE, PT, JA, ZH
+└── scripts/zip.ts    # Builds browser-specific packages into ../public/
 
-src/                  # Marketing / documentation site
+src/                  # Marketing / documentation site (TanStack Start)
 public/reddit-power-toolkit-chrome.zip   # Chrome / Edge / Brave / Kiwi bundle
 public/reddit-power-toolkit-firefox.zip  # Firefox 128+ bundle
 public/reddit-power-toolkit.zip          # Chrome-compatible fallback alias
@@ -98,20 +94,20 @@ public/reddit-power-toolkit.zip          # Chrome-compatible fallback alias
 
 ### Chrome, Edge, Brave, Opera, Arc
 
-1. Download this repo (`Code → Download ZIP`) and unzip it, or clone with `git clone`.
+1. Download `public/reddit-power-toolkit-chrome.zip` from this repo (or the [website](https://redditpt.lovable.app)) and unzip it.
 2. Open a new tab and go to `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`).
 3. Toggle **Developer mode** on (top-right corner).
-4. Click **Load unpacked** and pick the `extension/` folder from this repo.
+4. Click **Load unpacked** and pick the unzipped folder.
 5. Pin **Reddit Power Toolkit** to the toolbar from the puzzle-piece menu.
 6. Open any Reddit comment thread (`reddit.com/r/*/comments/*`) and click the icon — the side panel opens and the floating **RPT** button appears bottom-right.
 7. If Reddit was already open before you installed, hit **Reload this tab** in the popup once.
 
 ### Firefox (128+)
 
-1. Download or clone this repo.
+1. Download and unzip `public/reddit-power-toolkit-firefox.zip`.
 2. Open `about:debugging#/runtime/this-firefox`.
 3. Click **Load Temporary Add-on…**.
-4. Navigate into the `extension/` folder and pick **`manifest.json`**.
+4. Navigate into the unzipped folder and pick **`manifest.json`**.
 5. Open a Reddit thread — the toolkit runs immediately.
 6. Temporary add-ons are removed when Firefox restarts. To keep it permanently, install a signed build from AMO (planned) or use Firefox Developer Edition / Nightly with `xpinstall.signatures.required = false`.
 
@@ -222,10 +218,10 @@ Open **Options → General** and confirm **Show author colors** is enabled. Colo
 Live-new uses adaptive polling (slower when the tab is idle). Move the mouse over the panel to switch to active polling. If the pill stays gray, Reddit is likely rate-limiting your session — wait 60 seconds and try again.
 
 **The extension broke after a Reddit redesign.**
-Reddit changes DOM class names frequently. Update `RPT.selectors` in `extension/content.js`, reload the extension from `chrome://extensions`, and open an issue with the failing selector so a fix can ship for everyone.
+Reddit changes DOM class names frequently. Update `RPT.selectors` in `extension-src/src/content/legacy/content.js`, reload the extension from `chrome://extensions`, and open an issue with the failing selector so a fix can ship for everyone.
 
 **Firefox: "This add-on could not be installed because it appears to be corrupt."**
-You're likely trying to load the `.zip`. In Firefox, use `about:debugging` → **Load Temporary Add-on…** and pick `extension/manifest.json` directly. Permanent installs require signing via AMO.
+You're likely trying to load the `.zip`. In Firefox, use `about:debugging` → **Load Temporary Add-on…** and pick `extension-src/dist/firefox/manifest.json` directly. Permanent installs require signing via AMO.
 
 **Kiwi Browser: nothing happens after loading the zip.**
 Kiwi occasionally needs a full app restart after enabling a new extension. Force-stop Kiwi from Android settings, reopen, then visit a Reddit thread.
@@ -234,7 +230,7 @@ Kiwi occasionally needs a full app restart after enabling a new extension. Force
 
 ## Development
 
-Extension: edit files under `extension/` and reload from `chrome://extensions`.
+Extension: edit files under `extension-src/src/` and reload from `chrome://extensions`.
 
 Landing site:
 
@@ -293,7 +289,7 @@ Run through this list on each browser before shipping a release. Every row must 
 
 > Kiwi note: rows 10-11 depend on a physical keyboard. On a touch-only device, use the equivalent on-screen buttons in the quick-bar and panel.
 
-Extension: edit files under `extension/` and reload from `chrome://extensions`.
+Extension: edit files under `extension-src/src/` and reload from `chrome://extensions`.
 
 Landing site:
 
@@ -308,13 +304,13 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases).
 
-### v2.0.0-beta — current
+### v2.0.1 — current
 
 - **Full Vite + React + TypeScript + Tailwind migration** (`extension-src/`) with production-optimised builds, tree-shaking, minification and per-target Chrome/Firefox zips.
 - **React content-script overlay** mounted inside an isolated **Shadow DOM** — the ⚡ v2 floating button (bottom-left) opens a modern panel that wires all **36 Power features** with live enable/disable toggles synced through `chrome.storage.local`.
 - **Conflict-safe execution**: a single-flight mutex prevents two Power features from mutating the DOM at once, and the panel is fully keyboard-accessible (Alt+Shift+P to toggle, Esc to close, aria-labels on every control).
 - Enable state is shared with the legacy hub, so toggling from either UI stays in sync.
-- Manifest, popup, Options, README, website footer and About panel synced to **v2.0.0-beta**.
+- Manifest, popup, Options, README, website footer and About panel synced to **v2.0.1**.
 
 ### v1.10.7
 
@@ -468,7 +464,7 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 
 ## Contributing
 
-Issues and PRs welcome. Because Reddit changes its DOM frequently, selector updates in `extension/content.js` (`RPT.selectors`) are the most common contribution.
+Issues and PRs welcome. Because Reddit changes its DOM frequently, selector updates in `extension-src/src/content/legacy/content.js` (`RPT.selectors`) are the most common contribution.
 
 ## License
 
