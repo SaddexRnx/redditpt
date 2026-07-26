@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.10.7-10b981?style=flat-square" alt="Version 1.10.7">
+  <img src="https://img.shields.io/badge/version-2.0.0--beta-46d160?style=flat-square" alt="Version 1.10.7">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.10.7** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
+> **Current release: **v2.0.0-beta**** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
