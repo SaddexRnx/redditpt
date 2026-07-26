@@ -1,7 +1,7 @@
 // Package built extensions into shippable zips.
 // Uses `nix run nixpkgs#zip` since zip isn't in the sandbox by default.
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
@@ -23,4 +23,11 @@ for (const target of ["chrome", "firefox"] as const) {
   );
   if (r.status !== 0) process.exit(r.status ?? 1);
   console.log(`packaged → ${out}`);
+
+  if (target === "chrome") {
+    const genericOut = resolve(publicDir, "reddit-power-toolkit.zip");
+    rmSync(genericOut, { force: true });
+    copyFileSync(out, genericOut);
+    console.log(`packaged → ${genericOut}`);
+  }
 }

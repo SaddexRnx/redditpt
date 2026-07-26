@@ -288,12 +288,13 @@ const T: Record<Lang, Record<string, string>> = {
   },
 };
 
-function downloadZip() {
-  fetch("/reddit-power-toolkit.zip")
+function downloadZip(target: "chrome" | "ff" | "kiwi" = "chrome") {
+  const fileName = target === "ff" ? "reddit-power-toolkit-firefox.zip" : "reddit-power-toolkit-chrome.zip";
+  fetch(`/${fileName}`)
     .then((res) => { if (!res.ok) throw new Error(`Download failed: ${res.status}`); return res.blob(); })
     .then((blob) => {
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = "reddit-power-toolkit.zip"; a.click();
+      a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
       URL.revokeObjectURL(a.href);
     })
     .catch((err) => alert(err.message));
@@ -431,7 +432,7 @@ function BrowserPick({
         document.dispatchEvent(new CustomEvent("rpt-install-tab", { detail: tab }));
         const el = document.getElementById("install");
         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-        setTimeout(downloadZip, 350);
+        setTimeout(() => downloadZip(tab), 350);
       }}
       className={`group flex items-center gap-3 rounded-xl border px-4 py-4 text-left transition ${border} ${isDark ? "bg-white/[0.03] hover:bg-white/[0.06] hover:border-[#46d160]/60" : "bg-white hover:bg-slate-50 hover:border-[#46d160]"}`}
       aria-label={`${t("install_for")} ${label}`}
