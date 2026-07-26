@@ -106,8 +106,12 @@
           </tr>`;
         }).join("");
       const uptime = Math.round((Date.now() - V._perf.mounted) / 1000);
+      const api = window.RPT_API?.stats ? window.RPT_API.stats() : null;
       const body = `
         <p class="rpt-muted">${tr("uptime_on_page")}: <strong>${uptime}s</strong>${sub ? ` · ${tr("community_lower")}: <strong>r/${esc(sub)}</strong>` : ""}</p>
+        ${api ? `<p class="rpt-muted" style="margin:4px 0 10px">
+          Reddit JSON cache: <strong>${api.cached}</strong> entries · <strong>${api.hits}</strong> hits · <strong>${api.misses}</strong> fetches · <strong>${api.errors}</strong> errors${api.inflight ? ` · ${api.inflight} in-flight` : ""}
+        </p>` : ""}
         <div style="max-height:60vh;overflow:auto;border:1px solid var(--border);border-radius:8px">
           <table class="rpt-perf-table" style="width:100%;border-collapse:collapse;font-size:13px">
             <thead><tr>

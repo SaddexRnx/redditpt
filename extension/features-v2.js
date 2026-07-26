@@ -114,15 +114,82 @@
   }
   V._sub = currentSubreddit;
 
+  /* Live-data helper: pull up to 100 posts for a subreddit from Reddit's own
+   * JSON endpoint, then merge with anything already visible in the DOM (so
+   * we keep the `el` reference for modules that mutate the page — hiding,
+   * sorting, highlighting…). Falls back to DOM-only if the fetch fails
+   * (private sub, rate limit, offline). Cached for 60s by RPT_API. */
+  async function postsLive(sub, sort = "hot") {
+    const domPosts = collectPosts();
+    const target = sub || currentSubreddit();
+    if (!target || !window.RPT_API) return domPosts;
+    let fetched = [];
+    try {
+      const [hot, nu] = await Promise.all([
+        window.RPT_API.posts(target, sort, { limit: 100 }),
+        sort === "new" ? Promise.resolve([]) : window.RPT_API.posts(target, "new", { limit: 100 }),
+      ]);
+      const byId = new Map();
+      [...hot, ...nu].forEach((p) => { if (!byId.has(p.id)) byId.set(p.id, p); });
+      fetched = [...byId.values()];
+    } catch { /* keep DOM */ }
+    if (!fetched.length) return domPosts;
+    /* Re-attach DOM element references when the same permalink shows up. */
+    const domByLink = new Map(domPosts.map((p) => [String(p.permalink || "").replace(/^https?:\/\/[^/]+/, ""), p.el]));
+    fetched.forEach((p) => {
+      const key = String(p.permalink || "").replace(/^https?:\/\/[^/]+/, "");
+      const el = domByLink.get(key);
+      if (el) p.el = el;
+    });
+    return fetched;
+  }
+  V._postsLive = postsLive;
+
+  /* Small helper: show a transient "loading…" body and swap in real content. */
+  async function withLoading(title, opts, worker) {
+    const m = modal(title, `<p class="rpt-muted">${esc(tx("Loading live data from Reddit"))}…</p>`, opts || {});
+    try {
+      const html = await worker();
+      const body = m.querySelector(".rpt-v2-body");
+      if (body) body.innerHTML = html;
+      return m;
+    } catch (e) {
+      const body = m.querySelector(".rpt-v2-body");
+      if (body) body.innerHTML = `<p class="rpt-muted">${esc(tx("Couldn't reach Reddit — falling back to on-page data."))}</p>`;
+      return m;
+    }
+  }
+  V._withLoading = withLoading;
+
   /* ============ 1. COMMUNITY COMPARISON TOOL ============ */
   V.modules.communityCompare = {
     id: "communityCompare", name: "Community comparison",
     desc: "Snapshot the current subreddit and compare with saved snapshots.",
     KEY: "rpt_v2_communities",
-    snapshot() {
+    /* Sync fallback kept for callers that can't await (legacy call sites). */
+    snapshot() { return this._buildSnap(collectPosts()); },
+    async snapshotLive() {
       const sub = currentSubreddit();
-      if (!sub) { toast("Open a subreddit to snapshot"); return null; }
-      const posts = collectPosts();
+      if (!sub) return null;
+      const posts = await postsLive(sub, "hot");
+      const snap = this._buildSnap(posts);
+      /* Merge in real subreddit metadata from Reddit's about endpoint. */
+      try {
+        const meta = await window.RPT_API?.about?.(sub);
+        if (meta) {
+          snap.members = meta.subscribers;
+          snap.online = meta.active_user_count ?? meta.accounts_active;
+          snap.created = meta.created_utc ? new Date(meta.created_utc * 1000).toISOString() : snap.created;
+          snap.description = meta.public_description || meta.description || snap.description;
+          snap.isNsfw = !!meta.over18;
+          snap.subType = meta.subreddit_type || "";
+        }
+      } catch {}
+      return snap;
+    },
+    _buildSnap(posts) {
+      const sub = currentSubreddit();
+      if (!sub) { return null; }
       const wordFreq = {};
       posts.forEach((p) => {
         (p.title.toLowerCase().match(/[a-z]{4,}/g) || []).forEach((w) => wordFreq[w] = (wordFreq[w] || 0) + 1);
@@ -152,7 +219,7 @@
     },
     async open() {
       const stored = await S.get(this.KEY, {});
-      const snapNow = this.snapshot();
+      const snapNow = await this.snapshotLive();
       const list = Object.values(stored);
       const rows = list.map((s) => `
         <tr>
@@ -390,13 +457,21 @@
         this._card.addEventListener("mouseleave", () => this._hide());
         document.body.appendChild(this._card);
       }
-      this._card.innerHTML = `
+      /* Render local numbers immediately, then upgrade with live karma/age. */
+      const renderCard = (live) => {
+        this._card.innerHTML = `
         <div class="rpt-uc-head">
           <span class="rpt-uc-dot" style="background:${RPT.utils.authorColor(author)}"></span>
           <strong>u/${esc(author)}</strong>
+          ${live?.is_gold ? `<span class="rpt-tag" style="background:#f6a700;color:#111">Premium</span>` : ""}
+          ${live?.verified ? `<span class="rpt-tag">Verified</span>` : ""}
           ${notes.tag ? `<span class="rpt-tag">${esc(notes.tag)}</span>` : ""}
         </div>
         <div class="rpt-uc-grid">
+          ${live ? `
+          <div><small>${esc(tx("Post karma"))}</small><strong>${live.link_karma ?? "—"}</strong></div>
+          <div><small>${esc(tx("Comment karma"))}</small><strong>${live.comment_karma ?? "—"}</strong></div>
+          <div><small>${esc(tx("Account age"))}</small><strong>${live.created_utc ? Math.floor((Date.now()/1000 - live.created_utc)/86400/365 * 10)/10 + "y" : "—"}</strong></div>` : ""}
           <div><small>Comments here</small><strong>${mine.length}</strong></div>
           <div><small>Replies received</small><strong>${replies.length}</strong></div>
           <div><small>Avg length</small><strong>${avgLen}c</strong></div>
@@ -404,15 +479,22 @@
         <textarea class="rpt-uc-note" placeholder="Private note (local only)">${esc(notes.note)}</textarea>
         <input class="rpt-uc-tag" placeholder="Tag (e.g. helpful, expert)" value="${esc(notes.tag)}">
         <button class="rpt-uc-save rpt-v2-primary">Save note</button>`;
+        this._card.querySelector(".rpt-uc-save").onclick = async () => {
+          const note = this._card.querySelector(".rpt-uc-note").value;
+          const tag = this._card.querySelector(".rpt-uc-tag").value;
+          await S.patch(this.KEY, {}, (c) => { c[author] = { note, tag }; return c; });
+          toast("Note saved");
+        };
+      };
+      renderCard(null);
       this._card.style.left = Math.min(window.innerWidth - 300, x + 12) + "px";
       this._card.style.top = Math.min(window.innerHeight - 260, y + 12) + "px";
       this._card.style.display = "block";
-      this._card.querySelector(".rpt-uc-save").onclick = async () => {
-        const note = this._card.querySelector(".rpt-uc-note").value;
-        const tag = this._card.querySelector(".rpt-uc-tag").value;
-        await S.patch(this.KEY, {}, (c) => { c[author] = { note, tag }; return c; });
-        toast("Note saved");
-      };
+      /* Upgrade with real karma/age from Reddit's public JSON. */
+      try {
+        const live = await window.RPT_API?.user?.(author);
+        if (live) renderCard(live);
+      } catch {}
     },
     _hide() { this._hideTimer = setTimeout(() => { if (this._card) this._card.style.display = "none"; }, 260); },
     enabled: false,
@@ -449,21 +531,34 @@
         const p = posts.find((x) => x.el === node);
         if (!p) return;
         if (!this._card) { this._card = document.createElement("div"); this._card.className = "rpt-v2-postcard"; document.body.appendChild(this._card); }
-        const ratio = p.comments ? Math.round((p.comments / Math.max(1, p.score)) * 100) : 0;
-        this._card.innerHTML = `
-          <div class="rpt-uc-head"><strong>${esc(p.title.slice(0, 80))}</strong></div>
-          <div class="rpt-uc-grid">
-            <div><small>Score</small><strong>▲${p.score}</strong></div>
-            <div><small>Comments</small><strong>${p.comments}</strong></div>
-            <div><small>Engage</small><strong>${ratio}%</strong></div>
-            <div><small>Type</small><strong>${esc(p.type)}</strong></div>
-            <div><small>Domain</small><strong>${esc(p.domain || "self")}</strong></div>
-            <div><small>Flair</small><strong>${esc(p.flair || "—")}</strong></div>
-          </div>`;
+        const render = (live) => {
+          const score = live?.score ?? p.score;
+          const comments = live?.comments ?? p.comments;
+          const ratio = comments ? Math.round((comments / Math.max(1, score)) * 100) : 0;
+          const upv = live?.upvoteRatio != null ? Math.round(live.upvoteRatio * 100) + "%" : "—";
+          this._card.innerHTML = `
+            <div class="rpt-uc-head"><strong>${esc((live?.title || p.title).slice(0, 80))}</strong></div>
+            <div class="rpt-uc-grid">
+              <div><small>Score</small><strong>▲${score}</strong></div>
+              <div><small>Comments</small><strong>${comments}</strong></div>
+              <div><small>${esc(tx("Upvote ratio"))}</small><strong>${upv}</strong></div>
+              <div><small>${esc(tx("Awards"))}</small><strong>${live?.awards ?? 0}</strong></div>
+              <div><small>Engage</small><strong>${ratio}%</strong></div>
+              <div><small>Type</small><strong>${esc(live?.type || p.type)}</strong></div>
+              <div><small>Domain</small><strong>${esc(live?.domain || p.domain || "self")}</strong></div>
+              <div><small>Flair</small><strong>${esc(live?.flair || p.flair || "—")}</strong></div>
+            </div>`;
+        };
+        render(null);
         const r = node.getBoundingClientRect();
         this._card.style.left = Math.min(window.innerWidth - 320, r.right + 8) + "px";
         this._card.style.top = Math.max(8, r.top) + "px";
         this._card.style.display = "block";
+        /* Upgrade with real numbers from Reddit's JSON. */
+        const pid = window.RPT_API?.permalinkToId?.(p.permalink);
+        if (pid && window.RPT_API) {
+          window.RPT_API.comments(pid, { limit: 1, depth: 0 }).then((t) => { if (t && this._card?.style.display !== "none") render(t.post); }).catch(() => {});
+        }
       }, true);
       document.addEventListener("mouseleave", () => { if (this._card) this._card.style.display = "none"; }, true);
     },
@@ -476,7 +571,9 @@
     desc: "Full breakdown of the current subreddit from loaded data.",
     /* Pull as many rich signals as we can from the DOM without any network calls. */
     async _harvest(sub) {
-      const posts = collectPosts();
+      /* Prefer live Reddit JSON (up to 200 posts) so numbers reflect the real
+       * subreddit, not just what's rendered on the current viewport. */
+      const posts = await postsLive(sub, "hot");
       const snap = V.modules.communityCompare.snapshot() || {};
       /* Sidebar / header metadata — try both old & new Reddit layouts. */
       const q = (sel) => document.querySelector(sel);
@@ -753,8 +850,8 @@
   V.modules.calendar = {
     id: "calendar", name: "Subreddit activity calendar",
     desc: "Heatmap of loaded posts by day-of-week and hour.",
-    open() {
-      const posts = collectPosts();
+    async open() {
+      const posts = await postsLive(currentSubreddit(), "new");
       const grid = Array.from({ length: 7 }, () => Array(24).fill(0));
       posts.forEach((p) => {
         if (!p.created) return;
@@ -764,7 +861,7 @@
       });
       const max = Math.max(1, ...grid.flat());
       const days = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-      const body = `<p class="rpt-muted">Darker = more posts. From ${posts.length} loaded posts.</p>
+      const body = `<p class="rpt-muted">${esc(tx("Darker = more posts. Live sample from Reddit's newest 100 posts."))} (${posts.length})</p>
         <table class="rpt-v2-cal"><thead><tr><th></th>${Array.from({length:24}, (_,h)=>`<th>${h}</th>`).join("")}</tr></thead>
         <tbody>${days.map((d,di)=>`<tr><th>${d}</th>${grid[di].map((v)=>`<td style="background:rgba(255,69,0,${v/max})" title="${v} posts">${v||""}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
       modal("Activity calendar", body, { wide: true });
@@ -827,8 +924,9 @@
   V.modules.repostDetector = {
     id: "repostDetector", name: "Repost detector",
     desc: "Find posts with same URL or very similar titles on this page.",
-    open() {
-      const posts = collectPosts();
+    async open() {
+      const sub = currentSubreddit();
+      const posts = sub ? await postsLive(sub, "hot") : collectPosts();
       const norm = (s) => s.toLowerCase().replace(/[^a-z0-9 ]/g, "").split(/\s+/).filter(Boolean);
       const jaccard = (a, b) => { const A = new Set(a), B = new Set(b); const I = [...A].filter((x) => B.has(x)).length; const U = new Set([...A, ...B]).size; return U ? I / U : 0; };
       const dupes = [];
@@ -838,12 +936,26 @@
         const sim = jaccard(norm(p.title), norm(q.title));
         if (urlDup || sim >= 0.6) dupes.push({ p, q, sim: urlDup ? 1 : sim });
       }
-      const body = dupes.length ? dupes.map(({p,q,sim})=>`
+      /* If we're on a specific post, also fetch Reddit's own crossposts/duplicates. */
+      let dupSection = "";
+      const postId = window.RPT_API?.currentPostId?.();
+      if (postId) {
+        try {
+          const otherPosts = await window.RPT_API.duplicates(postId);
+          if (otherPosts.length) {
+            dupSection = `<h4 class="rpt-section-title">${esc(tx("Reddit-known duplicates of this post"))}</h4>
+              <ul class="rpt-v2-linklist">${otherPosts.slice(0, 20).map((p) =>
+                `<li><a href="${esc(p.permalink)}" target="_blank" rel="noopener">${esc(p.title)}</a>
+                 <span class="rpt-muted"> — r/${esc(p.subreddit)} · ▲${p.score} · ${p.comments}c</span></li>`).join("")}</ul>`;
+          }
+        } catch {}
+      }
+      const body = (dupSection ? dupSection : "") + (dupes.length ? dupes.map(({p,q,sim})=>`
         <div class="rpt-v2-dup">
           <div><span class="rpt-tag">${Math.round(sim*100)}% match</span></div>
           <div><a href="${esc(p.permalink)}" target="_blank" rel="noopener">${esc(p.title)}</a> — ▲${p.score} · ${p.comments}c</div>
           <div><a href="${esc(q.permalink)}" target="_blank" rel="noopener">${esc(q.title)}</a> — ▲${q.score} · ${q.comments}c</div>
-        </div>`).join("") : `<p class="rpt-muted">No possible reposts detected among loaded posts.</p>`;
+        </div>`).join("") : `<p class="rpt-muted">${esc(tx("No possible reposts detected among loaded posts."))}</p>`);
       modal("Repost detector", body, { wide: true });
     },
     run() { this.open(); },
@@ -1007,20 +1119,46 @@
   V.modules.subHealth = {
     id: "subHealth", name: "Subreddit health monitor",
     desc: "Compute activity, engagement and spam signals locally.",
-    open() {
-      const posts = collectPosts();
+    async open() {
+      const sub = currentSubreddit();
+      const posts = sub ? await postsLive(sub, "new") : collectPosts();
+      let removed = 0, deletedComments = 0, lockedPosts = 0, modActioned = 0, controversial = 0;
+      try {
+        const meta = sub ? await window.RPT_API?.about?.(sub) : null;
+        var members = meta?.subscribers ?? null;
+        var online  = meta?.active_user_count ?? meta?.accounts_active ?? null;
+      } catch {}
+      lockedPosts = posts.filter((p) => p.locked).length;
+      /* Pull the current thread's comment tree for signal on removed/mod actions. */
+      const postId = window.RPT_API?.currentPostId?.();
+      if (postId) {
+        try {
+          const t = await window.RPT_API.comments(postId, { limit: 500 });
+          if (t) {
+            deletedComments = t.comments.filter((c) => c.removed).length;
+            modActioned = t.comments.filter((c) => c.distinguished === "moderator").length;
+            controversial = t.comments.filter((c) => c.controversial).length;
+          }
+        } catch {}
+      }
       const withComments = posts.filter((p) => p.comments > 0).length;
       const dead = posts.filter((p) => p.comments === 0).length;
-      const deleted = document.querySelectorAll('.deleted, [deleted], shreddit-comment[author="[deleted]"]').length;
+      const deleted = deletedComments || document.querySelectorAll('.deleted, [deleted], shreddit-comment[author="[deleted]"]').length;
       const spamHint = posts.filter((p) => /free|discount|check.*bio|onlyfans/i.test(p.title)).length;
       const health = Math.max(0, Math.min(100, Math.round((withComments / Math.max(1, posts.length)) * 100 - spamHint * 5 - dead * 0.5)));
+      const fmtNum = (n) => n == null ? "—" : (n >= 1e6 ? (n/1e6).toFixed(1)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"k" : String(n));
       const body = `
         <div class="rpt-v2-health"><div class="rpt-v2-health-num" style="color:${health>60?"var(--brand-2)":health>30?"#f59e0b":"#ef4444"}">${health}</div><div>Health score</div></div>
         <div class="rpt-v2-cmp-grid">
-          <div><small>Posts loaded</small><strong>${posts.length}</strong></div>
+          <div><small>${esc(tx("Members"))}</small><strong>${fmtNum(members)}</strong></div>
+          <div><small>${esc(tx("Online now"))}</small><strong>${fmtNum(online)}</strong></div>
+          <div><small>Posts sampled</small><strong>${posts.length}</strong></div>
           <div><small>With comments</small><strong>${withComments}</strong></div>
           <div><small>Dead posts</small><strong>${dead}</strong></div>
           <div><small>Deleted comments</small><strong>${deleted}</strong></div>
+          <div><small>${esc(tx("Locked posts"))}</small><strong>${lockedPosts}</strong></div>
+          <div><small>${esc(tx("Mod comments"))}</small><strong>${modActioned}</strong></div>
+          <div><small>${esc(tx("Controversial"))}</small><strong>${controversial}</strong></div>
           <div><small>Spam hints</small><strong>${spamHint}</strong></div>
           <div><small>Avg score</small><strong>${posts.length ? Math.round(posts.reduce((s,p)=>s+p.score,0)/posts.length) : 0}</strong></div>
         </div>`;
@@ -1051,9 +1189,10 @@
     },
     async apply() {
       const c = await S.get(this.KEY, { minScore: 0, minComments: 0, minTitle: 0, hideShort: false });
-      collectPosts().forEach((p) => {
+      const posts = collectPosts();
+      posts.forEach((p) => {
         const bad = p.score < c.minScore || p.comments < c.minComments || p.title.length < c.minTitle || (c.hideShort && p.title.length < 20);
-        p.el.style.display = bad ? "none" : "";
+        if (p.el) p.el.style.display = bad ? "none" : "";
       });
     },
     run() { this.open(); },
@@ -1063,13 +1202,15 @@
   V.modules.timeline = {
     id: "timeline", name: "Subreddit timeline",
     desc: "Chronological view of loaded posts.",
-    open() {
-      const posts = collectPosts().filter((p) => p.created).sort((a,b) => new Date(a.created) - new Date(b.created));
+    async open() {
+      const sub = currentSubreddit();
+      const raw = sub ? await postsLive(sub, "new") : collectPosts();
+      const posts = raw.filter((p) => p.created).sort((a,b) => new Date(a.created) - new Date(b.created));
       const body = posts.length ? `<ol class="rpt-v2-timeline">${posts.map((p) => `
         <li><time>${new Date(p.created).toLocaleString()}</time>
-          <a href="${esc(p.permalink)}">${esc(p.title)}</a>
+          <a href="${esc(p.permalink)}" target="_blank" rel="noopener">${esc(p.title)}</a>
           <span class="rpt-muted">▲${p.score} · ${p.comments}c</span></li>`).join("")}</ol>` :
-        `<p class="rpt-muted">No timestamped posts detected.</p>`;
+        `<p class="rpt-muted">${esc(tx("No timestamped posts detected."))}</p>`;
       modal("Subreddit timeline", body, { wide: true });
     },
     run() { this.open(); },
@@ -1118,7 +1259,7 @@
     KEY: "rpt_v2_trends",
     async open() {
       const sub = currentSubreddit(); if (!sub) return toast("Open a subreddit");
-      const snap = V.modules.communityCompare.snapshot();
+      const snap = await V.modules.communityCompare.snapshotLive();
       const cur = await S.get(this.KEY, {});
       const prev = cur[sub];
       let body = "";
@@ -1140,12 +1281,18 @@
   V.modules.contentExporter = {
     id: "contentExporter", name: "Subreddit content exporter",
     desc: "Export loaded posts + flairs + rules as JSON/MD.",
-    open() {
+    async open() {
       const sub = currentSubreddit();
-      const posts = collectPosts().map((p) => ({ title: p.title, author: p.author, score: p.score, comments: p.comments, permalink: p.permalink, flair: p.flair, type: p.type, domain: p.domain }));
-      const rules = [...document.querySelectorAll('[data-testid*="rule"], .rule')].map((r) => r.innerText.trim());
+      const live = sub ? await postsLive(sub, "hot") : collectPosts();
+      const posts = live.map((p) => ({ title: p.title, author: p.author, score: p.score, comments: p.comments, permalink: p.permalink, flair: p.flair, type: p.type, domain: p.domain, created: p.created, nsfw: p.nsfw }));
+      let rulesArr = [];
+      try {
+        const r = sub ? await window.RPT_API?.rules?.(sub) : null;
+        rulesArr = Array.isArray(r?.rules) ? r.rules.map((x) => x.short_name || x.violation_reason || "") : [];
+      } catch {}
+      const rules = rulesArr.length ? rulesArr : [...document.querySelectorAll('[data-testid*="rule"], .rule')].map((r) => r.innerText.trim());
       const flairs = [...new Set(posts.map((p) => p.flair).filter(Boolean))];
-      const body = `<p>Ready to export r/${esc(sub || "current")} — ${posts.length} posts, ${flairs.length} flairs, ${rules.length} rules.</p>
+      const body = `<p>${esc(tx("Ready to export"))} r/${esc(sub || "current")} — ${posts.length} posts, ${flairs.length} flairs, ${rules.length} rules.</p>
         <div class="rpt-btnrow">
           <button class="rpt-v2-primary" data-f="json">Export JSON</button>
           <button class="rpt-v2-primary" data-f="md">Export Markdown</button>
@@ -1168,8 +1315,10 @@
   V.modules.feedDedup = {
     id: "feedDedup", name: "Feed deduplicator",
     desc: "Hide duplicate posts (same URL or near-identical title).",
-    apply() {
+    async apply() {
       const posts = collectPosts();
+      /* We only hide DOM elements, so DOM-visible posts are the ones that
+       * matter — no need for a live fetch here. */
       const seen = new Map();
       let hidden = 0;
       posts.forEach((p) => {
@@ -1198,8 +1347,16 @@
         <button class="rpt-v2-primary" data-s="engage">Highest engagement</button>
       </div>`;
       const m = modal("Post age sorting", body);
-      m.querySelectorAll("[data-s]").forEach((b) => b.onclick = () => {
-        const posts = collectPosts().filter((p) => p.el.parentElement);
+      m.querySelectorAll("[data-s]").forEach((b) => b.onclick = async () => {
+        /* Enrich DOM posts with live timestamps + scores where available. */
+        const sub = currentSubreddit();
+        let live = [];
+        if (sub) { try { live = await window.RPT_API.posts(sub, "new", { limit: 100 }); } catch {} }
+        const liveByLink = new Map(live.map((p) => [String(p.permalink).replace(/^https?:\/\/[^/]+/, ""), p]));
+        const posts = collectPosts().filter((p) => p.el && p.el.parentElement).map((p) => {
+          const l = liveByLink.get(String(p.permalink).replace(/^https?:\/\/[^/]+/, ""));
+          return l ? { ...p, created: l.created || p.created, score: l.score || p.score, comments: l.comments || p.comments } : p;
+        });
         const parent = posts[0]?.el.parentElement; if (!parent) return toast("No posts");
         const now = Date.now();
         const score = (p) => {
@@ -1364,14 +1521,23 @@
   V.modules.oldGold = {
     id: "oldGold", name: "Old gold finder",
     desc: "Highlight old but highly upvoted / commented posts on this page.",
-    apply() {
+    async apply() {
       const posts = collectPosts();
+      /* Enrich with live scores/dates so posts without DOM timestamps still count. */
+      const sub = currentSubreddit();
+      let live = [];
+      if (sub) { try { live = await window.RPT_API?.posts(sub, "top", { t: "all", limit: 100 }); } catch {} }
+      const liveByLink = new Map(live.map((p) => [String(p.permalink).replace(/^https?:\/\/[^/]+/, ""), p]));
       let n = 0;
       posts.forEach((p) => {
-        if (!p.created) return;
-        const days = (Date.now() - new Date(p.created)) / 86400000;
-        if (days > 180 && (p.score > 500 || p.comments > 100)) {
-          p.el.classList.add("rpt-oldgold"); n++;
+        const l = liveByLink.get(String(p.permalink).replace(/^https?:\/\/[^/]+/, ""));
+        const created = (l?.created) || p.created;
+        const score = (l?.score) || p.score;
+        const comments = (l?.comments) || p.comments;
+        if (!created) return;
+        const days = (Date.now() - new Date(created)) / 86400000;
+        if (days > 180 && (score > 500 || comments > 100)) {
+          if (p.el) p.el.classList.add("rpt-oldgold"); n++;
         }
       });
       toast(`Marked ${n} old-gold posts`);
