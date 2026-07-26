@@ -506,7 +506,16 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.10.3", t: "Side panel fix & full TabBankruptcy theme sync", d: "Latest", i: Rocket, items: [
+    { v: "1.10.6", t: "Live Reddit data everywhere", d: "Latest", i: Rocket, items: [
+      "New shared Reddit JSON client (`reddit-api.js`) — every remote-capable module now fetches real live numbers from Reddit's public endpoints, cached 60 s in-memory, with graceful fallback to on-page DOM harvest when offline or rate-limited",
+      "Subreddit analyzer, health monitor, timeline, calendar, content exporter, trend tracker, old-gold finder, age sort and repost detector now sample up to 200 real posts instead of just what's visible on screen",
+      "Post hover card upgrades with real score, upvote ratio, comments and awards straight from `/comments/{id}.json`",
+      "User hover card upgrades with real post karma, comment karma, account age, premium/verified badges from `/user/{name}/about.json`",
+      "Repost detector adds Reddit's own crossposts list from `/duplicates/{id}.json` when you're on a specific thread",
+      "Performance panel now shows Reddit JSON cache stats (entries · hits · fetches · errors) so lag is easy to diagnose",
+      "Subreddit analyzer section headings finally translate — bug where raw i18n keys like `content_types` leaked through in French/Spanish is fixed",
+    ]},
+    { v: "1.10.3", t: "Side panel fix & full TabBankruptcy theme sync", d: "", i: Rocket, items: [
       "Side panel now opens reliably with all 8 tabs (Tree, Tools, Saved, Clean, Keywords, Stats, Power, Export) — the tab bar auto-scrolls the active tab into view on 400 px panels",
       "TabBankruptcy dark theme applied end-to-end: identical tokens, spacing and typography across popup, side panel, options, analytics and the Power features hub",
       "Manifest, popup, Options, README, site footer, About modal and language taglines all synced to v1.10.3",
