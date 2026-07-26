@@ -506,7 +506,16 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "1.10.6", t: "Live Reddit data everywhere", d: "Latest", i: Rocket, items: [
+    { v: "1.10.7", t: "Diagnostics, charts & fetch-on-demand", d: "Latest", i: Rocket, items: [
+      "New Data Sources & Diagnostics inspector — see every Reddit JSON endpoint the toolkit called, per module, with status, cache hit, duration and error message; rolling log of the last 200 requests",
+      "Interactive SVG charts in the Subreddit Analyzer — hour-of-day histogram and 7-day posting trend, rebuilt live per subreddit with hover tooltips",
+      "Refresh live data button on the Subreddit Analyzer and Performance panel, plus per-module Fetch latest now — clears the cache and re-runs just that feature",
+      "Per-section timestamps (Posts / About / Rules) so you always see how fresh each block is",
+      "Endpoint fallbacks: when about.json or rules.json come back empty (private, quarantined, rate-limited) the toolkit falls back to /api/info.json and the sidebar widgets.json rules widget, then recomputes Members / Online now / Created / Rules from the best available response",
+      "Field provenance shown under each Overview card (e.g. about.json → data.subscribers) so you can see exactly which JSON field powers each number",
+      "Manifest, popup, Options, README, site footer, About modal and language taglines all synced to v1.10.7",
+    ]},
+    { v: "1.10.6", t: "Live Reddit data everywhere", d: "", i: Rocket, items: [
       "New shared Reddit JSON client (`reddit-api.js`) — every remote-capable module now fetches real live numbers from Reddit's public endpoints, cached 60 s in-memory, with graceful fallback to on-page DOM harvest when offline or rate-limited",
       "Subreddit analyzer, health monitor, timeline, calendar, content exporter, trend tracker, old-gold finder, age sort and repost detector now sample up to 200 real posts instead of just what's visible on screen",
       "Post hover card upgrades with real score, upvote ratio, comments and awards straight from `/comments/{id}.json`",
