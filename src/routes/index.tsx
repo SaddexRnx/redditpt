@@ -288,13 +288,20 @@ const T: Record<Lang, Record<string, string>> = {
   },
 };
 
+// Kept in sync by scripts/check-version.mjs — must equal extension-src/package.json version.
+const EXT_VERSION = "2.0.1";
+
 function downloadZip(target: "chrome" | "ff" | "kiwi" = "chrome") {
-  const fileName = target === "ff" ? "reddit-power-toolkit-firefox.zip" : "reddit-power-toolkit-chrome.zip";
-  fetch(`/${fileName}`)
-    .then((res) => { if (!res.ok) throw new Error(`Download failed: ${res.status}`); return res.blob(); })
-    .then((blob) => {
+  const browser = target === "ff" ? "firefox" : "chrome";
+  const versioned = `reddit-power-toolkit-${EXT_VERSION}-${browser}.zip`;
+  const fallback = `reddit-power-toolkit-${browser}.zip`;
+  // Try the versioned filename first so cached CDNs never serve a stale build.
+  fetch(`/${versioned}`)
+    .then((res) => (res.ok ? res : fetch(`/${fallback}`)))
+    .then((res) => { if (!res.ok) throw new Error(`Download failed: ${res.status}`); return res.blob().then((b) => ({ b, name: res.url.split("/").pop() || versioned })); })
+    .then(({ b, name }) => {
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
+      a.href = URL.createObjectURL(b); a.download = name; a.click();
       URL.revokeObjectURL(a.href);
     })
     .catch((err) => alert(err.message));
