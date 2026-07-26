@@ -100,7 +100,9 @@
       const type = n.getAttribute?.("post-type") ||
         (n.querySelector?.('img, video') ? (n.querySelector('video') ? "video" : "image") : (domain ? "link" : "text"));
       const created = n.getAttribute?.("created-timestamp") || "";
-      out.push({ title, author, score, comments, permalink, domain, flair, type, created, el: n });
+      const nsfw = n.getAttribute?.("nsfw") === "true" || n.classList?.contains("over18") || !!n.querySelector?.('[data-testid="nsfw-tag"]');
+      const spoiler = n.getAttribute?.("spoiler") === "true" || !!n.querySelector?.('[data-testid="spoiler-tag"]');
+      out.push({ title, author, score, comments, permalink, domain, flair, type, created, nsfw, spoiler, el: n });
     });
     return out;
   }
