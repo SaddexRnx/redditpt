@@ -1,0 +1,33 @@
+{
+  "name": "reddit-power-toolkit-ext",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:chrome": "TARGET=chrome vite build --outDir dist/chrome",
+    "build:firefox": "TARGET=firefox vite build --outDir dist/firefox",
+    "package": "bun run build:chrome && bun run build:firefox && bun run zip",
+    "zip": "bun scripts/zip.ts"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.4",
+    "lucide-react": "^0.454.0"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "2.0.0-beta.28",
+    "@types/chrome": "^0.0.287",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  }
+}
