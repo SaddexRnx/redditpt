@@ -1110,7 +1110,8 @@ html[data-rpt-motion="reduced"] .rpt-live-dot { animation: none !important; }
 
 /* ⚡ Hub — align with theme, remove hard-coded darks. */
 .rpt-hub-card { border-radius: var(--rpt-radius) !important; background: var(--rpt-bg-1) !important; border-color: var(--rpt-border) !important; }
-.rpt-hub-run { padding: 14px 44px 14px 14px !important; }
+.rpt-hub-run { padding: 14px 46px 14px 18px !important; }
+.rpt-hub-run strong, .rpt-hub-run span { padding-left: 2px !important; }
 .rpt-hub-run strong { color: var(--rpt-text) !important; font-size: 13px !important; margin-bottom: 5px !important; }
 .rpt-hub-run span  { color: var(--rpt-muted) !important; font-size: 11.5px !important; }
 .rpt-hub-cat      { color: var(--rpt-green) !important; margin: 18px 0 8px !important; }
