@@ -543,7 +543,9 @@
     desc: "Full breakdown of the current subreddit from loaded data.",
     /* Pull as many rich signals as we can from the DOM without any network calls. */
     async _harvest(sub) {
-      const posts = collectPosts();
+      /* Prefer live Reddit JSON (up to 200 posts) so numbers reflect the real
+       * subreddit, not just what's rendered on the current viewport. */
+      const posts = await postsLive(sub, "hot");
       const snap = V.modules.communityCompare.snapshot() || {};
       /* Sidebar / header metadata — try both old & new Reddit layouts. */
       const q = (sel) => document.querySelector(sel);
