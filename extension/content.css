@@ -1191,3 +1191,54 @@ html[data-rpt-theme="light"] { --rpt-muted: #4a5566; }
   .rpt-btnrow button { min-height: 44px !important; }
   .rpt-qb-btn { width: 40px !important; height: 40px !important; }
 }
+
+/* --- v1.10.7 Analyzer toolbar, timestamps, SVG chart, data sources --- */
+.rpt-analyzer-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  margin: 0 0 12px; padding: 10px 12px;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px;
+}
+.rpt-stamps { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px; }
+.rpt-stamp {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px; border-radius: 999px;
+  background: var(--bg-3, rgba(255,255,255,0.04));
+  border: 1px solid var(--border); color: var(--fg-2, var(--fg));
+}
+.rpt-stamp b { color: var(--fg); font-weight: 600; }
+
+.rpt-card .rpt-src {
+  font-size: 10px; color: var(--fg-2, #8a8a8a);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  margin-top: 4px; opacity: 0.75; word-break: break-all;
+}
+
+.rpt-svg-chart {
+  width: 100%; height: 140px; display: block;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px;
+}
+.rpt-bar-rect { fill: var(--accent, #46d160); transition: opacity 0.15s; }
+.rpt-bar-rect:hover { opacity: 0.75; }
+.rpt-bar-lbl { font-size: 4px; fill: var(--fg-2, #8a8a8a); font-family: system-ui, sans-serif; }
+
+.rpt-sources {
+  margin-top: 16px; padding: 12px;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+}
+.rpt-sources h5 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--fg-2, #8a8a8a); }
+.rpt-sources ul { list-style: none; padding: 0; margin: 0; }
+.rpt-sources li { padding: 4px 0; font-size: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rpt-sources code { font-size: 11px; padding: 2px 6px; background: var(--bg-3, rgba(255,255,255,0.05)); border-radius: 4px; }
+.rpt-src-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.rpt-src-dot.ok { background: var(--accent, #46d160); }
+.rpt-src-dot.bad { background: #ff5b5b; }
+
+.rpt-mini-btn {
+  background: var(--bg-2); color: var(--fg);
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 4px 10px; font-size: 12px; cursor: pointer;
+  transition: background 0.12s;
+}
+.rpt-mini-btn:hover { background: var(--bg-3, rgba(255,255,255,0.06)); }

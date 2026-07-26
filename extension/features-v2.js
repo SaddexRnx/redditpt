@@ -570,10 +570,13 @@
     id: "subAnalyzer", name: "Subreddit analyzer dashboard",
     desc: "Full breakdown of the current subreddit from loaded data.",
     /* Pull as many rich signals as we can from the DOM without any network calls. */
-    async _harvest(sub) {
+    async _harvest(sub, opts = {}) {
+      if (opts.force && window.RPT_API) window.RPT_API.clearCache(`/r/${sub}/`);
+      if (window.RPT_API) window.RPT_API.tag("subAnalyzer");
       /* Prefer live Reddit JSON (up to 200 posts) so numbers reflect the real
        * subreddit, not just what's rendered on the current viewport. */
       const posts = await postsLive(sub, "hot");
+      const postsAt = Date.now();
       const snap = V.modules.communityCompare.snapshot() || {};
       /* Sidebar / header metadata — try both old & new Reddit layouts. */
       const q = (sel) => document.querySelector(sel);
@@ -609,16 +612,16 @@
         'shreddit-rule, [data-testid="subreddit-rule"], .side .titlebox ol li'
       ).length;
 
-      /* Live fetch — Reddit's public JSON works from any origin logged in as the
-         current user, no API key. This gives us reliable members / online /
-         created / description / rules even when the DOM doesn't expose them. */
-      let live = {};
-      try {
-        const [aboutR, rulesR] = await Promise.all([
-          fetch(`/r/${sub}/about.json`, { credentials: "include" }).then(r=>r.ok?r.json():null).catch(()=>null),
-          fetch(`/r/${sub}/about/rules.json`, { credentials: "include" }).then(r=>r.ok?r.json():null).catch(()=>null),
+      /* Live JSON with graceful fallbacks (about → info; rules → widgets). */
+      let live = {}; let aboutSources = []; let rulesSources = []; let aboutAt = 0, rulesAt = 0;
+      if (window.RPT_API) {
+        const [ab, rl] = await Promise.all([
+          window.RPT_API.aboutWithFallback(sub, { module: "subAnalyzer", force: !!opts.force }),
+          window.RPT_API.rulesWithFallback(sub, { module: "subAnalyzer", force: !!opts.force }),
         ]);
-        const d = aboutR?.data || {};
+        aboutAt = Date.now(); rulesAt = Date.now();
+        aboutSources = ab.sources; rulesSources = rl.sources;
+        const d = ab.data || {};
         live = {
           members: d.subscribers,
           online: d.active_user_count ?? d.accounts_active,
@@ -626,13 +629,12 @@
           description: d.public_description || d.description || "",
           isNsfw: !!d.over18,
           isPrivate: d.subreddit_type === "private" || d.subreddit_type === "restricted",
-          rulesCount: Array.isArray(rulesR?.rules) ? rulesR.rules.length : 0,
-          rules: Array.isArray(rulesR?.rules) ? rulesR.rules.slice(0,20).map(r=>r.short_name||r.violation_reason||"") : [],
-          title: d.title || "",
-          lang: d.lang || "",
-          type: d.subreddit_type || "",
+          rulesCount: rl.rules.length,
+          rules: rl.rules.slice(0, 20).map((r) => r.short_name || ""),
+          rulesDetail: rl.rules.slice(0, 20),
+          title: d.title || "", lang: d.lang || "", type: d.subreddit_type || "",
         };
-      } catch {}
+      }
 
       /* Post-derived stats. */
       const scores = posts.map(p=>p.score).sort((a,b)=>a-b);
@@ -654,6 +656,21 @@
       });
       const peakHour = dated ? hours.indexOf(Math.max(...hours)) : -1;
 
+      /* Daily trend — bucket posts into the last 7 days. */
+      const now = Date.now();
+      const days = new Array(7).fill(0);
+      const dayLabels = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(now - i * 86400000);
+        dayLabels.push(d.toLocaleDateString(undefined, { weekday: "short", day: "numeric" }));
+      }
+      posts.forEach(p => {
+        if (!p.created) return;
+        const t = new Date(p.created).getTime();
+        const idx = 6 - Math.floor((now - t) / 86400000);
+        if (idx >= 0 && idx < 7) days[idx]++;
+      });
+
       const topByScore = [...posts].sort((a,b)=>b.score-a.score).slice(0,5);
       const topByComments = [...posts].sort((a,b)=>b.comments-a.comments).slice(0,5);
 
@@ -666,20 +683,21 @@
         isPrivate: live.isPrivate || isPrivate,
         description: live.description || description,
         mods, rulesCount: live.rulesCount || rulesCount,
-        rules: live.rules || [],
+        rules: live.rules || [], rulesDetail: live.rulesDetail || [],
         title: live.title || "",
         lang: live.lang || "",
         type: live.type || "",
         median, max, nsfwCount, spoilerCount,
-        topAuthors, hours, peakHour, dated,
+        topAuthors, hours, peakHour, dated, days, dayLabels,
         topByScore, topByComments,
+        _diag: { aboutSources, rulesSources, postsAt, aboutAt, rulesAt },
       };
     },
-    async open() {
+    async open(opts = {}) {
       const sub = currentSubreddit();
       if (!sub) return toast(tr("open_subreddit_page") || "Open a subreddit page");
-      modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, `<p class="rpt-muted">${tx("Loading")}…</p>`, { wide: true });
-      const h = await this._harvest(sub);
+      const m0 = modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, `<p class="rpt-muted">${tx("Loading live data from Reddit")}…</p>`, { wide: true });
+      const h = await this._harvest(sub, opts);
       const snap = h.snap;
       const totalPosts = h.posts.length || snap.posts || 0;
       const fmtDate = (v) => {
@@ -689,7 +707,8 @@
         try { return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" }); }
         catch { return d.toISOString().slice(0,10); }
       };
-      const stat = (k, v) => `<div class="rpt-card"><div class="rpt-k">${esc(tx(k))}</div><div class="rpt-v">${v}</div></div>`;
+      const fmtTime = (t) => t ? new Date(t).toLocaleTimeString() : "—";
+      const stat = (k, v, src) => `<div class="rpt-card"><div class="rpt-k">${esc(tx(k))}</div><div class="rpt-v">${v}</div>${src ? `<div class="rpt-src">${esc(src)}</div>` : ""}</div>`;
       const chip = (label, count) => `<span class="rpt-stat-chip">${esc(label)}<em>${count}</em></span>`;
 
       const flairs = Object.entries(snap.flairs||{}).sort((a,b)=>b[1]-a[1]);
@@ -704,14 +723,11 @@
           <div class="rpt-bar"><i style="width:${pct}%"></i></div><b>${v} · ${pct}%</b></div>`;
       }).join("");
 
-      /* Hour histogram bars. */
-      const maxH = Math.max(1, ...h.hours);
-      const hoursRow = h.dated
-        ? `<div class="rpt-hours">${h.hours.map((c,i)=>{
-            const pct = Math.round((c/maxH)*100);
-            return `<div class="rpt-hour" title="${i}:00 — ${c} ${tr("posts") || "posts"}"><i style="height:${pct}%"></i><span>${i}</span></div>`;
-          }).join("")}</div>
-          <p class="rpt-muted" style="margin:6px 0 0">${tr("peak_hour") || "Peak hour"}: <strong>${h.peakHour}:00</strong> · ${h.dated}/${totalPosts} ${tr("with_dates") || "with dates"}</p>`
+      /* Interactive SVG hour histogram + daily trend. */
+      const hoursSvg = renderBarChart(h.hours, { labels: Array.from({length:24}, (_,i)=>String(i)), h: 120, unit: tr("posts") || "posts", ariaLabel: tx("Posting activity by hour") });
+      const daysSvg = renderBarChart(h.days, { labels: h.dayLabels, h: 120, unit: tr("posts") || "posts", ariaLabel: tx("Daily posting trend (last 7 days)") });
+      const hoursBlock = h.dated
+        ? `${hoursSvg}<p class="rpt-muted" style="margin:6px 0 0">${tr("peak_hour") || "Peak hour"}: <strong>${h.peakHour}:00</strong> · ${h.dated}/${totalPosts} ${tr("with_dates") || "with dates"}</p>`
         : `<p class="rpt-muted">${tr("no_dated_posts") || "No dated posts on this page."}</p>`;
 
       const linkList = (arr, valFn, label) => arr.length ? `<ul class="rpt-linklist">${arr.map(p=>`
@@ -732,7 +748,31 @@
         h.isPrivate ? `<span class="rpt-badge-off">${tr("private") || "Private"}</span>` : "",
       ].filter(Boolean).join(" ");
 
+      /* Data sources block for transparency. */
+      const srcRow = (s) => `<li>
+        <span class="rpt-src-dot ${s.ok ? "ok" : "bad"}"></span>
+        <code>${esc(s.url)}</code>
+        <span class="rpt-muted"> · ${s.ok ? tx("ok") : tx("empty")}</span>
+        ${s.fields ? `<span class="rpt-muted"> · ${esc(Object.entries(s.fields).map(([k,v])=>`${k}=${v==null?"—":v}`).join(", "))}</span>` : ""}
+      </li>`;
+      const sourcesBlock = `
+        <div class="rpt-sources">
+          <h5>${esc(tx("Data sources"))}</h5>
+          <ul>${(h._diag.aboutSources || []).concat(h._diag.rulesSources || []).map(srcRow).join("")}</ul>
+        </div>`;
+
+      const stamp = (label, t) => `<span class="rpt-stamp">${esc(tx(label))}: <b>${fmtTime(t)}</b></span>`;
+
       const body = `
+        <div class="rpt-analyzer-toolbar">
+          <div class="rpt-stamps">
+            ${stamp("Posts", h._diag.postsAt)}
+            ${stamp("About", h._diag.aboutAt)}
+            ${stamp("Rules", h._diag.rulesAt)}
+          </div>
+          <button class="rpt-v2-primary" data-act="refresh" aria-label="${esc(tx("Refresh live data"))}">${esc(tx("Refresh live data"))}</button>
+        </div>
+
         <div class="rpt-sub-head">
           <div>
             <h3 style="margin:0 0 4px">r/${esc(sub)} ${badges}</h3>
@@ -742,10 +782,10 @@
 
         <h4 class="rpt-section-title">${esc(tx("Overview"))}</h4>
         <div class="rpt-metric-grid">
-          ${stat("Members", esc(fmtNum(h.members)))}
-          ${stat("Online now", esc(fmtNum(h.online)))}
-          ${stat("Created", fmtDate(h.created))}
-          ${stat("Rules", h.rulesCount || "—")}
+          ${stat("Members", esc(fmtNum(h.members)), "about.json → data.subscribers")}
+          ${stat("Online now", esc(fmtNum(h.online)), "about.json → data.active_user_count")}
+          ${stat("Created", fmtDate(h.created), "about.json → data.created_utc")}
+          ${stat("Rules", h.rulesCount || "—", "about/rules.json → rules.length")}
           ${stat("Posts loaded", totalPosts)}
           ${stat("Avg score", snap.avgScore ?? 0)}
           ${stat("Median score", h.median)}
@@ -760,7 +800,10 @@
         <div class="rpt-bars">${typesRow}</div>
 
         <h4 class="rpt-section-title">${esc(tx("Posting activity by hour"))}</h4>
-        ${hoursRow}
+        ${hoursBlock}
+
+        <h4 class="rpt-section-title">${esc(tx("Daily posting trend (last 7 days)"))}</h4>
+        ${daysSvg}
 
         <h4 class="rpt-section-title">${esc(tx("Top authors on this page"))}</h4>
         <div class="rpt-chips-v">${h.topAuthors.length
@@ -788,21 +831,45 @@
         <h4 class="rpt-section-title">${esc(tx("Most-commented posts"))}</h4>
         ${linkList(h.topByComments, p=>p.comments, "comments")}
 
-        ${h.rules && h.rules.length ? `
+        ${h.rulesDetail && h.rulesDetail.length ? `
           <h4 class="rpt-section-title">${esc(tx("Rules"))}</h4>
-          <ol class="rpt-linklist">${h.rules.map(r=>`<li>${esc(r)}</li>`).join("")}</ol>` : ""}
+          <ol class="rpt-linklist">${h.rulesDetail.map(r=>`<li><strong>${esc(r.short_name)}</strong>${r.description?` — <span class="rpt-muted">${esc(String(r.description).slice(0,180))}</span>`:""}</li>`).join("")}</ol>` : ""}
 
         ${h.mods.length ? `
           <h4 class="rpt-section-title">${esc(tx("Moderators"))}</h4>
           <div class="rpt-chips-v">${h.mods.map(m=>chip(`u/${m}`,"")).join("")}</div>` : ""}
 
+        ${sourcesBlock}
+
         <p class="rpt-muted" style="margin-top:14px;font-size:11px">
           ${esc(tx("Live data from Reddit's public JSON, combined with posts currently loaded in your feed. Scroll for a bigger sample."))}
         </p>`;
-      modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, body, { wide: true });
+      const m = modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, body, { wide: true });
+      m.querySelector('[data-act="refresh"]')?.addEventListener("click", async () => {
+        m.remove();
+        await this.open({ force: true });
+      });
     },
     run() { this.open(); },
   };
+
+  /* Small SVG bar-chart renderer with hover tooltips, used by the analyzer. */
+  function renderBarChart(values, opts = {}) {
+    const w = 100, h = opts.h || 120, gap = 1;
+    const n = values.length || 1;
+    const bw = (w - gap * (n - 1)) / n;
+    const max = Math.max(1, ...values);
+    const unit = opts.unit || "";
+    const labels = opts.labels || values.map((_, i) => String(i));
+    const bars = values.map((v, i) => {
+      const bh = (v / max) * (h - 18);
+      const x = i * (bw + gap);
+      const y = h - 14 - bh;
+      return `<rect class="rpt-bar-rect" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${bw.toFixed(2)}" height="${bh.toFixed(2)}" rx="0.6"><title>${esc(labels[i])} — ${v} ${esc(unit)}</title></rect>
+        <text class="rpt-bar-lbl" x="${(x + bw / 2).toFixed(2)}" y="${h - 3}" text-anchor="middle">${esc(String(labels[i]).slice(0,3))}</text>`;
+    }).join("");
+    return `<svg class="rpt-svg-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(opts.ariaLabel || "chart")}">${bars}</svg>`;
+  }
 
   /* ============ 8. FLAIR TOOLS ============ */
   V.modules.flairTools = {
