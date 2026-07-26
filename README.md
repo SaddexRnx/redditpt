@@ -306,7 +306,15 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases).
 
-### v1.10.7 — current
+### v2.0.0-beta — current
+
+- **Full Vite + React + TypeScript + Tailwind migration** (`extension-src/`) with production-optimised builds, tree-shaking, minification and per-target Chrome/Firefox zips.
+- **React content-script overlay** mounted inside an isolated **Shadow DOM** — the ⚡ v2 floating button (bottom-left) opens a modern panel that wires all **36 Power features** with live enable/disable toggles synced through `chrome.storage.local`.
+- **Conflict-safe execution**: a single-flight mutex prevents two Power features from mutating the DOM at once, and the panel is fully keyboard-accessible (Alt+Shift+P to toggle, Esc to close, aria-labels on every control).
+- Enable state is shared with the legacy hub, so toggling from either UI stays in sync.
+- Manifest, popup, Options, README, website footer and About panel synced to **v2.0.0-beta**.
+
+### v1.10.7
 
 - **Data Sources & Diagnostics** inspector: per-module summary of endpoints called, plus a rolling log of the last 200 Reddit JSON requests with status, cache-hit flag, duration and errors.
 - **Interactive charts** in the Subreddit Analyzer — SVG bar charts for hour-of-day posting activity and the last 7 days of posting trend, rebuilt live per subreddit.
