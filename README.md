@@ -74,19 +74,15 @@ Works on Chrome, Edge, Brave, Firefox, and Kiwi Browser (Android).
 ## Project Structure
 
 ```
-extension/            # The browser extension (load this folder unpacked)
-├── manifest.json
-├── background.js
-├── content.js        # Modular RPT.* runtime
-├── content.css
-├── popup.{html,js,css}
-├── options.{html,js,css}
-├── analytics.{html,js,css}
-├── shared.js         # i18n + shared helpers
-├── _locales/         # EN, ES, FR, DE, PT, JA, ZH
-└── icons/
+extension-src/        # The browser extension source (Vite + React + TS + Tailwind)
+├── src/manifest.ts   # MV3 manifest generator (Chrome / Firefox targets)
+├── src/pages/        # popup, options, analytics — React + Tailwind
+├── src/content/      # Shadow-DOM overlay + vendored legacy runtime
+├── src/background/   # MV3 service worker
+├── public/_locales/  # EN, ES, FR, DE, PT, JA, ZH
+└── scripts/zip.ts    # Builds browser-specific packages into ../public/
 
-src/                  # Marketing / documentation site
+src/                  # Marketing / documentation site (TanStack Start)
 public/reddit-power-toolkit-chrome.zip   # Chrome / Edge / Brave / Kiwi bundle
 public/reddit-power-toolkit-firefox.zip  # Firefox 128+ bundle
 public/reddit-power-toolkit.zip          # Chrome-compatible fallback alias
@@ -98,20 +94,20 @@ public/reddit-power-toolkit.zip          # Chrome-compatible fallback alias
 
 ### Chrome, Edge, Brave, Opera, Arc
 
-1. Download this repo (`Code → Download ZIP`) and unzip it, or clone with `git clone`.
+1. Download `public/reddit-power-toolkit-chrome.zip` from this repo (or the [website](https://redditpt.lovable.app)) and unzip it.
 2. Open a new tab and go to `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`).
 3. Toggle **Developer mode** on (top-right corner).
-4. Click **Load unpacked** and pick the `extension/` folder from this repo.
+4. Click **Load unpacked** and pick the unzipped folder.
 5. Pin **Reddit Power Toolkit** to the toolbar from the puzzle-piece menu.
 6. Open any Reddit comment thread (`reddit.com/r/*/comments/*`) and click the icon — the side panel opens and the floating **RPT** button appears bottom-right.
 7. If Reddit was already open before you installed, hit **Reload this tab** in the popup once.
 
 ### Firefox (128+)
 
-1. Download or clone this repo.
+1. Download and unzip `public/reddit-power-toolkit-firefox.zip`.
 2. Open `about:debugging#/runtime/this-firefox`.
 3. Click **Load Temporary Add-on…**.
-4. Navigate into the `extension/` folder and pick **`manifest.json`**.
+4. Navigate into the unzipped folder and pick **`manifest.json`**.
 5. Open a Reddit thread — the toolkit runs immediately.
 6. Temporary add-ons are removed when Firefox restarts. To keep it permanently, install a signed build from AMO (planned) or use Firefox Developer Edition / Nightly with `xpinstall.signatures.required = false`.
 
