@@ -103,11 +103,16 @@
             <td>${active ? `<span class='rpt-badge-on'>${tr("on")}</span>` : `<span class='rpt-badge-off'>${tr("off")}</span>`}</td>
             <td>${last}</td>
             <td>${ms}</td>
+            <td><button class="rpt-mini-btn" data-fetch="${esc(m.id)}" title="${esc(tx("Fetch latest now"))}">↻</button></td>
           </tr>`;
         }).join("");
       const uptime = Math.round((Date.now() - V._perf.mounted) / 1000);
       const api = window.RPT_API?.stats ? window.RPT_API.stats() : null;
       const body = `
+        <div class="rpt-analyzer-toolbar">
+          <div></div>
+          <button class="rpt-v2-primary" data-act="refresh-all" aria-label="${esc(tx("Refresh live data"))}">${esc(tx("Refresh live data"))}</button>
+        </div>
         <p class="rpt-muted">${tr("uptime_on_page")}: <strong>${uptime}s</strong>${sub ? ` · ${tr("community_lower")}: <strong>r/${esc(sub)}</strong>` : ""}</p>
         ${api ? `<p class="rpt-muted" style="margin:4px 0 10px">
           Reddit JSON cache: <strong>${api.cached}</strong> entries · <strong>${api.hits}</strong> hits · <strong>${api.misses}</strong> fetches · <strong>${api.errors}</strong> errors${api.inflight ? ` · ${api.inflight} in-flight` : ""}
@@ -115,7 +120,7 @@
         <div style="max-height:60vh;overflow:auto;border:1px solid var(--border);border-radius:8px">
           <table class="rpt-perf-table" style="width:100%;border-collapse:collapse;font-size:13px">
             <thead><tr>
-              <th></th><th style="text-align:left">${tr("module")}</th><th>${tr("status")}</th><th>${tr("last_run")}</th><th>${tr("duration")}</th>
+              <th></th><th style="text-align:left">${tr("module")}</th><th>${tr("status")}</th><th>${tr("last_run")}</th><th>${tr("duration")}</th><th></th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
@@ -124,7 +129,20 @@
           ${tr("legend_perf")}
           ${tr("use_panel_lag")}
         </p>`;
-      modal(tx("Performance & status"), body, { wide: true });
+      const m = modal(tx("Performance & status"), body, { wide: true });
+      m.querySelector('[data-act="refresh-all"]')?.addEventListener("click", () => {
+        if (window.RPT_API) window.RPT_API.clearCache();
+        m.remove();
+        V.modules.perfStatus.open();
+      });
+      m.querySelectorAll("[data-fetch]").forEach((btn) => btn.addEventListener("click", async () => {
+        const id = btn.dataset.fetch;
+        if (window.RPT_API) window.RPT_API.clearCache();
+        try {
+          m.remove();
+          await V.modules[id]?.run?.({ force: true });
+        } catch (e) { console.warn(e); }
+      }));
     },
     run() { this.open(); },
   };
