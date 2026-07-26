@@ -457,13 +457,21 @@
         this._card.addEventListener("mouseleave", () => this._hide());
         document.body.appendChild(this._card);
       }
-      this._card.innerHTML = `
+      /* Render local numbers immediately, then upgrade with live karma/age. */
+      const renderCard = (live) => {
+        this._card.innerHTML = `
         <div class="rpt-uc-head">
           <span class="rpt-uc-dot" style="background:${RPT.utils.authorColor(author)}"></span>
           <strong>u/${esc(author)}</strong>
+          ${live?.is_gold ? `<span class="rpt-tag" style="background:#f6a700;color:#111">Premium</span>` : ""}
+          ${live?.verified ? `<span class="rpt-tag">Verified</span>` : ""}
           ${notes.tag ? `<span class="rpt-tag">${esc(notes.tag)}</span>` : ""}
         </div>
         <div class="rpt-uc-grid">
+          ${live ? `
+          <div><small>${esc(tx("Post karma"))}</small><strong>${live.link_karma ?? "—"}</strong></div>
+          <div><small>${esc(tx("Comment karma"))}</small><strong>${live.comment_karma ?? "—"}</strong></div>
+          <div><small>${esc(tx("Account age"))}</small><strong>${live.created_utc ? Math.floor((Date.now()/1000 - live.created_utc)/86400/365 * 10)/10 + "y" : "—"}</strong></div>` : ""}
           <div><small>Comments here</small><strong>${mine.length}</strong></div>
           <div><small>Replies received</small><strong>${replies.length}</strong></div>
           <div><small>Avg length</small><strong>${avgLen}c</strong></div>
@@ -471,15 +479,22 @@
         <textarea class="rpt-uc-note" placeholder="Private note (local only)">${esc(notes.note)}</textarea>
         <input class="rpt-uc-tag" placeholder="Tag (e.g. helpful, expert)" value="${esc(notes.tag)}">
         <button class="rpt-uc-save rpt-v2-primary">Save note</button>`;
+        this._card.querySelector(".rpt-uc-save").onclick = async () => {
+          const note = this._card.querySelector(".rpt-uc-note").value;
+          const tag = this._card.querySelector(".rpt-uc-tag").value;
+          await S.patch(this.KEY, {}, (c) => { c[author] = { note, tag }; return c; });
+          toast("Note saved");
+        };
+      };
+      renderCard(null);
       this._card.style.left = Math.min(window.innerWidth - 300, x + 12) + "px";
       this._card.style.top = Math.min(window.innerHeight - 260, y + 12) + "px";
       this._card.style.display = "block";
-      this._card.querySelector(".rpt-uc-save").onclick = async () => {
-        const note = this._card.querySelector(".rpt-uc-note").value;
-        const tag = this._card.querySelector(".rpt-uc-tag").value;
-        await S.patch(this.KEY, {}, (c) => { c[author] = { note, tag }; return c; });
-        toast("Note saved");
-      };
+      /* Upgrade with real karma/age from Reddit's public JSON. */
+      try {
+        const live = await window.RPT_API?.user?.(author);
+        if (live) renderCard(live);
+      } catch {}
     },
     _hide() { this._hideTimer = setTimeout(() => { if (this._card) this._card.style.display = "none"; }, 260); },
     enabled: false,
