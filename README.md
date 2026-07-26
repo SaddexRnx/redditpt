@@ -218,10 +218,10 @@ Open **Options → General** and confirm **Show author colors** is enabled. Colo
 Live-new uses adaptive polling (slower when the tab is idle). Move the mouse over the panel to switch to active polling. If the pill stays gray, Reddit is likely rate-limiting your session — wait 60 seconds and try again.
 
 **The extension broke after a Reddit redesign.**
-Reddit changes DOM class names frequently. Update `RPT.selectors` in `extension/content.js`, reload the extension from `chrome://extensions`, and open an issue with the failing selector so a fix can ship for everyone.
+Reddit changes DOM class names frequently. Update `RPT.selectors` in `extension-src/src/content/legacy/content.js`, reload the extension from `chrome://extensions`, and open an issue with the failing selector so a fix can ship for everyone.
 
 **Firefox: "This add-on could not be installed because it appears to be corrupt."**
-You're likely trying to load the `.zip`. In Firefox, use `about:debugging` → **Load Temporary Add-on…** and pick `extension/manifest.json` directly. Permanent installs require signing via AMO.
+You're likely trying to load the `.zip`. In Firefox, use `about:debugging` → **Load Temporary Add-on…** and pick `extension-src/dist/firefox/manifest.json` directly. Permanent installs require signing via AMO.
 
 **Kiwi Browser: nothing happens after loading the zip.**
 Kiwi occasionally needs a full app restart after enabling a new extension. Force-stop Kiwi from Android settings, reopen, then visit a Reddit thread.
@@ -230,7 +230,7 @@ Kiwi occasionally needs a full app restart after enabling a new extension. Force
 
 ## Development
 
-Extension: edit files under `extension/` and reload from `chrome://extensions`.
+Extension: edit files under `extension-src/src/` and reload from `chrome://extensions`.
 
 Landing site:
 
@@ -289,7 +289,7 @@ Run through this list on each browser before shipping a release. Every row must 
 
 > Kiwi note: rows 10-11 depend on a physical keyboard. On a touch-only device, use the equivalent on-screen buttons in the quick-bar and panel.
 
-Extension: edit files under `extension/` and reload from `chrome://extensions`.
+Extension: edit files under `extension-src/src/` and reload from `chrome://extensions`.
 
 Landing site:
 
@@ -464,7 +464,7 @@ Full release history lives on the [GitHub releases page](https://github.com/Sadd
 
 ## Contributing
 
-Issues and PRs welcome. Because Reddit changes its DOM frequently, selector updates in `extension/content.js` (`RPT.selectors`) are the most common contribution.
+Issues and PRs welcome. Because Reddit changes its DOM frequently, selector updates in `extension-src/src/content/legacy/content.js` (`RPT.selectors`) are the most common contribution.
 
 ## License
 
