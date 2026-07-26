@@ -5,13 +5,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.10.7-10b981?style=flat-square" alt="Version 1.10.7">
+  <img src="https://img.shields.io/badge/version-2.0.0--beta-46d160?style=flat-square" alt="Version 2.0.0-beta">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
 </p>
 
-> **Current release: v1.10.7** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
+> **Current release: **v2.0.0-beta**** — see the [Changelog](#changelog) or the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases) for full history.
 
 A local-first, open-source browser extension that supercharges the Reddit reading and writing experience. No backend, no tracking, no AI calls — everything runs inside your browser using the Chrome Storage API.
 
@@ -306,7 +306,15 @@ bun run dev
 
 Full release history lives on the [GitHub releases page](https://github.com/Saddexrnx/redditpt/releases).
 
-### v1.10.7 — current
+### v2.0.0-beta — current
+
+- **Full Vite + React + TypeScript + Tailwind migration** (`extension-src/`) with production-optimised builds, tree-shaking, minification and per-target Chrome/Firefox zips.
+- **React content-script overlay** mounted inside an isolated **Shadow DOM** — the ⚡ v2 floating button (bottom-left) opens a modern panel that wires all **36 Power features** with live enable/disable toggles synced through `chrome.storage.local`.
+- **Conflict-safe execution**: a single-flight mutex prevents two Power features from mutating the DOM at once, and the panel is fully keyboard-accessible (Alt+Shift+P to toggle, Esc to close, aria-labels on every control).
+- Enable state is shared with the legacy hub, so toggling from either UI stays in sync.
+- Manifest, popup, Options, README, website footer and About panel synced to **v2.0.0-beta**.
+
+### v1.10.7
 
 - **Data Sources & Diagnostics** inspector: per-module summary of endpoints called, plus a rolling log of the last 200 Reddit JSON requests with status, cache-hit flag, duration and errors.
 - **Interactive charts** in the Subreddit Analyzer — SVG bar charts for hour-of-day posting activity and the last 7 days of posting trend, rebuilt live per subreddit.
