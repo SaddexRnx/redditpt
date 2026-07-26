@@ -507,13 +507,14 @@ function Index() {
   const section2 = isDark ? "bg-white/[0.02]" : "bg-slate-50/60";
 
   const CHANGELOG: { v: string; t: string; d: string; i: typeof Rocket; items: string[] }[] = [
-    { v: "2.0.1", t: "React overlay + Vite migration", d: "Latest · Beta", i: Rocket, items: [
-      "Full Vite + React + TypeScript + Tailwind migration under extension-src/ — production builds are minified, tree-shaken and per-target for Chrome and Firefox",
+    { v: "2.0.1", t: "Cleanup, stable release & version sync", d: "Latest", i: Rocket, items: [
+      "Removed the legacy `extension/` source tree — Vite + React + TypeScript + Tailwind build under `extension-src/` is now the single source of truth",
+      "Repo trimmed: dropped stale UI-snapshot audit artifacts and obsolete scripts; every version string across manifest, popup, Options, About modal, README and website footer synced to v2.0.1",
+      "Rebuilt Chrome / Firefox / generic zips in `public/` from the current Vite bundle",
       "New React content-script overlay mounted inside an isolated Shadow DOM so Reddit CSS can never leak in — opens with the ⚡ v2 floating button (bottom-left) or the Alt+Shift+P shortcut",
       "All 36 Power features wired into the new UI with live enable/disable toggles synced through chrome.storage.local — flip a switch and both the React overlay and the legacy hub update together",
       "Conflict-safe execution: a single-flight mutex prevents two Power features from mutating the DOM at the same time, so heavy modules stop stepping on each other",
       "Keyboard-first panel: focus-trapped, Esc closes, every control carries an explicit aria-label",
-      "Manifest carries version_name \"2.0.1\" so browsers show the beta tag while keeping the numeric version valid for the Chrome Web Store",
     ]},
     { v: "1.10.7", t: "Diagnostics, charts & fetch-on-demand", d: "", i: Rocket, items: [
       "New Data Sources & Diagnostics inspector — see every Reddit JSON endpoint the toolkit called, per module, with status, cache hit, duration and error message; rolling log of the last 200 requests",
