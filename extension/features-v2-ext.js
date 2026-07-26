@@ -198,6 +198,96 @@
   /* =============================================================
    * 4. LOCAL BACKUP (export / import all local RPT data)
    * ============================================================= */
+  /* =============================================================
+   * 3b. DATA SOURCES / LIVE DIAGNOSTICS INSPECTOR
+   * ============================================================= */
+  V.modules.dataDiag = {
+    id: "dataDiag", name: "Data sources & diagnostics",
+    desc: tr("data_diag_desc") || "See which Reddit JSON endpoints were used, per-module, with status, timing and errors.",
+    _renderLog(log) {
+      if (!log.length) return `<p class="rpt-muted">${esc(tx("No requests recorded yet — open a module or refresh live data."))}</p>`;
+      const rows = log.slice(0, 60).map((e) => {
+        const dot = e.ok ? "●" : "✕";
+        const cls = e.ok ? "rpt-badge-on" : "rpt-badge-off";
+        const t = new Date(e.at).toLocaleTimeString();
+        return `<tr>
+          <td><span class="${cls}">${dot}</span></td>
+          <td>${esc(e.module || "—")}</td>
+          <td style="font-family:ui-monospace,monospace;font-size:11px">${esc(e.url.replace(location.origin, ""))}</td>
+          <td>${e.status || "—"}${e.cached ? " <span class='rpt-muted'>cache</span>" : ""}</td>
+          <td>${e.ms} ms</td>
+          <td>${t}</td>
+          <td>${e.error ? `<span class="rpt-muted">${esc(e.error)}</span>` : ""}</td>
+        </tr>`;
+      }).join("");
+      return `<table class="rpt-perf-table" style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr><th></th><th>${esc(tx("Module"))}</th><th>${esc(tx("Endpoint"))}</th><th>${esc(tx("Status"))}</th><th>${esc(tx("Duration"))}</th><th>${esc(tx("Time"))}</th><th>${esc(tx("Error"))}</th></tr></thead>
+        <tbody>${rows}</tbody></table>`;
+    },
+    _renderPerModule(pm) {
+      const ids = Object.keys(pm);
+      if (!ids.length) return `<p class="rpt-muted">${esc(tx("No modules have fetched live data yet."))}</p>`;
+      return `<div class="rpt-hub-grid">${ids.map((id) => {
+        const r = pm[id];
+        const mod = V.modules[id];
+        return `<div class="rpt-hub-card">
+          <div style="padding:10px 14px">
+            <strong>${esc(tx(mod?.name || id))}</strong>
+            <div class="rpt-muted" style="font-size:12px;margin-top:4px">
+              ${r.calls} ${esc(tx("calls"))} · ${r.errors} ${esc(tx("errors"))} · ${esc(tx("last"))}: ${new Date(r.lastAt).toLocaleTimeString()}
+            </div>
+            <div class="rpt-muted" style="font-size:11px;margin-top:6px;font-family:ui-monospace,monospace;word-break:break-all">
+              ${r.endpoints.slice(0, 4).map((u) => esc(u.replace(location.origin, ""))).join("<br>")}
+              ${r.endpoints.length > 4 ? `<br>+${r.endpoints.length - 4} more` : ""}
+            </div>
+            <button class="rpt-mini-btn" data-fetch-mod="${esc(id)}" style="margin-top:8px">${esc(tx("Fetch latest now"))}</button>
+          </div>
+        </div>`;
+      }).join("")}</div>`;
+    },
+    async open() {
+      const api = window.RPT_API;
+      if (!api) return toast(tx("Live-data client not loaded"));
+      const render = () => {
+        const s = api.stats();
+        const body = `
+          <div class="rpt-analyzer-toolbar">
+            <div class="rpt-muted" style="font-size:12px">
+              ${s.cached} ${esc(tx("cached"))} · ${s.hits} ${esc(tx("hits"))} · ${s.misses} ${esc(tx("fetches"))} · ${s.errors} ${esc(tx("errors"))}
+            </div>
+            <div class="rpt-btnrow" style="margin:0">
+              <button class="rpt-v2-secondary" data-act="clear">${esc(tx("Clear log"))}</button>
+              <button class="rpt-v2-primary" data-act="refresh">${esc(tx("Refresh live data"))}</button>
+            </div>
+          </div>
+          <h4 class="rpt-section-title">${esc(tx("Per-module summary"))}</h4>
+          ${this._renderPerModule(api.perModule())}
+          <h4 class="rpt-section-title">${esc(tx("Recent Reddit JSON requests"))}</h4>
+          <div style="max-height:44vh;overflow:auto;border:1px solid var(--border);border-radius:8px">${this._renderLog(api.log())}</div>
+          <p class="rpt-muted" style="margin-top:10px;font-size:11px">
+            ${esc(tx("All requests go directly from your browser to reddit.com. Nothing is sent to any third-party server."))}
+          </p>`;
+        return body;
+      };
+      const m = modal(tx("Data sources & diagnostics"), render(), { wide: true });
+      const rebind = () => {
+        m.querySelector('[data-act="clear"]')?.addEventListener("click", () => {
+          api.clearLog(); m.querySelector(".rpt-v2-body").innerHTML = render(); rebind();
+        });
+        m.querySelector('[data-act="refresh"]')?.addEventListener("click", () => {
+          api.clearCache(); m.querySelector(".rpt-v2-body").innerHTML = render(); rebind();
+        });
+        m.querySelectorAll("[data-fetch-mod]").forEach((b) => b.addEventListener("click", async () => {
+          const id = b.dataset.fetchMod; api.clearCache();
+          try { m.remove(); await V.modules[id]?.run?.({ force: true }); }
+          catch (e) { console.warn(e); }
+        }));
+      };
+      rebind();
+    },
+    run() { this.open(); },
+  };
+
   V.modules.backup = {
     id: "backup", name: "Backup & restore",
     desc: tr("backup_restore_desc"),
@@ -270,7 +360,7 @@
         ["Filtering & feed", ["flairTools","qualityFilter","feedDedup","ageSort","mediaToggle","oldGold","sidebarCleaner"]],
         ["Discovery & knowledge", ["bookmarks","savedManager","research","topicTracker","random","history","achievements","wikiNav","resourceCollector"]],
         ["Utilities", ["searchEnhancer","linksManager","explainLink","exportLibrary","repostDetector","devMode"]],
-        [tr("system_v19"), ["perfStatus","perSubreddit","backup"]],
+        [tr("system_v19"), ["perfStatus","dataDiag","perSubreddit","backup"]],
       ];
       const body = `
         <p class="rpt-muted">${tr("local_first_tools_desc")}</p>
@@ -323,6 +413,7 @@
       cmdk.commands = function () {
         return prev.call(this).concat(
           { id: "sys-perf", label: `⚡ ${tx("Performance & status")}`, run: () => V.modules.perfStatus.run() },
+          { id: "sys-diag", label: `⚡ ${tx("Data sources & diagnostics")}`, run: () => V.modules.dataDiag.run() },
           { id: "sys-persub", label: `⚡ ${tx("Per-subreddit rules")}`, run: () => V.modules.perSubreddit.run() },
           { id: "sys-backup", label: `⚡ ${tx("Backup & restore")}`,  run: () => V.modules.backup.run() },
         );
