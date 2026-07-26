@@ -474,32 +474,190 @@
   V.modules.subAnalyzer = {
     id: "subAnalyzer", name: "Subreddit analyzer dashboard",
     desc: "Full breakdown of the current subreddit from loaded data.",
+    /* Pull as many rich signals as we can from the DOM without any network calls. */
+    _harvest(sub) {
+      const posts = collectPosts();
+      const snap = V.modules.communityCompare.snapshot() || {};
+      /* Sidebar / header metadata — try both old & new Reddit layouts. */
+      const q = (sel) => document.querySelector(sel);
+      const header = q("shreddit-subreddit-header");
+      const membersRaw =
+        header?.getAttribute?.("subscribers") ||
+        q('faceplate-number[pretty]')?.getAttribute?.("number") ||
+        q('[data-testid="subreddit-subscribers"]')?.textContent ||
+        q('.subscribers .number')?.textContent || snap.members || "";
+      const onlineRaw =
+        header?.getAttribute?.("active") ||
+        q('[id^="IdCard--ActiveMembers"]')?.textContent ||
+        q('.users-online .number')?.textContent || "";
+      const createdRaw =
+        header?.getAttribute?.("created-timestamp") ||
+        q('shreddit-subreddit-header [name="created"]')?.getAttribute?.("datetime") ||
+        q('faceplate-date-format[format="MMM DD, YYYY"]')?.getAttribute?.("datetime") ||
+        q('.titlebox .age time')?.getAttribute?.("datetime") || snap.created || "";
+      const isNsfw =
+        header?.getAttribute?.("is-nsfw") === "true" ||
+        !!q('shreddit-subreddit-header [data-testid="subreddit-nsfw"]');
+      const isPrivate =
+        header?.getAttribute?.("subreddit-type") === "private" ||
+        !!q('[data-testid="subreddit-private"]');
+      const description =
+        header?.getAttribute?.("description") ||
+        q('shreddit-subreddit-header [slot="description"]')?.textContent?.trim() ||
+        q('.titlebox .md')?.innerText?.trim() || snap.description || "";
+      const mods = Array.from(document.querySelectorAll('[data-testid="moderator-list"] a, .titlebox .list-item a[href*="/user/"]'))
+        .map((a) => a.textContent.trim().replace(/^u\//, ""))
+        .filter(Boolean).slice(0, 12);
+      const rulesCount = document.querySelectorAll(
+        'shreddit-rule, [data-testid="subreddit-rule"], .side .titlebox ol li'
+      ).length;
+
+      /* Post-derived stats. */
+      const scores = posts.map(p=>p.score).sort((a,b)=>a-b);
+      const median = scores.length ? scores[Math.floor(scores.length/2)] : 0;
+      const max = scores.length ? scores[scores.length-1] : 0;
+      const nsfwCount = posts.filter(p=>p.nsfw).length;
+      const spoilerCount = posts.filter(p=>p.spoiler).length;
+      const authorCount = {};
+      posts.forEach(p=>{ if(p.author && p.author!=="[deleted]") authorCount[p.author]=(authorCount[p.author]||0)+1; });
+      const topAuthors = Object.entries(authorCount).sort((a,b)=>b[1]-a[1]).slice(0,10);
+
+      /* Hour-of-day histogram from created timestamps (local time). */
+      const hours = new Array(24).fill(0);
+      let dated = 0;
+      posts.forEach(p=>{
+        if(!p.created) return;
+        const d = new Date(p.created);
+        if(!isNaN(d)) { hours[d.getHours()]++; dated++; }
+      });
+      const peakHour = dated ? hours.indexOf(Math.max(...hours)) : -1;
+
+      const topByScore = [...posts].sort((a,b)=>b.score-a.score).slice(0,5);
+      const topByComments = [...posts].sort((a,b)=>b.comments-a.comments).slice(0,5);
+
+      return {
+        sub, snap, posts,
+        members: membersRaw ? String(membersRaw).trim() : "",
+        online: onlineRaw ? String(onlineRaw).trim() : "",
+        created: createdRaw,
+        isNsfw, isPrivate, description, mods, rulesCount,
+        median, max, nsfwCount, spoilerCount,
+        topAuthors, hours, peakHour, dated,
+        topByScore, topByComments,
+      };
+    },
     open() {
-      const sub = currentSubreddit(); if (!sub) return toast("Open a subreddit page");
-      const snap = V.modules.communityCompare.snapshot();
-      const flairs = Object.entries(snap.flairs).sort((a,b)=>b[1]-a[1]);
-      const domains = Object.entries(snap.domains).sort((a,b)=>b[1]-a[1]).slice(0, 10);
-      const kw = snap.topKeywords;
+      const sub = currentSubreddit();
+      if (!sub) return toast(tr("open_subreddit_page") || "Open a subreddit page");
+      const h = this._harvest(sub);
+      const snap = h.snap;
+      const totalPosts = h.posts.length || snap.posts || 0;
+      const fmtDate = (v) => {
+        if(!v) return "—";
+        const d = new Date(v);
+        if(isNaN(d)) return esc(v);
+        try { return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" }); }
+        catch { return d.toISOString().slice(0,10); }
+      };
+      const stat = (k, v) => `<div class="rpt-card"><div class="rpt-k">${esc(tx(k))}</div><div class="rpt-v">${v}</div></div>`;
+      const chip = (label, count) => `<span class="rpt-stat-chip">${esc(label)}<em>${count}</em></span>`;
+
+      const flairs = Object.entries(snap.flairs||{}).sort((a,b)=>b[1]-a[1]);
+      const domains = Object.entries(snap.domains||{}).sort((a,b)=>b[1]-a[1]).slice(0,12);
+      const kw = snap.topKeywords || [];
+
+      /* Content-type bars. */
+      const types = snap.types || { text:0,image:0,video:0,link:0 };
+      const typesRow = Object.entries(types).map(([k,v])=>{
+        const pct = totalPosts ? Math.round((v/totalPosts)*100) : 0;
+        return `<div class="rpt-bar-row"><span>${esc(tx(k))}</span>
+          <div class="rpt-bar"><i style="width:${pct}%"></i></div><b>${v} · ${pct}%</b></div>`;
+      }).join("");
+
+      /* Hour histogram bars. */
+      const maxH = Math.max(1, ...h.hours);
+      const hoursRow = h.dated
+        ? `<div class="rpt-hours">${h.hours.map((c,i)=>{
+            const pct = Math.round((c/maxH)*100);
+            return `<div class="rpt-hour" title="${i}:00 — ${c} ${tr("posts") || "posts"}"><i style="height:${pct}%"></i><span>${i}</span></div>`;
+          }).join("")}</div>
+          <p class="rpt-muted" style="margin:6px 0 0">${tr("peak_hour") || "Peak hour"}: <strong>${h.peakHour}:00</strong> · ${h.dated}/${totalPosts} ${tr("with_dates") || "with dates"}</p>`
+        : `<p class="rpt-muted">${tr("no_dated_posts") || "No dated posts on this page."}</p>`;
+
+      const linkList = (arr, valFn, label) => arr.length ? `<ul class="rpt-linklist">${arr.map(p=>`
+        <li><a href="${esc(p.permalink||"#")}" target="_blank" rel="noopener">${esc(p.title||"(untitled)")}</a>
+          <span class="rpt-muted"> · ${valFn(p)} ${esc(tx(label))} · u/${esc(p.author||"?")}</span></li>`).join("")}</ul>`
+        : `<p class="rpt-muted">${tr("none") || "None"}</p>`;
+
+      const badges = [
+        h.isNsfw ? `<span class="rpt-badge-off">NSFW 18+</span>` : "",
+        h.isPrivate ? `<span class="rpt-badge-off">${tr("private") || "Private"}</span>` : "",
+      ].filter(Boolean).join(" ");
+
       const body = `
-        <h3>r/${esc(sub)}</h3>
-        <p class="rpt-muted">${esc(snap.description || "No description")}</p>
-        <div class="rpt-v2-cmp-grid">
-          <div><small>Members</small><strong>${esc(snap.members || "—")}</strong></div>
-          <div><small>Posts loaded</small><strong>${snap.posts}</strong></div>
-          <div><small>Avg score</small><strong>${snap.avgScore}</strong></div>
-          <div><small>Avg comments</small><strong>${snap.avgComments}</strong></div>
+        <div class="rpt-sub-head">
+          <div>
+            <h3 style="margin:0 0 4px">r/${esc(sub)} ${badges}</h3>
+            <p class="rpt-muted" style="margin:0">${esc(h.description).slice(0,320) || esc(tr("no_description") || "No description available.")}</p>
+          </div>
         </div>
-        <h4>Content types</h4>
-        <div class="rpt-v2-bars">
-          ${Object.entries(snap.types).map(([k, v]) => `<div><span>${k}</span><div class="rpt-v2-bar"><i style="width:${(v/(snap.posts||1))*100}%"></i></div><b>${v}</b></div>`).join("")}
+
+        <h4 class="rpt-section-title">${esc(tr("overview") || "Overview")}</h4>
+        <div class="rpt-metric-grid">
+          ${stat("Members", esc(h.members || "—"))}
+          ${stat("Online now", esc(h.online || "—"))}
+          ${stat("Created", fmtDate(h.created))}
+          ${stat("Rules", h.rulesCount || "—")}
+          ${stat("Posts loaded", totalPosts)}
+          ${stat("Avg score", snap.avgScore ?? 0)}
+          ${stat("Median score", h.median)}
+          ${stat("Top score", h.max)}
+          ${stat("Avg comments", snap.avgComments ?? 0)}
+          ${stat("NSFW posts", h.nsfwCount)}
+          ${stat("Spoilers", h.spoilerCount)}
+          ${stat("Unique authors", Object.keys(h.topAuthors.reduce((a,[k])=>((a[k]=1),a),{})).length || h.topAuthors.length)}
         </div>
-        <h4>Top flairs</h4>
-        <div>${flairs.slice(0,8).map(([f,c]) => `<span class="rpt-chip">${esc(f)} · ${c}</span>`).join("") || `<p class="rpt-muted">None</p>`}</div>
-        <h4>Top domains</h4>
-        <div>${domains.map(([d,c]) => `<span class="rpt-chip">${esc(d)} · ${c}</span>`).join("") || `<p class="rpt-muted">None</p>`}</div>
-        <h4>Popular keywords</h4>
-        <div>${kw.map((k) => `<span class="rpt-chip">${esc(k.w)} · ${k.c}</span>`).join("")}</div>`;
-      modal(`Subreddit analyzer — r/${sub}`, body, { wide: true });
+
+        <h4 class="rpt-section-title">${esc(tr("content_types") || "Content types")}</h4>
+        <div class="rpt-bars">${typesRow}</div>
+
+        <h4 class="rpt-section-title">${esc(tr("posting_activity") || "Posting activity by hour")}</h4>
+        ${hoursRow}
+
+        <h4 class="rpt-section-title">${esc(tr("top_authors") || "Top authors on this page")}</h4>
+        <div class="rpt-chips-v">${h.topAuthors.length
+          ? h.topAuthors.map(([a,c]) => chip(`u/${a}`, c)).join("")
+          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+
+        <h4 class="rpt-section-title">${esc(tr("top_flairs") || "Top flairs")}</h4>
+        <div class="rpt-chips-v">${flairs.length
+          ? flairs.slice(0,10).map(([f,c])=>chip(f,c)).join("")
+          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+
+        <h4 class="rpt-section-title">${esc(tr("top_domains") || "Top domains")}</h4>
+        <div class="rpt-chips-v">${domains.length
+          ? domains.map(([d,c])=>chip(d,c)).join("")
+          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+
+        <h4 class="rpt-section-title">${esc(tr("popular_keywords") || "Popular keywords")}</h4>
+        <div class="rpt-chips-v">${kw.length
+          ? kw.map(k=>chip(k.w, k.c)).join("")
+          : `<p class="rpt-muted">${tr("none") || "None"}</p>`}</div>
+
+        <h4 class="rpt-section-title">${esc(tr("highest_scored_posts") || "Highest-scored posts")}</h4>
+        ${linkList(h.topByScore, p=>p.score, "score")}
+
+        <h4 class="rpt-section-title">${esc(tr("most_commented_posts") || "Most-commented posts")}</h4>
+        ${linkList(h.topByComments, p=>p.comments, "comments")}
+
+        ${h.mods.length ? `
+          <h4 class="rpt-section-title">${esc(tr("moderators") || "Moderators")}</h4>
+          <div class="rpt-chips-v">${h.mods.map(m=>chip(`u/${m}`,"")).join("")}</div>` : ""}
+
+        <p class="rpt-muted" style="margin-top:14px;font-size:11px">
+          ${esc(tr("local_snapshot_note") || "Snapshot computed from posts currently loaded in your feed. Scroll the subreddit before opening this dashboard for a bigger sample.")}
+        </p>`;
+      modal(`${tx("Subreddit analyzer dashboard")} — r/${sub}`, body, { wide: true });
     },
     run() { this.open(); },
   };
