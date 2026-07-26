@@ -7,6 +7,7 @@ const base = {
   manifest_version: 3 as const,
   name: "Reddit Power Toolkit",
   version: pkg.version,
+  version_name: "2.0.0-beta",
   description:
     "A local-first toolkit that supercharges the Reddit reading & writing experience.",
   default_locale: "en",
