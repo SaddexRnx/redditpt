@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0--beta-46d160?style=flat-square" alt="Version 1.10.7">
+  <img src="https://img.shields.io/badge/version-2.0.0--beta-46d160?style=flat-square" alt="Version 2.0.0-beta">
   <img src="https://img.shields.io/badge/manifest-v3-10b981?style=flat-square" alt="Manifest V3">
   <img src="https://img.shields.io/badge/license-MIT-000?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/local--first-100%25-10b981?style=flat-square" alt="Local-first">
