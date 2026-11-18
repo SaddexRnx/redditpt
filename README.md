@@ -6,6 +6,10 @@ Works on Chrome, Edge, Brave, Firefox, and Kiwi on Android.
 
 ![Reddit Power Toolkit](public/logo.png)
 
+## About
+
+This started as a few tweaks to my own Reddit experience and slowly turned into a full toolkit. It's local-first because I don't want an extension reading my browsing and sending it somewhere. I'm Saddek, a developer in Algeria. More projects at [saddexrnx.github.io](https://saddexrnx.github.io), and I'm on [Telegram](https://t.me/Saddex_x).
+
 ## What it does
 
 It adds a side panel and a floating quick bar to Reddit comment threads, with tools for navigating and making sense of long discussions.
